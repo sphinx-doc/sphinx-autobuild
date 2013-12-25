@@ -1,4 +1,4 @@
-include README AUTHORS NEWS LICENSE
+include README.rst AUTHORS NEWS LICENSE
 
 include entry-points.ini
 include requirements.txt
