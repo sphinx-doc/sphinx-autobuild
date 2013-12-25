@@ -60,7 +60,6 @@ class Setup(object):
     def longdesc():
         return Setup.read('README.rst') + '\n\n' + Setup.read('NEWS')
 
-
     @staticmethod
     def test_links():
         # Test if hardlinks work. This is a workaround until
