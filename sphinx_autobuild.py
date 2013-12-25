@@ -1,3 +1,11 @@
+"""
+Sphinx Documentation Automatic Builder
+
+MIT License. See LICENSE for more details.
+Copyright (c) 2013, Jonathan Stoppani
+"""
+
+
 import argparse
 import os
 import subprocess
