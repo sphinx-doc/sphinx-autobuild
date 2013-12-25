@@ -11,7 +11,6 @@ import os
 import subprocess
 import sys
 import pty
-import multiprocessing
 
 from livereload import Server
 
@@ -19,7 +18,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 class _WatchdogHandler(FileSystemEventHandler):
