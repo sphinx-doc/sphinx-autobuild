@@ -1,4 +1,8 @@
+0.2.0 - 2013/12/25
+------------------
+* Explicitly parse sphinx-build arguments for better compatibility.
+
+
 0.1.0 - 2013/12/25
 ------------------
-
-* Initial release
+* Initial release.
