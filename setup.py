@@ -58,7 +58,7 @@ class Setup(object):
 
     @staticmethod
     def longdesc():
-        return Setup.read('README.rst') + '\n\n' + Setup.read('CHANGELOG.md')
+        return Setup.read('README.rst') + '\n\n' + Setup.read('NEWS.rst')
 
     @staticmethod
     def test_links():
