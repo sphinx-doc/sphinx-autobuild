@@ -11,6 +11,9 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
+__version__ = '0.1.0'
+
+
 class _WatchdogHandler(FileSystemEventHandler):
 
     def __init__(self, watcher, action):

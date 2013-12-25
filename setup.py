@@ -51,8 +51,7 @@ class Setup(object):
 
     @staticmethod
     def version():
-        data = Setup.read(os.path.join('sphinx-autobuild',
-                                       '__init__.py'))
+        data = Setup.read(os.path.join('sphinx_autobuild.py'))
         version = (re.search(u"__version__\s*=\s*u?'([^']+)'", data)
                    .group(1).strip())
         return version
