@@ -18,7 +18,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 
 class _WatchdogHandler(FileSystemEventHandler):
