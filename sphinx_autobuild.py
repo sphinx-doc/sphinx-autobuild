@@ -86,13 +86,16 @@ class SphinxBuilder(object):
         sys.stdout.write('\n')
         subprocess.Popen(['sphinx-build'] + self._args, stdout=slave)
         os.close(slave)
-        while 1:
-            line = stdout.readline()
-            if not line:
-                break
-            sys.stdout.write('| ')
-            sys.stdout.write(line.rstrip())
-            sys.stdout.write('\n')
+        try:
+            while 1:
+                line = stdout.readline()
+                if not line:
+                    break
+                sys.stdout.write('| ')
+                sys.stdout.write(line.rstrip())
+                sys.stdout.write('\n')
+        except IOError:
+            pass
         sys.stdout.write('+')
         sys.stdout.write('-' * 80)
         sys.stdout.write('\n\n')
