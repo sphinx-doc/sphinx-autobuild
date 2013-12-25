@@ -64,15 +64,18 @@ class LivereloadWatchdogWatcher(object):
 
 class SphinxBuilder(object):
 
-    def __init__(self, outdir, args):
+    def __init__(self, outdir, args, ignored=None):
         self._outdir = outdir
         self._args = args
+        self._ignored = ignored or []
+        self._ignored.append(outdir)
 
     def __call__(self, watcher, src_path):
         path = self.get_relative_path(src_path)
 
-        if src_path.startswith(self._outdir + os.sep):
-            return
+        for i in self._ignored:
+            if src_path.startswith(i + os.sep):
+                return
 
         watcher._action_file = path  # TODO: Hack
 
@@ -136,7 +139,7 @@ def get_parser():
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
             parser.add_argument('-{}'.format(opt), action='count',
-                            help='See sphinx-build -h')
+                                help='See sphinx-build -h')
         else:
             parser.add_argument('-{}'.format(opt), action='append',
                                 metavar=meta, help='See sphinx-build -h')
@@ -169,10 +172,16 @@ def main():
     build_args.extend([srcdir, outdir])
     build_args.extend(args.filenames)
 
+    ignored = []
+    if args.w:  # Logfile
+        ignored.append(os.path.realpath(args.w))
+    if args.d:  # Doctrees
+        ignored.append(os.path.realpath(args.d))
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
     server = Server(watcher=LivereloadWatchdogWatcher())
-    server.watch(srcdir, SphinxBuilder(outdir, remaining))
+    server.watch(srcdir, SphinxBuilder(outdir, build_args, ignored))
     server.watch(outdir)
     server.serve(port=args.port, root=outdir)
