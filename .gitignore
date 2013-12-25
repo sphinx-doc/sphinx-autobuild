@@ -1,0 +1,26 @@
+*.py[cod]
+
+.DS_Store
+
+# Build artifacts
+/*.egg
+/*.egg-info
+/dist
+/build
+/eggs
+/sdist
+/develop-eggs
+/.sass-cache
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.htmlcov
+
+# Translations
+*.mo
+
+# Sphinx
+docs/_build

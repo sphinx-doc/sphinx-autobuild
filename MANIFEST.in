@@ -1,0 +1,7 @@
+include README AUTHORS NEWS LICENSE
+
+include entry-points.ini
+include requirements.txt
+
+graft docs
+prune docs/_build

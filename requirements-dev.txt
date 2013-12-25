@@ -1,0 +1,20 @@
+# Automation
+Fabric==1.6.1
+pycrypto==2.6
+paramiko==1.10.1
+
+# Packaging
+wheel==0.22.0
+
+# Code linting
+flake8==2.0
+mccabe==0.2.1
+pep8==1.4.6
+pyflakes==0.7.3
+
+# Documentation
+Jinja2==2.7.1
+MarkupSafe==0.18
+Pygments==1.6
+Sphinx==1.2b3
+docutils==0.11
