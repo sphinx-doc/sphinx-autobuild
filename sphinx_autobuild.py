@@ -102,18 +102,66 @@ class SphinxBuilder(object):
         return os.path.relpath(path)
 
 
+sphinx_build_options = (
+    ('b', 'builder'),
+    ('a', None),
+    ('E', None),
+    ('d', 'path'),
+    ('j', 'N'),
+
+    ('c', 'path'),
+    ('C', None),
+    ('D', 'setting=value'),
+    ('t', 'tag'),
+    ('A', 'name=value'),
+    ('n', None),
+
+    ('v', None),
+    ('q', None),
+    ('Q', None),
+    ('w', 'file'),
+    ('W', None),
+    ('T', None),
+    ('N', None),
+    ('P', None),
+)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
+
+    for opt, meta in sphinx_build_options:
+        if meta is None:
+            parser.add_argument('-{}'.format(opt), action='count',
+                            help='See sphinx-build -h')
+        else:
+            parser.add_argument('-{}'.format(opt), action='append',
+                                metavar=meta, help='See sphinx-build -h')
+
     parser.add_argument('sourcedir')
     parser.add_argument('outdir')
+    parser.add_argument('filenames', nargs='*', help='See sphinx-build -h')
 
-    args, remaining = parser.parse_known_args()
+    args = parser.parse_args()
 
     srcdir = os.path.realpath(args.sourcedir)
     outdir = os.path.realpath(args.outdir)
 
-    remaining += ['-j', str(multiprocessing.cpu_count() + 1), srcdir, outdir]
+    remaining= []
+    for arg, meta in sphinx_build_options:
+        val = getattr(args, arg)
+        if val is None:
+            continue
+        opt = '-{}'.format(arg)
+        if meta is None:
+            remaining.extend([opt] * val)
+        else:
+            for v in val:
+                remaining.extend([opt, v])
+
+    remaining.extend([srcdir, outdir])
+    remaining.extend(args.filenames)
 
     if not os.path.exists(outdir):
         os.makedirs(outdir)
