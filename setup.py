@@ -58,7 +58,7 @@ class Setup(object):
 
     @staticmethod
     def longdesc():
-        return Setup.read('README') + '\n\n' + Setup.read('NEWS')
+        return Setup.read('README.rst') + '\n\n' + Setup.read('NEWS')
 
 
     @staticmethod
