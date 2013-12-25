@@ -104,7 +104,7 @@ class SphinxBuilder(object):
         return os.path.relpath(path)
 
 
-sphinx_build_options = (
+SPHINX_BUILD_OPTIONS = (
     ('b', 'builder'),
     ('a', None),
     ('E', None),
@@ -129,11 +129,11 @@ sphinx_build_options = (
 )
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
 
-    for opt, meta in sphinx_build_options:
+    for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
             parser.add_argument('-{}'.format(opt), action='count',
                             help='See sphinx-build -h')
@@ -144,26 +144,30 @@ def main():
     parser.add_argument('sourcedir')
     parser.add_argument('outdir')
     parser.add_argument('filenames', nargs='*', help='See sphinx-build -h')
+    return parser
 
+
+def main():
+    parser = get_parser()
     args = parser.parse_args()
 
     srcdir = os.path.realpath(args.sourcedir)
     outdir = os.path.realpath(args.outdir)
 
-    remaining= []
-    for arg, meta in sphinx_build_options:
+    build_args = []
+    for arg, meta in SPHINX_BUILD_OPTIONS:
         val = getattr(args, arg)
         if val is None:
             continue
         opt = '-{}'.format(arg)
         if meta is None:
-            remaining.extend([opt] * val)
+            build_args.extend([opt] * val)
         else:
             for v in val:
-                remaining.extend([opt, v])
+                build_args.extend([opt, v])
 
-    remaining.extend([srcdir, outdir])
-    remaining.extend(args.filenames)
+    build_args.extend([srcdir, outdir])
+    build_args.extend(args.filenames)
 
     if not os.path.exists(outdir):
         os.makedirs(outdir)
