@@ -19,6 +19,7 @@ from watchdog.events import FileSystemEventHandler
 
 
 __version__ = '0.2.3'
+__url__ = 'https://github.com/GaretJax/sphinx-autobuild'
 
 
 class _WatchdogHandler(FileSystemEventHandler):

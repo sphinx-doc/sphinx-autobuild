@@ -4,7 +4,7 @@ import io
 import os
 import re
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 class Setup(object):
@@ -51,14 +51,14 @@ class Setup(object):
 
     @staticmethod
     def version():
-        data = Setup.read(os.path.join('sphinx_autobuild.py'))
+        data = Setup.read(os.path.join('sphinx_autobuild/__init__.py'))
         version = (re.search(u"__version__\s*=\s*u?'([^']+)'", data)
                    .group(1).strip())
         return version
 
     @staticmethod
     def longdesc():
-        return Setup.read('README.rst') + '\n\n' + Setup.read('NEWS')
+        return Setup.read('README.rst') + '\n\n' + Setup.read('CHANGELOG.md')
 
     @staticmethod
     def test_links():
@@ -88,7 +88,7 @@ setup(name='sphinx-autobuild',
       zip_safe=False,
       url='https://github.com/GaretJax/sphinx-autobuild',
       license='MIT',
-      py_modules=['sphinx_autobuild'],
+      packages=find_packages(),
       description=('Watch a Sphinx directory and rebuild the documentation '
                    'when a change is detected. Also includes a livereload '
                    'enabled web server.'),
