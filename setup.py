@@ -61,7 +61,27 @@ class Setup(object):
         return Setup.read('README') + '\n\n' + Setup.read('NEWS')
 
 
-setup(name='Sphinx Documentation Automatic Builder',
+    @staticmethod
+    def test_links():
+        # Test if hardlinks work. This is a workaround until
+        # http://bugs.python.org/issue8876 is solved
+        if hasattr(os, 'link'):
+            tempfile = __file__ + '.tmp'
+            try:
+                os.link(__file__, tempfile)
+            except OSError as e:
+                if e.errno == 1:  # Operation not permitted
+                    del os.link
+                else:
+                    raise
+            finally:
+                if os.path.exists(tempfile):
+                    os.remove(tempfile)
+
+
+Setup.test_links()
+
+setup(name='sphinx-autobuild',
       version=Setup.version(),
       author='Jonathan Stoppani',
       author_email='jonathan@stoppani.name',
