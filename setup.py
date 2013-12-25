@@ -4,7 +4,7 @@ import io
 import os
 import re
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 class Setup(object):
@@ -70,9 +70,10 @@ setup(name='Sphinx Documentation Automatic Builder',
       zip_safe=False,
       url='https://github.com/GaretJax/sphinx-autobuild',
       license='MIT',
-      packages=find_packages(),
-      package_dir={'irco': 'irco'},
-      description='Watch a Sphinx directory and rebuild the documentation when a change is detected. Also includes a livereload enabled web server.',
+      py_modules=['sphinx_autobuild'],
+      description=('Watch a Sphinx directory and rebuild the documentation '
+                   'when a change is detected. Also includes a livereload '
+                   'enabled web server.'),
       install_requires=Setup.requirements('requirements.txt'),
       long_description=Setup.longdesc(),
       entry_points=Setup.read('entry-points.ini', True),
