@@ -1,10 +1,8 @@
 sphinx-autobuild
 ================
 
-Sphinx Documentation Automatic Builder.
-
 Watch a Sphinx directory and rebuild the documentation when a change is
-detected. Also includes a livereload enabled web server
+detected. Also includes a livereload enabled web server.
 
 
 Installation
