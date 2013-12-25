@@ -1,4 +1,4 @@
-0.2.2 - 2013/12/25
+0.2.3 - 2013/12/25
 ------------------
 * Ignore the paths indicated by the -w and -d arguments when watching for
   changes to the documentation.

@@ -18,7 +18,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
 
 
 class _WatchdogHandler(FileSystemEventHandler):
@@ -160,7 +160,7 @@ def main():
     build_args = []
     for arg, meta in SPHINX_BUILD_OPTIONS:
         val = getattr(args, arg)
-        if val is None:
+        if not val:
             continue
         opt = '-{}'.format(arg)
         if meta is None:
@@ -174,9 +174,9 @@ def main():
 
     ignored = []
     if args.w:  # Logfile
-        ignored.append(os.path.realpath(args.w))
+        ignored.append(os.path.realpath(args.w[0]))
     if args.d:  # Doctrees
-        ignored.append(os.path.realpath(args.d))
+        ignored.append(os.path.realpath(args.d[0]))
 
     if not os.path.exists(outdir):
         os.makedirs(outdir)
