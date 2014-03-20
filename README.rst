@@ -47,3 +47,7 @@ add the following target::
     livehtml:
     	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 
+Then run with::
+
+    make livehtml
+
