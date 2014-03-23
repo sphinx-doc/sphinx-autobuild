@@ -11,6 +11,7 @@
 /sdist
 /develop-eggs
 /.sass-cache
+/.cache
 
 # Installer logs
 pip-log.txt
