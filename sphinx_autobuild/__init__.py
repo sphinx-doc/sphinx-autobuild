@@ -62,6 +62,13 @@ class LivereloadWatchdogWatcher(object):
         event_handler = _WatchdogHandler(self, action)
         self._observer.schedule(event_handler, path=path, recursive=True)
 
+    def start(self, callback):
+        """
+        Start the watcher running, calling callback when changes are observed.
+        If this returns False, regular polling will be used.
+        """
+        return False
+
 
 class SphinxBuilder(object):
 
