@@ -23,7 +23,7 @@ import os
 parent = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(parent)
 
-import sphinx-autobuild
+import sphinx_autobuild
 
 # -- General configuration ------------------------------------------------
 
