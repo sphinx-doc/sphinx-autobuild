@@ -140,14 +140,14 @@ def get_parser():
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
             parser.add_argument('-{}'.format(opt), action='count',
-                                help='See sphinx-build -h')
+                                help='See `sphinx-build -h`')
         else:
             parser.add_argument('-{}'.format(opt), action='append',
-                                metavar=meta, help='See sphinx-build -h')
+                                metavar=meta, help='See `sphinx-build -h`')
 
     parser.add_argument('sourcedir')
     parser.add_argument('outdir')
-    parser.add_argument('filenames', nargs='*', help='See sphinx-build -h')
+    parser.add_argument('filenames', nargs='*', help='See `sphinx-build -h`')
     return parser
 
 
