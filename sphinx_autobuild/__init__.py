@@ -40,23 +40,38 @@ class LivereloadWatchdogWatcher(object):
     def __init__(self):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
-        self._action_file = None  # TODO: Hack
+        self._action_file = None  # TODO: Hack.
+                                  # Allows the LivereloadWatchdogWatcher
+                                  # instance to set the file which was
+                                  # modified. Used for output purposes only.
+
         self._observer = Observer()
         self._observer.start()
 
         # Compatibility with livereload's builtin watcher
-        self._tasks = True
-        self.filepath = None
+        self._tasks = True  # Accessed by LiveReloadHandler's on_message method
+                            # to decide if a task has to be added to watch the
+                            # cwd.
+        self.filepath = None  # Accessed by LiveReloadHandler's watch_task
+                              # method. When set to a boolean false value,
+                              # everything is reloaded in the browser ('*').
 
     def set_changed(self):
         self._changed = True
 
     def examine(self):
+        """
+        Called by LiveReloadHandler's poll_tasks method. If a boolean true
+        value is returned, then the waiters (browsers) are reloaded.
+        """
         if self._changed:
             self._changed = False
-            return self._action_file or True  # TODO: Hack
+            return self._action_file or True  # TODO: Hack (see above)
 
-    def watch(self, path, action=None):
+    def watch(self, path, action):
+        """
+        Called by the Server instance when a new watch task is requested.
+        """
         if action is None:
             action = lambda w, _: w.set_changed()
         event_handler = _WatchdogHandler(self, action)
@@ -85,7 +100,7 @@ class SphinxBuilder(object):
             if src_path.startswith(i + os.sep):
                 return
 
-        watcher._action_file = path  # TODO: Hack
+        watcher._action_file = path  # TODO: Hack (see above)
 
         master, slave = pty.openpty()
         stdout = os.fdopen(master)
