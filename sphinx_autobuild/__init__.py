@@ -105,7 +105,7 @@ class SphinxBuilder(object):
         master, slave = pty.openpty()
         stdout = os.fdopen(master)
 
-        pre = '+--------- {} changed '.format(path)
+        pre = '+--------- {0} changed '.format(path)
         sys.stdout.write('\n')
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
@@ -161,10 +161,10 @@ def get_parser():
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
-            parser.add_argument('-{}'.format(opt), action='count',
+            parser.add_argument('-{0}'.format(opt), action='count',
                                 help='See `sphinx-build -h`')
         else:
-            parser.add_argument('-{}'.format(opt), action='append',
+            parser.add_argument('-{0}'.format(opt), action='append',
                                 metavar=meta, help='See `sphinx-build -h`')
 
     parser.add_argument('sourcedir')
@@ -185,7 +185,7 @@ def main():
         val = getattr(args, arg)
         if not val:
             continue
-        opt = '-{}'.format(arg)
+        opt = '-{0}'.format(arg)
         if meta is None:
             build_args.extend([opt] * val)
         else:
