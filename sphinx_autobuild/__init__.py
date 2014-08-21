@@ -18,7 +18,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 
-__version__ = '0.2.3'
+__version__ = '0.3.0'
 __url__ = 'https://github.com/GaretJax/sphinx-autobuild'
 
 
