@@ -158,6 +158,7 @@ SPHINX_BUILD_OPTIONS = (
 def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
+    parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
@@ -207,4 +208,4 @@ def main():
     server = Server(watcher=LivereloadWatchdogWatcher())
     server.watch(srcdir, SphinxBuilder(outdir, build_args, ignored))
     server.watch(outdir)
-    server.serve(port=args.port, root=outdir)
+    server.serve(port=args.port, host=args.host, root=outdir)
