@@ -18,7 +18,7 @@ Usage
 
 The package installs a single executable script, named ``sphinx-autobuild``.
 The script takes the same arguments as the ``sphinx-build`` command installed
-by Sphinx plus such options:
+by Sphinx plus the following options:
 
 * ``-p``/``--port`` option to specify the port on which the documentation shall be served (default 8000)
 * ``-H``/``--host`` option to specify the host on which the documentation shall be served (default 127.0.0.1)
