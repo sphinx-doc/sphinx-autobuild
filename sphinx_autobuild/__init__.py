@@ -11,6 +11,11 @@ import os
 import subprocess
 import sys
 
+try:
+    import pty
+except ImportError:
+    pty = None
+
 from livereload import Server
 
 from watchdog.observers import Observer
@@ -106,9 +111,17 @@ class SphinxBuilder(object):
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
         sys.stdout.write('\n')
-        stdout = subprocess.Popen(['sphinx-build'] + self._args,
-                                  stdout=subprocess.PIPE,
-                                  universal_newlines=True).stdout
+
+        args = ['sphinx-build'] + self._args
+        if pty:
+            master, slave = pty.openpty()
+            stdout = os.fdopen(master)
+            subprocess.Popen(args, stdout=slave)
+            os.close(slave)
+        else:
+            stdout = subprocess.Popen(args,
+                                      stdout=subprocess.PIPE,
+                                      universal_newlines=True).stdout
         try:
             while 1:
                 line = stdout.readline()
@@ -120,7 +133,8 @@ class SphinxBuilder(object):
         except IOError:
             pass
         finally:
-            stdout.close()
+            if not pty:
+                stdout.close()
         sys.stdout.write('+')
         sys.stdout.write('-' * 80)
         sys.stdout.write('\n\n')
