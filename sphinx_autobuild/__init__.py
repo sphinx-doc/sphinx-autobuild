@@ -10,7 +10,11 @@ import argparse
 import os
 import subprocess
 import sys
-import pty
+
+try:
+    import pty
+except ImportError:
+    pty = None
 
 from livereload import Server
 
@@ -102,16 +106,22 @@ class SphinxBuilder(object):
 
         watcher._action_file = path  # TODO: Hack (see above)
 
-        master, slave = pty.openpty()
-        stdout = os.fdopen(master)
-
         pre = '+--------- {0} changed '.format(path)
         sys.stdout.write('\n')
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
         sys.stdout.write('\n')
-        subprocess.Popen(['sphinx-build'] + self._args, stdout=slave)
-        os.close(slave)
+
+        args = ['sphinx-build'] + self._args
+        if pty:
+            master, slave = pty.openpty()
+            stdout = os.fdopen(master)
+            subprocess.Popen(args, stdout=slave)
+            os.close(slave)
+        else:
+            stdout = subprocess.Popen(args,
+                                      stdout=subprocess.PIPE,
+                                      universal_newlines=True).stdout
         try:
             while 1:
                 line = stdout.readline()
@@ -122,6 +132,9 @@ class SphinxBuilder(object):
                 sys.stdout.write('\n')
         except IOError:
             pass
+        finally:
+            if not pty:
+                stdout.close()
         sys.stdout.write('+')
         sys.stdout.write('-' * 80)
         sys.stdout.write('\n\n')
