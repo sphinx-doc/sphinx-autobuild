@@ -1,5 +1,4 @@
-"""
-Sphinx Documentation Automatic Builder
+"""Sphinx Documentation Automatic Builder.
 
 MIT License. See LICENSE for more details.
 Copyright (c) 2013, Jonathan Stoppani
@@ -7,6 +6,7 @@ Copyright (c) 2013, Jonathan Stoppani
 
 
 import argparse
+import fnmatch
 import os
 import subprocess
 import sys
@@ -36,60 +36,64 @@ class _WatchdogHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if event.is_directory:
             return
-        self._action(self._watcher, event.src_path)
+        self._action(self._watcher, getattr(event, 'dest_path', event.src_path))
 
 
 class LivereloadWatchdogWatcher(object):
 
+    """File system watch dog."""
+
     def __init__(self):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
-        self._action_file = None  # TODO: Hack.
-                                  # Allows the LivereloadWatchdogWatcher
-                                  # instance to set the file which was
-                                  # modified. Used for output purposes only.
-
+        # TODO: Hack.
+        # Allows the LivereloadWatchdogWatcher
+        # instance to set the file which was
+        # modified. Used for output purposes only.
+        self._action_file = None
         self._observer = Observer()
         self._observer.start()
 
         # Compatibility with livereload's builtin watcher
-        self._tasks = True  # Accessed by LiveReloadHandler's on_message method
-                            # to decide if a task has to be added to watch the
-                            # cwd.
-        self.filepath = None  # Accessed by LiveReloadHandler's watch_task
-                              # method. When set to a boolean false value,
-                              # everything is reloaded in the browser ('*').
+        # Accessed by LiveReloadHandler's on_message method
+        # to decide if a task has to be added to watch the
+        # cwd.
+        self._tasks = True
+        # Accessed by LiveReloadHandler's watch_task
+        # method. When set to a boolean false value,
+        # everything is reloaded in the browser ('*').
+        self.filepath = None
 
     def set_changed(self):
         self._changed = True
 
     def examine(self):
-        """
-        Called by LiveReloadHandler's poll_tasks method. If a boolean true
-        value is returned, then the waiters (browsers) are reloaded.
+        """Called by LiveReloadHandler's poll_tasks method.
+
+        If a boolean true value is returned, then the waiters (browsers) are reloaded.
         """
         if self._changed:
             self._changed = False
             return self._action_file or True  # TODO: Hack (see above)
 
     def watch(self, path, action):
-        """
-        Called by the Server instance when a new watch task is requested.
-        """
+        """Called by the Server instance when a new watch task is requested."""
         if action is None:
             action = lambda w, _: w.set_changed()
         event_handler = _WatchdogHandler(self, action)
         self._observer.schedule(event_handler, path=path, recursive=True)
 
     def start(self, callback):
-        """
-        Start the watcher running, calling callback when changes are observed.
+        """Start the watcher running, calling callback when changes are observed.
+
         If this returns False, regular polling will be used.
         """
         return False
 
 
 class SphinxBuilder(object):
+
+    """Helper class to run sphinx-build command."""
 
     def __init__(self, outdir, args, ignored=None):
         self._outdir = outdir
@@ -101,6 +105,8 @@ class SphinxBuilder(object):
         path = self.get_relative_path(src_path)
 
         for i in self._ignored:
+            if fnmatch.fnmatch(path, i):
+                return
             if src_path.startswith(i + os.sep):
                 return
 
@@ -172,6 +178,7 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
+    parser.add_argument('-i', '--ignore', action='append', default=[])
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
@@ -209,7 +216,7 @@ def main():
     build_args.extend([srcdir, outdir])
     build_args.extend(args.filenames)
 
-    ignored = []
+    ignored = args.ignore
     if args.w:  # Logfile
         ignored.append(os.path.realpath(args.w[0]))
     if args.d:  # Doctrees

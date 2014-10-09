@@ -1,0 +1,5 @@
+# Testing
+mock
+pytest
+pytest-pep8
+tox
