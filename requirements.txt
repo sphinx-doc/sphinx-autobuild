@@ -3,4 +3,4 @@ argh>=0.24.1
 pathtools>=0.1.2
 PyYAML>=3.10
 tornado>=3.2
-livereload>=2.2.0
+livereload==2.2.2
