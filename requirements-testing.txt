@@ -2,4 +2,7 @@
 mock
 pytest
 pytest-pep8
+pytest-cov
+cov-core
+coverage
 tox
