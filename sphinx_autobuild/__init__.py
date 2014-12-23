@@ -36,12 +36,14 @@ class _WatchdogHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if event.is_directory:
             return
-        self._action(self._watcher, getattr(event, 'dest_path', event.src_path))
+        self._action(self._watcher,
+                     getattr(event, 'dest_path', event.src_path))
 
 
 class LivereloadWatchdogWatcher(object):
-
-    """File system watch dog."""
+    """
+    File system watch dog.
+    """
 
     def __init__(self):
         super(LivereloadWatchdogWatcher, self).__init__()
@@ -68,23 +70,29 @@ class LivereloadWatchdogWatcher(object):
         self._changed = True
 
     def examine(self):
-        """Called by LiveReloadHandler's poll_tasks method.
+        """
+        Called by LiveReloadHandler's poll_tasks method.
 
-        If a boolean true value is returned, then the waiters (browsers) are reloaded.
+        If a boolean true value is returned, then the waiters (browsers) are
+        reloaded.
         """
         if self._changed:
             self._changed = False
             return self._action_file or True  # TODO: Hack (see above)
 
     def watch(self, path, action):
-        """Called by the Server instance when a new watch task is requested."""
+        """
+        Called by the Server instance when a new watch task is requested.
+        """
         if action is None:
             action = lambda w, _: w.set_changed()
         event_handler = _WatchdogHandler(self, action)
         self._observer.schedule(event_handler, path=path, recursive=True)
 
     def start(self, callback):
-        """Start the watcher running, calling callback when changes are observed.
+        """
+        Start the watcher running, calling callback when changes are
+        observed.
 
         If this returns False, regular polling will be used.
         """
@@ -92,8 +100,9 @@ class LivereloadWatchdogWatcher(object):
 
 
 class SphinxBuilder(object):
-
-    """Helper class to run sphinx-build command."""
+    """
+    Helper class to run sphinx-build command.
+    """
 
     def __init__(self, outdir, args, ignored=None):
         self._outdir = outdir
