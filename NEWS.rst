@@ -1,3 +1,11 @@
+Unreleased
+----------
+
+* Added -i, --ignore command line argument to ignore files by the glob expression
+* Added basic tests for the entry point script
+* pep257 improvements
+* prepare for travis integration
+
 0.2.3 - 2013/12/25
 ------------------
 * Ignore the paths indicated by the -w and -d arguments when watching for

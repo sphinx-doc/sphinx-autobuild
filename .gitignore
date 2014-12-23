@@ -12,6 +12,7 @@
 /develop-eggs
 /.sass-cache
 /.cache
+/.env
 
 # Installer logs
 pip-log.txt

@@ -69,7 +69,7 @@ local development.
 
     $  mkvirtualenv sphinx-autobuild
     $  cd sphinx-autobuild/
-    $  python setup.py develop
+    $  pip install -e . -r requirements-dev.txt
 
 4. Create a branch for local development::
 
@@ -83,10 +83,6 @@ local development.
     $  flake8 solution tests
     $  py.test tests
     $  tox
-
-  To get flake8, py.test and tox, just pip install them into your virtualenv::
-
-    $   pip install flake8 pytest tox
 
 6. Commit your changes and push your branch to GitHub::
 
