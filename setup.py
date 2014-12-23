@@ -11,8 +11,9 @@ class Setup(object):
     @staticmethod
     def read(fname, fail_silently=False):
         """
-        Read the content of the given file. The path is evaluated from the
-        directory containing this file.
+        Read the content of the given file.
+
+        The path is evaluated from the directory containing this file.
         """
         try:
             filepath = os.path.join(os.path.dirname(__file__), fname)

@@ -1,5 +1,5 @@
 """
-Sphinx Documentation Automatic Builder.
+Automatic builder for Sphinx based documentation sets.
 
 MIT License. See LICENSE for more details.
 Copyright (c) 2013, Jonathan Stoppani
@@ -45,7 +45,6 @@ class LivereloadWatchdogWatcher(object):
     """
     File system watch dog.
     """
-
     def __init__(self):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
@@ -113,7 +112,6 @@ class SphinxBuilder(object):
     """
     Helper class to run sphinx-build command.
     """
-
     def __init__(self, outdir, args, ignored=None):
         self._outdir = outdir
         self._args = args
