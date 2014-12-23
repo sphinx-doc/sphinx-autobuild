@@ -58,14 +58,18 @@ class LivereloadWatchdogWatcher(object):
         self._observer.start()
 
         # Compatibility with livereload's builtin watcher
-        # Accessed by LiveReloadHandler's on_message method
-        # to decide if a task has to be added to watch the
-        # cwd.
+
+        # Accessed by LiveReloadHandler's on_message method to decide if a task
+        # has to be added to watch the cwd.
         self._tasks = True
-        # Accessed by LiveReloadHandler's watch_task
-        # method. When set to a boolean false value,
-        # everything is reloaded in the browser ('*').
+
+        # Accessed by LiveReloadHandler's watch_task method. When set to a
+        # boolean false value, everything is reloaded in the browser ('*').
         self.filepath = None
+
+        # Accessed by Server's serve method to set reload time to 0 in
+        # LiveReloadHandler's poll_tasks method.
+        self._changes = []
 
     def set_changed(self):
         self._changed = True
@@ -77,11 +81,16 @@ class LivereloadWatchdogWatcher(object):
         If a boolean true value is returned, then the waiters (browsers) are
         reloaded.
         """
+        if self._changes:
+            return self._changes.pop()
+
+        action_file = None
         if self._changed:
             self._changed = False
-            return self._action_file or True  # TODO: Hack (see above)
+            action_file = self._action_file or True  # TODO: Hack (see above)
+        return action_file, None
 
-    def watch(self, path, action):
+    def watch(self, path, action, _):
         """
         Called by the Server instance when a new watch task is requested.
         """
