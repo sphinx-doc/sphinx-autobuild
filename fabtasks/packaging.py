@@ -74,7 +74,7 @@ def release():
                                        pipes.quote(tag_message)))
 
     # Push
-    local('git push --tags origin master')
+    local('git push --tags origin develop')
 
     # Package and upload to pypi
     local('python setup.py sdist bdist_wheel upload')

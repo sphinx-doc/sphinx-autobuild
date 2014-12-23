@@ -1,3 +1,7 @@
+Unreleased
+----------
+
+
 0.4.0 2014/12/23
 ----------------
 * Added -i, --ignore command line argument to ignore files by the glob
