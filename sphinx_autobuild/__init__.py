@@ -122,6 +122,9 @@ class SphinxBuilder(object):
 
         watcher._action_file = path  # TODO: Hack (see above)
 
+        self.build(path)
+
+    def build(self, path):
         pre = '+--------- {0} changed '.format(path)
         sys.stdout.write('\n')
         sys.stdout.write(pre)
