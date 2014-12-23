@@ -1,10 +1,14 @@
 [run]
 branch = True
-omit = tests/*, setup.py
+omit = setup.py, */migrations/*, */conftest.py, docs/*
 
 [report]
 # Regexes for lines to exclude from consideration
 exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+    NOCOV
+
     # Don't complain if non-runnable code isn't run:
     if __name__ == .__main__.:
 
