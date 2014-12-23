@@ -110,9 +110,11 @@ To run a subset of tests::
 Authoring a release
 -------------------
 
-* Update the NEWS.rst file.
+* Update the ``NEWS.rst`` file (replace the unreleased title with the current
+  date).
 * Bump ther version in the ``sphinx_autobuild/__init__.py`` file.
 * Update the AUTHORS file by running ``fab authors``.
 * Make sure that the working tree is clean (either commit or stash the changes).
 * Push everything and make sure the Travis tests still pass.
 * Run ``fab release`` to build the package and release it on PyPI.
+* Add a new unreleased section to the top of the ``NEWS.rst`` file
