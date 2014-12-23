@@ -10,7 +10,11 @@ detected. Also includes a livereload enabled web server.
 .. image:: https://pypip.in/v/sphinx-autobuild/badge.png
    :target: https://crate.io/packages/sphinx-autobuild/
 .. image:: https://coveralls.io/repos/GaretJax/sphinx-autobuild/badge.png?branch=develop
-  :target: https://coveralls.io/r/GaretJax/sphinx-autobuild?branch=develop
+   :target: https://coveralls.io/r/GaretJax/sphinx-autobuild?branch=develop
+.. image:: https://readthedocs.org/projects/sphinx-autobuild/?badge=latest
+   :target: http://sphinx-autobuild.readthedocs.org/en/latest/
+
+
 
 
 Installation
