@@ -80,8 +80,8 @@ local development.
 5. When you\'re done making changes, check that your changes pass all tests,
    including testing other Python versions with ``tox``::
 
-    $  flake8 solution tests
-    $  py.test tests
+    $  fab lint
+    $  py.test
     $  tox
 
 6. Commit your changes and push your branch to GitHub::
@@ -107,4 +107,4 @@ Tips
 
 To run a subset of tests::
 
-  $  py.test tests/tests_file.py
+  $  py.test sphinx_autobuild/test/tests_file.py
