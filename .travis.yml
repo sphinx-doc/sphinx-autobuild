@@ -1,11 +1,14 @@
 language: python
 
+python:
+  - "2.7"
+
 # command to install dependencies
 install:
-  - pip install tox
+  - pip install -r requirements-testing.txt
   - pip install coveralls
 
 # command to run tests
-script: tox
+script: py.test
 
 after_success: coveralls

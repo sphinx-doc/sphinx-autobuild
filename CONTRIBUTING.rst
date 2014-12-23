@@ -75,22 +75,20 @@ local development.
 
     $  git checkout -b name-of-your-bugfix-or-feature
 
-  Now you can make your changes locally.
+5. Now you can make your changes locally.
 
-5. When you\'re done making changes, check that your changes pass all tests,
-   including testing other Python versions with ``tox``::
+6. When you're done making changes, check that your changes pass all tests::
 
     $  fab lint
     $  py.test
-    $  tox
 
-6. Commit your changes and push your branch to GitHub::
+7. Commit your changes and push your branch to GitHub::
 
     $  git add .
     $  git commit -m "Your detailed description of your changes."
     $  git push origin name-of-your-bugfix-or-feature
 
-7. Submit a pull request through the GitHub website.
+8. Submit a pull request through the GitHub website.
 
 Pull Request Guidelines
 -----------------------
@@ -99,8 +97,8 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request has code, it should include tests.
 2. If the pull request adds functionality, the docs should be updated.
-3. Run ``tox`` and make sure that the tests pass for all supported Python
-   versions.
+3. Make sure that the tests pass for all supported Python versions (see the
+   Travis builds for details).
 
 Tips
 ----
