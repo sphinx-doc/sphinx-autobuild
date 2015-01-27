@@ -200,6 +200,7 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-i', '--ignore', action='append', default=[])
     parser.add_argument('-z', '--watch', action='append', metavar='DIR',
+                        default=[],
                         help=('Specify additional directories to watch. May be'
                               ' used multiple times.'),
                         dest='watched_dirs')
