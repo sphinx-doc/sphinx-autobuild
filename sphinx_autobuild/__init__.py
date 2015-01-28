@@ -251,11 +251,12 @@ def main():
         os.makedirs(outdir)
 
     builder = SphinxBuilder(outdir, build_args, ignored)
-
     server = Server(watcher=LivereloadWatchdogWatcher())
+
     server.watch(srcdir, builder)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
         server.watch(dirpath, builder)
     server.watch(outdir)
+
     server.serve(port=args.port, host=args.host, root=outdir)
