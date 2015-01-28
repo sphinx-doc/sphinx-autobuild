@@ -203,7 +203,7 @@ def get_parser():
                         default=[],
                         help=('Specify additional directories to watch. May be'
                               ' used multiple times.'),
-                        dest='watched_dirs')
+                        dest='additional_watched_dirs')
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
@@ -254,7 +254,7 @@ def main():
 
     server = Server(watcher=LivereloadWatchdogWatcher())
     server.watch(srcdir, builder)
-    for dirpath in args.watched_dirs:
+    for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
         server.watch(dirpath, builder)
     server.watch(outdir)
