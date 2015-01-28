@@ -35,6 +35,8 @@ by Sphinx plus the following options:
 * ``-p``/``--port`` option to specify the port on which the documentation shall be served (default 8000)
 * ``-H``/``--host`` option to specify the host on which the documentation shall be served (default 127.0.0.1)
 * ``-i``/``--ignore`` multiple allowed, option to specify file ignore glob expression when watching changes, for example: `*.tmp`
+* ``-z``/``--watch`` multiple allowed, option to specify additional directories
+  to watch, for example: `some/extra/dir`
 
 To build a classical Sphinx documentation set, issue the following command::
 
