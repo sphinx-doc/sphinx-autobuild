@@ -7,14 +7,12 @@ detected. Also includes a livereload enabled web server.
 
 .. image:: https://api.travis-ci.org/GaretJax/sphinx-autobuild.png
    :target: https://travis-ci.org/GaretJax/sphinx-autobuild
-.. image:: https://badge.fury.io/py/lancet.png
-   :target: http://badge.fury.io/py/lancet
+.. image:: https://badge.fury.io/py/sphinx-autobuild.png
+   :target: http://badge.fury.io/py/sphinx-autobuild
 .. image:: https://coveralls.io/repos/GaretJax/sphinx-autobuild/badge.png?branch=develop
    :target: https://coveralls.io/r/GaretJax/sphinx-autobuild?branch=develop
 .. image:: https://readthedocs.org/projects/sphinx-autobuild/badge/?version=latest
    :target: http://sphinx-autobuild.readthedocs.org/en/latest/
-
-
 
 
 Installation
