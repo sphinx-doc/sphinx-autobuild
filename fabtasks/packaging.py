@@ -1,6 +1,9 @@
-import pipes
+from __future__ import print_function
 
-from fabric.api import settings, task, local, hide
+import pipes
+import re
+
+from fabric.api import settings, task, local, hide, env
 from fabric.contrib.console import confirm
 
 
@@ -28,7 +31,19 @@ def authors():
     """
     Updates the AUTHORS file with a list of committers from GIT.
     """
-    local('git shortlog -s -e -n | cut -f 2- > AUTHORS')
+    fmt_re = re.compile(r'([^<]+) <([^>]+)>')
+    authors = local('git shortlog -s -e -n | cut -f 2-', capture=True)
+    with open('AUTHORS', 'w') as fh:
+        fh.write('Project contributors\n')
+        fh.write('====================\n\n')
+        for line in authors.splitlines():
+            match = fmt_re.match(line)
+            name, email = match.groups()
+            if email in env.ignored_authors:
+                continue
+            fh.write(' * ')
+            fh.write(line)
+            fh.write('\n')
 
 
 @task
@@ -38,18 +53,16 @@ def release():
     """
 
     if not is_working_tree_clean():
-        print 'Your working tree is not clean. Refusing to create a release.'
+        print('Your working tree is not clean. Refusing to create a release.')
         return
 
-    print 'Rebuilding the AUTHORS file to check for modifications...'
+    print('Rebuilding the AUTHORS file to check for modifications...')
     authors()
 
     if not is_working_tree_clean():
-        print (
-            'Your working tree is not clean after the AUTHORS file was '
-            'rebuilt.'
-        )
-        print 'Please commit the changes before continuing.'
+        print('Your working tree is not clean after the AUTHORS file was '
+              'rebuilt.')
+        print('Please commit the changes before continuing.')
         return
 
     # Get version
@@ -59,15 +72,15 @@ def release():
     # Tag
     tag_message = '{} release version {}.'.format(name, version)
 
-    print '----------------------'
-    print 'Proceeding will tag the release, push the repository upstream,'
-    print 'and release a new version on PyPI.'
-    print
-    print 'Version: {}'.format(version)
-    print 'Tag message: {}'.format(tag_message)
-    print
+    print('----------------------')
+    print('Proceeding will tag the release, push the repository upstream,')
+    print('and release a new version on PyPI.')
+    print()
+    print('Version: {}'.format(version))
+    print('Tag message: {}'.format(tag_message))
+    print()
     if not confirm('Continue?', default=True):
-        print 'Aborting.'
+        print('Aborting.')
         return
 
     local('git tag -a {} -m {}'.format(pipes.quote(version),
