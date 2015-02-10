@@ -14,6 +14,7 @@ detected. Also includes a livereload enabled web server.
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
    :target: http://sphinx-autobuild.readthedocs.org/en/latest/
 .. image:: https://img.shields.io/pypi/l/sphinx-autobuild.svg
+   :target: https://github.com/GaretJax/sphinx-autobuild/blob/develop/LICENSE
 
 
 Installation
