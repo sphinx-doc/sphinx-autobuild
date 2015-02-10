@@ -8,7 +8,7 @@ detected. Also includes a livereload enabled web server.
 .. image:: https://img.shields.io/travis/GaretJax/sphinx-autobuild.svg
    :target: https://travis-ci.org/GaretJax/sphinx-autobuild
 .. image:: https://img.shields.io/pypi/v/sphinx-autobuild.svg
-   :target: http://badge.fury.io/py/sphinx-autobuild
+   :target: https://pypi.python.org/pypi/sphinx-autobuild
 .. image:: https://img.shields.io/coveralls/GaretJax/sphinx-autobuild/develop.svg
    :target: https://coveralls.io/r/GaretJax/sphinx-autobuild?branch=develop
 .. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
