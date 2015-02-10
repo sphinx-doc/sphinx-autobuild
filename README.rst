@@ -5,14 +5,15 @@ Watch a Sphinx directory and rebuild the documentation when a change is
 detected. Also includes a livereload enabled web server.
 
 
-.. image:: https://api.travis-ci.org/GaretJax/sphinx-autobuild.png
+.. image:: https://img.shields.io/travis/GaretJax/sphinx-autobuild.svg
    :target: https://travis-ci.org/GaretJax/sphinx-autobuild
-.. image:: https://badge.fury.io/py/sphinx-autobuild.png
+.. image:: https://img.shields.io/pypi/v/sphinx-autobuild.svg
    :target: http://badge.fury.io/py/sphinx-autobuild
-.. image:: https://coveralls.io/repos/GaretJax/sphinx-autobuild/badge.png?branch=develop
+.. image:: https://img.shields.io/coveralls/GaretJax/sphinx-autobuild/develop.svg
    :target: https://coveralls.io/r/GaretJax/sphinx-autobuild?branch=develop
-.. image:: https://readthedocs.org/projects/sphinx-autobuild/badge/?version=latest
+.. image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
    :target: http://sphinx-autobuild.readthedocs.org/en/latest/
+.. image:: https://img.shields.io/pypi/l/sphinx-autobuild.svg
 
 
 Installation
