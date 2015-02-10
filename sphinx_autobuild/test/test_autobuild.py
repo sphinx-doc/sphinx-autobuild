@@ -8,7 +8,6 @@ import livereload
 from mock import call
 from watchdog import observers
 
-import sphinx_autobuild
 from sphinx_autobuild import main
 
 
@@ -63,11 +62,9 @@ def test_autobuild_with_options(mock_makedirs,
     mock_builder.assert_called_once_with(
         '/output', ['/source', '/output'], ['/ignored'])
 
-    list_cmp_unordered = lambda l_0, l_1: all(elt_0 in l_1 for elt_0 in l_0)
-
     # --watch
-    # ignore order of calls with `list_cmp_unordered`
-    assert list_cmp_unordered(mock_watch.call_args_list,
-                              [call('/source', mock_builder.return_value),
-                               call('/external', mock_builder.return_value),
-                               call('/output')])
+    calls = [call('/source', mock_builder.return_value),
+             call('/external', mock_builder.return_value),
+             call('/output')]
+    for call_spec in mock_watch.call_args_list:
+        assert call_spec in calls
