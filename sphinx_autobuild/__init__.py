@@ -9,6 +9,7 @@ Copyright (c) 2013, Jonathan Stoppani
 import argparse
 import fnmatch
 import os
+import re
 import subprocess
 import sys
 
@@ -116,20 +117,30 @@ class SphinxBuilder(object):
     """
     Helper class to run sphinx-build command.
     """
-    def __init__(self, outdir, args, ignored=None):
+    def __init__(self, outdir, args, ignored=None, regex_ignored=None):
         self._outdir = outdir
         self._args = args
         self._ignored = ignored or []
         self._ignored.append(outdir)
+        self._regex_ignored = [re.compile(r) for r in regex_ignored or []]
+
+    def is_ignored(self, src_path):
+        path = self.get_relative_path(src_path)
+        for i in self._ignored:
+            if fnmatch.fnmatch(path, i):
+                return True
+            if src_path.startswith(i + os.sep):
+                return True
+
+        for r in self._regex_ignored:
+            if r.search(src_path):
+                return True
 
     def __call__(self, watcher, src_path):
         path = self.get_relative_path(src_path)
 
-        for i in self._ignored:
-            if fnmatch.fnmatch(path, i):
-                return
-            if src_path.startswith(i + os.sep):
-                return
+        if self.is_ignored(src_path):
+            return
 
         watcher._action_file = path  # TODO: Hack (see above)
 
@@ -202,6 +213,7 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
+    parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
     parser.add_argument('-z', '--watch', action='append', metavar='DIR',
                         default=[],
@@ -254,7 +266,7 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    builder = SphinxBuilder(outdir, build_args, ignored)
+    builder = SphinxBuilder(outdir, build_args, ignored, args.re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher())
 
     server.watch(srcdir, builder)

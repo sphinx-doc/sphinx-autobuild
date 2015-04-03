@@ -60,7 +60,7 @@ def test_autobuild_with_options(mock_makedirs,
 
     # --ignore
     mock_builder.assert_called_once_with(
-        '/output', ['/source', '/output'], ['/ignored'])
+        '/output', ['/source', '/output'], ['/ignored'], [])
 
     # --watch
     calls = [call('/source', mock_builder.return_value),
