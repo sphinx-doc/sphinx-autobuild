@@ -28,6 +28,12 @@ __version__ = '0.5.0'
 __url__ = 'https://github.com/GaretJax/sphinx-autobuild'
 
 
+DEFAULT_IGNORE_REGEX = [
+    r'__pycache__/.*\.py',
+    r'.*\.pyc',
+]
+
+
 class _WatchdogHandler(FileSystemEventHandler):
 
     def __init__(self, watcher, action):
@@ -266,7 +272,10 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    builder = SphinxBuilder(outdir, build_args, ignored, args.re_ignore)
+    re_ignore = args.re_ignore
+    re_ignore.append(DEFAULT_IGNORE_REGEX)
+
+    builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher())
 
     server.watch(srcdir, builder)
