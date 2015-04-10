@@ -8,7 +8,7 @@ import livereload
 from mock import call
 from watchdog import observers
 
-from sphinx_autobuild import main
+from sphinx_autobuild import main, DEFAULT_IGNORE_REGEX
 
 
 @pytest.fixture(autouse=True)
@@ -60,7 +60,7 @@ def test_autobuild_with_options(mock_makedirs,
 
     # --ignore
     mock_builder.assert_called_once_with(
-        '/output', ['/source', '/output'], ['/ignored'], [])
+        '/output', ['/source', '/output'], ['/ignored'], DEFAULT_IGNORE_REGEX)
 
     # --watch
     calls = [call('/source', mock_builder.return_value),
