@@ -1,12 +1,17 @@
 Unreleased
 ----------
 
+0.5.2 - 2015/04/10
+------------------
+
+* Added -r, --re-ignore command line argumet to exclude paths using regexes.
+
 
 0.5.0 – 2015/01/28
 ------------------
 
-* Added -z, --watch command line argument to watch arbitrary folders
-  
+* Added -z, --watch command line argument to watch arbitrary folders.
+
 
 0.4.0 – 2014/12/23
 ------------------
