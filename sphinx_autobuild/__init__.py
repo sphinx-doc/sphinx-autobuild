@@ -272,8 +272,7 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    re_ignore = args.re_ignore
-    re_ignore.append(DEFAULT_IGNORE_REGEX)
+    re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher())
