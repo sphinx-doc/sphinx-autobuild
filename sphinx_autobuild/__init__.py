@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import sys
+import port_for
 
 try:
     import pty
@@ -273,6 +274,11 @@ def main():
         os.makedirs(outdir)
 
     re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
+
+    if args.port != 0:
+        portn = args.port
+    else:
+        portn = port_for.select_random()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher())
