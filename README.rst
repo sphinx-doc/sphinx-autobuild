@@ -106,5 +106,4 @@ document properly::
 	    source \
 	    build/html
 
-
-.. port-for: https://pypi.python.org/pypi/port-for/
+.. _port-for: https://pypi.python.org/pypi/port-for/
