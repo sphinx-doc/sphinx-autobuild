@@ -222,7 +222,8 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
-    parser.add_argument('-B', '--open-browser', dest='openbrowser', action='store_true', default=False)
+    parser.add_argument('-B', '--open-browser', dest='openbrowser',
+                        action='store_true', default=False)
     parser.add_argument('-s', '--delay', dest='delay', type=int, default=5)
     parser.add_argument('-z', '--watch', action='append', metavar='DIR',
                         default=[],
@@ -292,6 +293,7 @@ def main():
     server.watch(outdir)
 
     if args.openbrowser is True:
-        server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
+        server.serve(port=portn, host=args.host,
+                     root=outdir, open_url_delay=args.delay)
     else:
         server.serve(port=portn, host=args.host, root=outdir)
