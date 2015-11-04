@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 import sys
+import port_for
 
 try:
     import pty
@@ -221,6 +222,9 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
+    parser.add_argument('-B', '--open-browser', dest='openbrowser',
+                        action='store_true', default=False)
+    parser.add_argument('-s', '--delay', dest='delay', type=int, default=5)
     parser.add_argument('-z', '--watch', action='append', metavar='DIR',
                         default=[],
                         help=('Specify additional directories to watch. May be'
@@ -274,6 +278,11 @@ def main():
 
     re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
 
+    if args.port != 0:
+        portn = args.port
+    else:
+        portn = port_for.select_random()
+
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher())
 
@@ -283,4 +292,8 @@ def main():
         server.watch(dirpath, builder)
     server.watch(outdir)
 
-    server.serve(port=args.port, host=args.host, root=outdir)
+    if args.openbrowser is True:
+        server.serve(port=portn, host=args.host,
+                     root=outdir, open_url_delay=args.delay)
+    else:
+        server.serve(port=portn, host=args.host, root=outdir)
