@@ -101,7 +101,7 @@ class LivereloadWatchdogWatcher(object):
             action_file = self._action_file or True  # TODO: Hack (see above)
         return action_file, None
 
-    def watch(self, path, action, _):
+    def watch(self, path, action, delay=None, ignore=None):
         """
         Called by the Server instance when a new watch task is requested.
         """
