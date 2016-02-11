@@ -9,7 +9,7 @@ paramiko==1.16.0
 wheel==0.29.0
 
 # Code linting
-flake8==2.5.3
+flake8==2.5.4
 mccabe==0.4.0
 pep8==1.7.0
 pyflakes==1.0.0
