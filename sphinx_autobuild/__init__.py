@@ -32,6 +32,7 @@ __url__ = 'https://github.com/GaretJax/sphinx-autobuild'
 DEFAULT_IGNORE_REGEX = [
     r'__pycache__/.*\.py',
     r'.*\.pyc',
+    r'.*\.kate-swp',
 ]
 
 
