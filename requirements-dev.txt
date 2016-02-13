@@ -9,7 +9,7 @@ wheel
 # Code linting
 flake8
 mccabe
-pep8<1.6,>=1.5.7
+pep8>=1.7,<1.8
 pyflakes
 
 # Documentation
