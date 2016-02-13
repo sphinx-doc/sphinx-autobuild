@@ -154,8 +154,11 @@ class SphinxBuilder(object):
 
         self.build(path)
 
-    def build(self, path):
-        pre = '+--------- {0} changed '.format(path)
+    def build(self, path=None):
+        if path:
+            pre = '+--------- {0} changed '.format(path)
+        else:
+            pre = '+--------- manually triggered build '
         sys.stdout.write('\n')
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
@@ -223,6 +226,8 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
+    parser.add_argument('--no-initial', dest='initial_build',
+                        action='store_false', default=True)
     parser.add_argument('-B', '--open-browser', dest='openbrowser',
                         action='store_true', default=False)
     parser.add_argument('-s', '--delay', dest='delay', type=int, default=5)
@@ -292,6 +297,9 @@ def main():
         dirpath = os.path.realpath(dirpath)
         server.watch(dirpath, builder)
     server.watch(outdir)
+
+    if args.initial_build:
+        builder.build()
 
     if args.openbrowser is True:
         server.serve(port=portn, host=args.host,
