@@ -1,29 +1,32 @@
-0.6.0 - 2016/02/14
+0.6.0 – 2016/02/14
 ------------------
 
-* Support -p, --port=0 to automatically chose an available port
-* Added -B, --open-browser to automatically open the documentation upon build
+* Support ``-p``, ``--port=0`` to automatically chose an available port.
+* Added ``-B``, ``--open-browser`` to automatically open the documentation upon
+  build.
 * Added Kate swap files to the list of files ignored by default
-* Automatically build docs on startup (can be disabled with --no-initial)
-* Added --poll to force polling the FS for changes (useful for
-  networked/virtualized mountpoints)
+* Automatically build docs on startup (can be disabled with ``--no-initial``).
+* Added ``--poll`` to force polling the FS for changes (useful for
+  networked/virtualized mountpoints).
+* Compatibility with livereload >= 2.4.1.
 
 
-0.5.2 - 2015/04/10
+0.5.2 – 2015/04/10
 ------------------
 
-* Added -r, --re-ignore command line argumet to exclude paths using regexes.
+* Added ``-r``, ``--re-ignore`` command line argumet to exclude paths using
+  regexes.
 
 
 0.5.0 – 2015/01/28
 ------------------
 
-* Added -z, --watch command line argument to watch arbitrary folders.
+* Added ``-z``, ``--watch`` command line argument to watch arbitrary folders.
 
 
 0.4.0 – 2014/12/23
 ------------------
-* Added -i, --ignore command line argument to ignore files by the glob
+* Added ``-i``, ``--ignore`` command line argument to ignore files by the glob
   expression.
 * Added basic tests for the entry point script.
 * PEP 257 improvements.
@@ -39,8 +42,8 @@
 
 0.2.3 – 2013/12/25
 ------------------
-* Ignore the paths indicated by the -w and -d arguments when watching for
-  changes to the documentation.
+* Ignore the paths indicated by the ``-w`` and ``-d`` arguments when watching
+  for changes to the documentation.
 
 
 0.2.1 – 2013/12/25
