@@ -22,6 +22,7 @@ except ImportError:
 from livereload import Server
 
 from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
 
@@ -58,7 +59,7 @@ class LivereloadWatchdogWatcher(object):
     """
     File system watch dog.
     """
-    def __init__(self):
+    def __init__(self, use_polling=False):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
         # TODO: Hack.
@@ -66,7 +67,10 @@ class LivereloadWatchdogWatcher(object):
         # instance to set the file which was
         # modified. Used for output purposes only.
         self._action_file = None
-        self._observer = Observer()
+        if use_polling:
+            self._observer = PollingObserver()
+        else:
+            self._observer = Observer()
         self._observer.start()
 
         # Compatibility with livereload's builtin watcher
@@ -226,6 +230,8 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
+    parser.add_argument('--poll', dest='use_polling',
+                        action='store_true', default=False)
     parser.add_argument('--no-initial', dest='initial_build',
                         action='store_false', default=True)
     parser.add_argument('-B', '--open-browser', dest='openbrowser',
@@ -290,7 +296,9 @@ def main():
         portn = port_for.select_random()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
-    server = Server(watcher=LivereloadWatchdogWatcher())
+    server = Server(
+        watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),
+    )
 
     server.watch(srcdir, builder)
     for dirpath in args.additional_watched_dirs:
