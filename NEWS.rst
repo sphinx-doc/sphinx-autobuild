@@ -5,7 +5,7 @@ Changelog
 0.6.0 – 2016/02/14
 ------------------
 
-* Support ``-p``, ``--port=0`` to automatically chose an available port.
+* Support ``-p 0``, ``--port=0`` to automatically chose an available port.
 * Added ``-B``, ``--open-browser`` to automatically open the documentation upon
   build.
 * Added Kate swap files to the list of files ignored by default
