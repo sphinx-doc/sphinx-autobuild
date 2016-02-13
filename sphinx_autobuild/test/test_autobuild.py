@@ -22,12 +22,14 @@ def patched_args(sys_args, monkeypatch):
 ))
 @mock.patch.object(observers.Observer, 'schedule')
 @mock.patch.object(livereload.Server, 'serve')
+@mock.patch('sphinx_autobuild.SphinxBuilder.build')
 @mock.patch('os.makedirs')
-def test_autobuild(mock_makedirs, mock_serve, mock_schedule):
+def test_autobuild(mock_makedirs, mock_builder, mock_serve, mock_schedule):
     """
     Test autobuild entry point.
     """
     main()
+    mock_builder.assert_called_once_with()
     mock_makedirs.assert_called_once_with('/output')
     mock_serve.assert_called_once_with(
         host='127.0.0.1', root='/output', port=8000)
