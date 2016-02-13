@@ -1,18 +1,16 @@
 -r requirements-testing.txt
 
 # Automation
-Fabric==1.10.1
-pycrypto==2.6.1
-paramiko==1.15.2
+Fabric
 
 # Packaging
-wheel==0.24.0
+wheel
 
 # Code linting
-flake8==2.3.0
-mccabe==0.3
-pep8==1.5.7
-pyflakes==0.8.1
+flake8
+mccabe
+pep8<1.6,>=1.5.7
+pyflakes
 
 # Documentation
 Jinja2==2.7.3
