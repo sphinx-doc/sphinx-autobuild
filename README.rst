@@ -35,6 +35,8 @@ by Sphinx plus the following options:
 * ``-p``/``--port`` option to specify the port on which the documentation shall be served (default 8000)
 * ``-H``/``--host`` option to specify the host on which the documentation shall be served (default 127.0.0.1)
 * ``-i``/``--ignore`` multiple allowed, option to specify file ignore glob expression when watching changes, for example: `*.tmp`
+* ``-B``/``--open-browser`` automatically open a web browser with the URL for this document
+* ``-s``/``--delay`` delay in seconds before opening browser if ``--open-browser`` was selected (default 5)
 * ``-z``/``--watch`` multiple allowed, option to specify additional directories
   to watch, for example: `some/extra/dir`
 
@@ -62,3 +64,46 @@ Then run with::
 
     make livehtml
 
+
+Automatically starting a browser
+--------------------------------
+
+If you work on multiple Sphinx document repositories at one time (e.g., when
+working with related documents that have cross-referencing intersphinx links),
+managing multiple browser windows and manually selecting port numbers becomes
+difficult and tedious. By selecting ``--port 0`` on the command line,
+sphinx-autobuild will use `port-for`_ to generate a random high-numbered
+port that is not currently being used.
+
+To further simplify life, use the ``-B`` (``--open-browser``) option
+to trigger livereload's capability of automatically opening a browser
+window. Use ``-s`` (``--delay``) to change the number of seconds to
+delay before starting the browser, and you may need to do something
+like the following to ensure that all cached content is removed
+before sphinx-autobuild starts watching files to fully render the
+document properly::
+
+    # Clean out any cached content before starting.
+    make clean 2>/dev/null
+
+    # Background a trigger for initial build of all files.
+    (sleep 1 && touch source/*.rst) &
+
+    sphinx-autobuild -q \
+	    -p 0 \
+	    --open-browser \
+	    --delay 5 \
+	    --ignore "*.swp" \
+	    --ignore "*.pdf" \
+	    --ignore "*.log" \
+	    --ignore "*.out" \
+	    --ignore "*.toc" \
+	    --ignore "*.aux" \
+	    --ignore "*.idx" \
+	    --ignore "*.ind" \
+	    --ignore "*.ilg" \
+	    --ignore "*.tex" \
+	    source \
+	    build/html
+
+.. _port-for: https://pypi.python.org/pypi/port-for/
