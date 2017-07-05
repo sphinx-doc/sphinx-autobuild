@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.7.1 - 2017/07/05
+------------------
+
+* Remove spurious virtualenv directory from published packages.
+
+
 0.7.0 - 2017/07/05
 ------------------
 

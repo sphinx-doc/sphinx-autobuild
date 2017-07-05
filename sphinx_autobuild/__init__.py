@@ -26,7 +26,7 @@ from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 __url__ = 'https://github.com/GaretJax/sphinx-autobuild'
 
 
