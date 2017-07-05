@@ -5,6 +5,7 @@ Fabric
 
 # Packaging
 wheel
+check-manifest
 
 # Code linting
 flake8

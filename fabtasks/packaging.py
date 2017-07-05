@@ -17,6 +17,12 @@ def is_working_tree_clean():
     return unstaged.succeeded and uncommitted.succeeded
 
 
+def is_manifest_up_to_date():
+    with settings(hide('everything'), warn_only=True):
+        check = local('check-manifest')
+    return check.succeeded
+
+
 @task
 def lint():
     """
@@ -63,6 +69,11 @@ def release():
         print('Your working tree is not clean after the AUTHORS file was '
               'rebuilt.')
         print('Please commit the changes before continuing.')
+        return
+
+    if not is_manifest_up_to_date():
+        print('Manifest is not up to date.')
+        print('Please update MANIFEST.in or remove spurious files.')
         return
 
     # Get version
