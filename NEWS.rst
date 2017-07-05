@@ -1,11 +1,12 @@
 Changelog
 =========
 
-Next release
-------------
+0.7.0 - 2017/07/05
+------------------
 
 * Add support for python 3.5, 3.6 and deprecate official python 2.6 support.
 * Add ``__main__`` module for python 3.
+* Add a ``--version`` argument.
 
 
 0.6.0 – 2016/02/14

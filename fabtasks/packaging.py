@@ -23,7 +23,7 @@ def lint():
     Checks the source code using flake8.
     """
     local('flake8 --statistics --exit-zero --max-complexity=10 '
-          '--exclude=\'*/migrations/*,build,dist,docs,.env\' .')
+          '--exclude=\'.venv,*/migrations/*,build,dist,docs,.env\' .')
 
 
 @task
