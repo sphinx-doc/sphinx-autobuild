@@ -213,7 +213,7 @@ SPHINX_BUILD_OPTIONS = (
     ('A', 'name=value'),
     ('n', None),
 
-    # ('v', None),
+    ('v', None),
     ('q', None),
     ('Q', None),
     ('w', 'file'),
@@ -242,8 +242,8 @@ def get_parser():
                         help=('Specify additional directories to watch. May be'
                               ' used multiple times.'),
                         dest='additional_watched_dirs')
-    parser.add_argument('-v', '--version', action='version',
-                        version=__version__)
+    parser.add_argument('--version', action='version',
+                        version='sphinx-autobuild {}'.format(__version__))
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
