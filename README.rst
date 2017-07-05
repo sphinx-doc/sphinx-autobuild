@@ -45,7 +45,10 @@ by Sphinx plus the following options:
   ``--open-browser`` was selected (default 5)
 * ``-z``/``--watch`` multiple allowed, option to specify additional directories
   to watch, for example: `some/extra/dir`
-* ``--poll`` force polling, useful for Vagrant or VirtualBox `which don't trigger file updates in shared folders <https://www.virtualbox.org/ticket/10660>`_
+* ``--poll`` force polling, useful for Vagrant or VirtualBox which do not 
+  trigger file updates in `shared folders`_
+
+.. _shared folders: https://www.virtualbox.org/ticket/10660
 
 To build a classical Sphinx documentation set, issue the following command::
 
