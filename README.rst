@@ -60,6 +60,8 @@ automatically reloaded.
 
 To stop the server simply press ``^C``.
 
+The `SPHINXBUILD` environment variable is honored and can be used to set a
+custom `sphinx-build` command to be used.
 
 Makefile integration
 --------------------
