@@ -21,6 +21,8 @@ except ImportError:
 
 from livereload import Server
 
+from subprocess import call
+
 from watchdog.observers import Observer
 from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
@@ -129,12 +131,14 @@ class SphinxBuilder(object):
     """
     Helper class to run sphinx-build command.
     """
-    def __init__(self, outdir, args, ignored=None, regex_ignored=None):
+    def __init__(self, outdir, args, ignored=None, regex_ignored=None,
+                 exec_script=None):
         self._outdir = outdir
         self._args = args
         self._ignored = ignored or []
         self._ignored.append(outdir)
         self._regex_ignored = [re.compile(r) for r in regex_ignored or []]
+        self._exec_script = exec_script
 
     def is_ignored(self, src_path):
         path = self.get_relative_path(src_path)
@@ -159,10 +163,23 @@ class SphinxBuilder(object):
         self.build(path)
 
     def build(self, path=None):
+        if self._exec_script:
+            self.execute_script()
+
+        self._build(path)
+
+    def execute_script(self):
+        code = call(self._exec_script, shell=True)
+        if code != 0:
+            msg = "Warning: '{}' returned {}\n".format(self._exec_script, code)
+            sys.stdout.write(msg)
+
+    def _build(self, path):
         if path:
             pre = '+--------- {0} changed '.format(path)
         else:
             pre = '+--------- manually triggered build '
+
         sys.stdout.write('\n')
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
@@ -230,6 +247,7 @@ def get_parser():
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
+    parser.add_argument('-x', '--exec_script', help='specify prebuild script')
     parser.add_argument('--poll', dest='use_polling',
                         action='store_true', default=False)
     parser.add_argument('--no-initial', dest='initial_build',
@@ -297,7 +315,8 @@ def main():
     else:
         portn = port_for.select_random()
 
-    builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
+    builder = SphinxBuilder(outdir, build_args, ignored, re_ignore,
+                            args.exec_script)
     server = Server(
         watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),
     )
