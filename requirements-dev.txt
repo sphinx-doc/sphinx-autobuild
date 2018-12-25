@@ -17,5 +17,5 @@ pyflakes
 Jinja2==2.10
 MarkupSafe==1.1.0
 Pygments==2.3.1
-Sphinx==1.8.2
+Sphinx==1.8.3
 docutils==0.14
