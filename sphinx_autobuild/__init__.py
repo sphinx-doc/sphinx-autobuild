@@ -57,7 +57,7 @@ class EventActionThread(threading.Thread):
         print('EventActionThread is running.')
         while True:
             if not self.event_queue.empty():
-                print('Queue has {} entries. Building...'.format(self.event_queue.qsize()))
+                print('{} files changed. Building...'.format(self.event_queue.qsize()))
                 # clear queue and remember the last_event
                 last_event = None
                 while not self.event_queue.empty():
@@ -65,8 +65,6 @@ class EventActionThread(threading.Thread):
                 # call the action
                 self.action(self.watcher,
                             getattr(last_event, 'dest_path', last_event.src_path))
-            else:
-                print('debug: queue is empty. nothing to do.')
             time.sleep(self.check_interval)
 
 
@@ -81,10 +79,7 @@ class _WatchdogHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if event.is_directory:
             return
-        print('adding event to queue')
         self.event_queue.put(event)
-        # self._action(self._watcher,
-        #             getattr(event, 'dest_path', event.src_path))
 
 
 def _set_changed(w, _):
