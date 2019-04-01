@@ -5,7 +5,6 @@ MIT License. See LICENSE for more details.
 Copyright (c) 2013, Jonathan Stoppani
 """
 
-
 import argparse
 import fnmatch
 import os
@@ -13,6 +12,9 @@ import re
 import subprocess
 import sys
 import port_for
+import threading
+import time
+from queue import Queue
 
 try:
     import pty
@@ -25,10 +27,8 @@ from watchdog.observers import Observer
 from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
-
 __version__ = '0.7.1'
 __url__ = 'https://github.com/GaretJax/sphinx-autobuild'
-
 
 DEFAULT_IGNORE_REGEX = [
     r'__pycache__/.*\.py',
@@ -36,19 +36,55 @@ DEFAULT_IGNORE_REGEX = [
     r'.*\.kate-swp',
 ]
 
+DEFAULT_EVENT_DELAY_TIME = 5
+
+
+class EventActionThread(threading.Thread):
+    """
+    This Thread runs an endless loop which checks every defined interval time if the the FileSystemEvent Queue has entries.
+    If the queue has entries it empties the queue and invokes an action
+
+    """
+
+    def __init__(self, event_queue, action, watcher, check_interval=DEFAULT_EVENT_DELAY_TIME):
+        super().__init__()
+        self.action = action
+        self.event_queue = event_queue
+        self.watcher = watcher
+        self.check_interval = check_interval
+
+    def run(self):
+        print('EventActionThread is running.')
+        while True:
+            if not self.event_queue.empty():
+                print('Queue has {} entries. Building...'.format(self.event_queue.qsize()))
+                # clear queue and remember the last_event
+                last_event = None
+                while not self.event_queue.empty():
+                    last_event = self.event_queue.get()
+                # call the action
+                self.action(self.watcher,
+                            getattr(last_event, 'dest_path', last_event.src_path))
+            else:
+                print('debug: queue is empty. nothing to do.')
+            time.sleep(self.check_interval)
+
 
 class _WatchdogHandler(FileSystemEventHandler):
 
-    def __init__(self, watcher, action):
+    def __init__(self, watcher, action, event_queue):
         super(_WatchdogHandler, self).__init__()
         self._watcher = watcher
         self._action = action
+        self.event_queue = event_queue
 
     def on_any_event(self, event):
         if event.is_directory:
             return
-        self._action(self._watcher,
-                     getattr(event, 'dest_path', event.src_path))
+        print('adding event to queue')
+        self.event_queue.put(event)
+        # self._action(self._watcher,
+        #             getattr(event, 'dest_path', event.src_path))
 
 
 def _set_changed(w, _):
@@ -59,7 +95,8 @@ class LivereloadWatchdogWatcher(object):
     """
     File system watch dog.
     """
-    def __init__(self, use_polling=False):
+
+    def __init__(self, event_queue, use_polling=False):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
         # TODO: Hack.
@@ -70,7 +107,7 @@ class LivereloadWatchdogWatcher(object):
         if use_polling:
             self._observer = PollingObserver()
         else:
-            self._observer = Observer()
+            self._observer = Observer(timeout=1000)
         self._observer.start()
 
         # Compatibility with livereload's builtin watcher
@@ -86,6 +123,8 @@ class LivereloadWatchdogWatcher(object):
         # Accessed by Server's serve method to set reload time to 0 in
         # LiveReloadHandler's poll_tasks method.
         self._changes = []
+
+        self.event_queue = event_queue
 
     def set_changed(self):
         self._changed = True
@@ -112,7 +151,7 @@ class LivereloadWatchdogWatcher(object):
         """
         if action is None:
             action = _set_changed
-        event_handler = _WatchdogHandler(self, action)
+        event_handler = _WatchdogHandler(self, action, self.event_queue)
         self._observer.schedule(event_handler, path=path, recursive=True)
 
     def start(self, callback):
@@ -129,6 +168,7 @@ class SphinxBuilder(object):
     """
     Helper class to run sphinx-build command.
     """
+
     def __init__(self, outdir, args, ignored=None, regex_ignored=None):
         self._outdir = outdir
         self._args = args
@@ -149,6 +189,7 @@ class SphinxBuilder(object):
                 return True
 
     def __call__(self, watcher, src_path):
+
         path = self.get_relative_path(src_path)
 
         if self.is_ignored(src_path):
@@ -167,7 +208,6 @@ class SphinxBuilder(object):
         sys.stdout.write(pre)
         sys.stdout.write('-' * (81 - len(pre)))
         sys.stdout.write('\n')
-
         args = ['sphinx-build'] + self._args
         if pty:
             master, slave = pty.openpty()
@@ -228,6 +268,7 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
+    parser.add_argument('-ed', '--event-delay', type=int, default=DEFAULT_EVENT_DELAY_TIME)
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
     parser.add_argument('--poll', dest='use_polling',
@@ -297,10 +338,14 @@ def main():
     else:
         portn = port_for.select_random()
 
+    event_queue = Queue()
+
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
-    server = Server(
-        watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),
-    )
+    watcher = LivereloadWatchdogWatcher(event_queue, use_polling=args.use_polling)
+    action_thread = EventActionThread(event_queue, action=builder, watcher=watcher, check_interval=args.event_delay)
+
+    server = Server(watcher=watcher)
+    action_thread.start()
 
     server.watch(srcdir, builder)
     for dirpath in args.additional_watched_dirs:

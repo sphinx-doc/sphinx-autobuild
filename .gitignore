@@ -25,5 +25,11 @@ pip-log.txt
 # Translations
 *.mo
 
+# VirtualEnv
+/env
+
+# IDE
+/.idea
+
 # Sphinx
 docs/_build
