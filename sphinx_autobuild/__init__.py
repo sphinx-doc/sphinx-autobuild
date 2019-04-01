@@ -2,7 +2,7 @@
 Automatic builder for Sphinx based documentation sets.
 
 MIT License. See LICENSE for more details.
-Copyright (c) 2013, Jonathan Stoppani
+Copyright (c) 2013, Jonathan Stoppani, Fork by Carrot & Company
 """
 
 import argparse
@@ -12,9 +12,9 @@ import re
 import subprocess
 import sys
 import port_for
-import threading
+from threading import Thread, Lock
+from collections import deque
 import time
-from queue import Queue
 
 try:
     import pty
@@ -28,7 +28,7 @@ from watchdog.observers.polling import PollingObserver
 from watchdog.events import FileSystemEventHandler
 
 __version__ = '0.7.1'
-__url__ = 'https://github.com/GaretJax/sphinx-autobuild'
+__url__ = 'https://github.com/carrotandcompany/sphinx-autobuild'
 
 DEFAULT_IGNORE_REGEX = [
     r'__pycache__/.*\.py',
@@ -39,47 +39,62 @@ DEFAULT_IGNORE_REGEX = [
 DEFAULT_EVENT_DELAY_TIME = 5
 
 
-class EventActionThread(threading.Thread):
+class EventActionData(object):
+    def __init__(self):
+        self.lock = Lock()
+        self.queue = deque()
+
+
+class EventActionThread(Thread):
     """
-    This Thread runs an endless loop which checks every defined interval time if the the FileSystemEvent Queue has entries.
+    This Thread runs an endless loop which checks every defined interval time
+    if the the FileSystemEvent Queue has entries.
     If the queue has entries it empties the queue and invokes an action
 
     """
 
-    def __init__(self, event_queue, action, watcher, check_interval=DEFAULT_EVENT_DELAY_TIME):
+    def __init__(self, event_action_data, action, watcher,
+                 check_interval=DEFAULT_EVENT_DELAY_TIME):
         super().__init__()
         self.action = action
-        self.event_queue = event_queue
+        self.event_action_data = event_action_data
         self.watcher = watcher
         self.check_interval = check_interval
+        self._kill_received = False
 
     def run(self):
         print('EventActionThread is running.')
-        while True:
-            if not self.event_queue.empty():
-                print('{} files changed. Building...'.format(self.event_queue.qsize()))
-                # clear queue and remember the last_event
-                last_event = None
-                while not self.event_queue.empty():
-                    last_event = self.event_queue.get()
-                # call the action
-                self.action(self.watcher,
-                            getattr(last_event, 'dest_path', last_event.src_path))
+        while not self._kill_received:
+            with self.event_action_data.lock:
+                if len(self.event_action_data.queue) > 0:
+                    print('{} files changed. Building...'.format(
+                        len(self.event_action_data.queue)))
+                    # clear queue and remember the last_event
+                    last_event = self.event_action_data.queue.popleft()
+                    self.event_action_data.queue.clear()
+                    # call the action
+                    self.action(self.watcher,
+                                getattr(last_event, 'dest_path',
+                                        last_event.src_path))
             time.sleep(self.check_interval)
+
+    def kill(self):
+        self._kill_received = True
 
 
 class _WatchdogHandler(FileSystemEventHandler):
 
-    def __init__(self, watcher, action, event_queue):
+    def __init__(self, watcher, action, event_action_data):
         super(_WatchdogHandler, self).__init__()
         self._watcher = watcher
         self._action = action
-        self.event_queue = event_queue
+        self.event_action_data = event_action_data
 
     def on_any_event(self, event):
         if event.is_directory:
             return
-        self.event_queue.put(event)
+        with self.event_action_data.lock:
+            self.event_action_data.queue.append(event)
 
 
 def _set_changed(w, _):
@@ -263,7 +278,8 @@ def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=8000)
     parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
-    parser.add_argument('-ed', '--event-delay', type=int, default=DEFAULT_EVENT_DELAY_TIME)
+    parser.add_argument('-ed', '--event-delay', type=int,
+                        default=DEFAULT_EVENT_DELAY_TIME)
     parser.add_argument('-r', '--re-ignore', action='append', default=[])
     parser.add_argument('-i', '--ignore', action='append', default=[])
     parser.add_argument('--poll', dest='use_polling',
@@ -333,11 +349,14 @@ def main():
     else:
         portn = port_for.select_random()
 
-    event_queue = Queue()
+    event_action_data = EventActionData()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
-    watcher = LivereloadWatchdogWatcher(event_queue, use_polling=args.use_polling)
-    action_thread = EventActionThread(event_queue, action=builder, watcher=watcher, check_interval=args.event_delay)
+    watcher = LivereloadWatchdogWatcher(event_action_data,
+                                        use_polling=args.use_polling)
+    action_thread = EventActionThread(
+        event_action_data, action=builder, watcher=watcher,
+        check_interval=args.event_delay)
 
     server = Server(watcher=watcher)
     action_thread.start()
@@ -356,3 +375,9 @@ def main():
                      root=outdir, open_url_delay=args.delay)
     else:
         server.serve(port=portn, host=args.host, root=outdir)
+
+    try:
+        action_thread.kill()
+        action_thread.join()
+    except KeyboardInterrupt:
+        pass
