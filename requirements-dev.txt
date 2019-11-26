@@ -16,6 +16,6 @@ pyflakes
 # Documentation
 Jinja2==2.10.3
 MarkupSafe==1.1.1
-Pygments==2.5.0
+Pygments==2.5.1
 Sphinx==2.2.1
 docutils==0.15.2
