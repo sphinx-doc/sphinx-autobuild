@@ -20,3 +20,9 @@ def test(session):
     ]
     # fmt: on
     session.run("pytest", *(session.posargs or default_args))
+
+
+@nox.session
+def docs(session):
+    session.install(".[docs]")
+    session.run("sphinx-build", "-b", "html", "docs/", "build/docs")

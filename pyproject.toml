@@ -39,3 +39,4 @@ sphinx-autobuild = "sphinx_autobuild:main"
 
 [tool.flit.metadata.requires-extra]
 test = ["mock", "pytest", "pytest-cov"]
+docs = ["sphinx"]
