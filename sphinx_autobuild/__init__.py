@@ -1,11 +1,6 @@
-"""
-Automatic builder for Sphinx based documentation sets.
-
-MIT License. See LICENSE for more details.
-Copyright (c) 2013, Jonathan Stoppani
-"""
-
-
+"""Rebuild Sphinx documentation on changes, with live-reload in the browser."""
+# MIT License. See LICENSE for more details.
+# Copyright (c) 2013, Jonathan Stoppani
 import argparse
 import fnmatch
 import os

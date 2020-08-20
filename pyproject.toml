@@ -5,6 +5,7 @@ build-backend = "flit_core.buildapi"
 [tool.flit.metadata]
 module = "sphinx_autobuild"
 dist-name = "sphinx-autobuild"
+description-file = "README.rst"
 author = "Jonathan Stoppani"
 author-email = "jonathan@stoppani.name"
 classifiers = [
