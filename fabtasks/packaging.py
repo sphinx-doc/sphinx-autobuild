@@ -3,23 +3,24 @@ from __future__ import print_function
 import pipes
 import re
 
-from fabric.api import settings, task, local, hide, env
+from fabric.api import env, hide, local, settings, task
 from fabric.contrib.console import confirm
 
 
 def is_working_tree_clean():
-    with settings(hide('everything'), warn_only=True):
-        local('git update-index -q --ignore-submodules --refresh')
-        unstaged = local('git diff-files --quiet --ignore-submodules --',
-                         capture=True)
-        uncommitted = local('git diff-index --cached --quiet HEAD '
-                            '--ignore-submodules --', capture=True)
+    with settings(hide("everything"), warn_only=True):
+        local("git update-index -q --ignore-submodules --refresh")
+        unstaged = local("git diff-files --quiet --ignore-submodules --", capture=True)
+        uncommitted = local(
+            "git diff-index --cached --quiet HEAD " "--ignore-submodules --",
+            capture=True,
+        )
     return unstaged.succeeded and uncommitted.succeeded
 
 
 def is_manifest_up_to_date():
-    with settings(hide('everything'), warn_only=True):
-        check = local('check-manifest')
+    with settings(hide("everything"), warn_only=True):
+        check = local("check-manifest")
     return check.succeeded
 
 
@@ -28,8 +29,10 @@ def lint():
     """
     Checks the source code using flake8.
     """
-    local('flake8 --statistics --exit-zero --max-complexity=10 '
-          '--exclude=\'.venv,*/migrations/*,build,dist,docs,.env\' .')
+    local(
+        "flake8 --statistics --exit-zero --max-complexity=10 "
+        "--exclude='.venv,*/migrations/*,build,dist,docs,.env' ."
+    )
 
 
 @task
@@ -37,19 +40,19 @@ def authors():
     """
     Updates the AUTHORS file with a list of committers from GIT.
     """
-    fmt_re = re.compile(r'([^<]+) <([^>]+)>')
-    authors = local('git shortlog -s -e -n | cut -f 2-', capture=True)
-    with open('AUTHORS', 'w') as fh:
-        fh.write('Project contributors\n')
-        fh.write('====================\n\n')
+    fmt_re = re.compile(r"([^<]+) <([^>]+)>")
+    authors = local("git shortlog -s -e -n | cut -f 2-", capture=True)
+    with open("AUTHORS", "w") as fh:
+        fh.write("Project contributors\n")
+        fh.write("====================\n\n")
         for line in authors.splitlines():
             match = fmt_re.match(line)
             name, email = match.groups()
             if email in env.ignored_authors:
                 continue
-            fh.write(' * ')
+            fh.write(" * ")
             fh.write(line)
-            fh.write('\n')
+            fh.write("\n")
 
 
 @task
@@ -59,46 +62,44 @@ def release():
     """
 
     if not is_working_tree_clean():
-        print('Your working tree is not clean. Refusing to create a release.')
+        print("Your working tree is not clean. Refusing to create a release.")
         return
 
-    print('Rebuilding the AUTHORS file to check for modifications...')
+    print("Rebuilding the AUTHORS file to check for modifications...")
     authors()
 
     if not is_working_tree_clean():
-        print('Your working tree is not clean after the AUTHORS file was '
-              'rebuilt.')
-        print('Please commit the changes before continuing.')
+        print("Your working tree is not clean after the AUTHORS file was " "rebuilt.")
+        print("Please commit the changes before continuing.")
         return
 
     if not is_manifest_up_to_date():
-        print('Manifest is not up to date.')
-        print('Please update MANIFEST.in or remove spurious files.')
+        print("Manifest is not up to date.")
+        print("Please update MANIFEST.in or remove spurious files.")
         return
 
     # Get version
-    version = 'v{}'.format(local('python setup.py --version', capture=True))
-    name = local('python setup.py --name', capture=True)
+    version = "v{}".format(local("python setup.py --version", capture=True))
+    name = local("python setup.py --name", capture=True)
 
     # Tag
-    tag_message = '{} release version {}.'.format(name, version)
+    tag_message = "{} release version {}.".format(name, version)
 
-    print('----------------------')
-    print('Proceeding will tag the release, push the repository upstream,')
-    print('and release a new version on PyPI.')
+    print("----------------------")
+    print("Proceeding will tag the release, push the repository upstream,")
+    print("and release a new version on PyPI.")
     print()
-    print('Version: {}'.format(version))
-    print('Tag message: {}'.format(tag_message))
+    print("Version: {}".format(version))
+    print("Tag message: {}".format(tag_message))
     print()
-    if not confirm('Continue?', default=True):
-        print('Aborting.')
+    if not confirm("Continue?", default=True):
+        print("Aborting.")
         return
 
-    local('git tag -a {} -m {}'.format(pipes.quote(version),
-                                       pipes.quote(tag_message)))
+    local("git tag -a {} -m {}".format(pipes.quote(version), pipes.quote(tag_message)))
 
     # Push
-    local('git push --tags origin develop')
+    local("git push --tags origin develop")
 
     # Package and upload to pypi
-    local('python setup.py sdist bdist_wheel upload')
+    local("python setup.py sdist bdist_wheel upload")

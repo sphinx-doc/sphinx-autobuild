@@ -1,12 +1,14 @@
 """Rebuild Sphinx documentation on changes, with live-reload in the browser."""
 # MIT License. See LICENSE for more details.
 # Copyright (c) 2013, Jonathan Stoppani
+
 import argparse
 import fnmatch
 import os
 import re
 import subprocess
 import sys
+
 import port_for
 
 try:
@@ -15,25 +17,22 @@ except ImportError:
     pty = None
 
 from livereload import Server
-
+from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 from watchdog.observers.polling import PollingObserver
-from watchdog.events import FileSystemEventHandler
 
-
-__version__ = '0.7.1'
-__url__ = 'https://github.com/GaretJax/sphinx-autobuild'
+__version__ = "0.7.1"
+__url__ = "https://github.com/GaretJax/sphinx-autobuild"
 
 
 DEFAULT_IGNORE_REGEX = [
-    r'__pycache__/.*\.py',
-    r'.*\.pyc',
-    r'.*\.kate-swp',
+    r"__pycache__/.*\.py",
+    r".*\.pyc",
+    r".*\.kate-swp",
 ]
 
 
 class _WatchdogHandler(FileSystemEventHandler):
-
     def __init__(self, watcher, action):
         super(_WatchdogHandler, self).__init__()
         self._watcher = watcher
@@ -42,8 +41,7 @@ class _WatchdogHandler(FileSystemEventHandler):
     def on_any_event(self, event):
         if event.is_directory:
             return
-        self._action(self._watcher,
-                     getattr(event, 'dest_path', event.src_path))
+        self._action(self._watcher, getattr(event, "dest_path", event.src_path))
 
 
 def _set_changed(w, _):
@@ -54,6 +52,7 @@ class LivereloadWatchdogWatcher(object):
     """
     File system watch dog.
     """
+
     def __init__(self, use_polling=False):
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
@@ -124,6 +123,7 @@ class SphinxBuilder(object):
     """
     Helper class to run sphinx-build command.
     """
+
     def __init__(self, outdir, args, ignored=None, regex_ignored=None):
         self._outdir = outdir
         self._args = args
@@ -155,102 +155,115 @@ class SphinxBuilder(object):
 
     def build(self, path=None):
         if path:
-            pre = '+--------- {0} changed '.format(path)
+            pre = "+--------- {0} changed ".format(path)
         else:
-            pre = '+--------- manually triggered build '
-        sys.stdout.write('\n')
+            pre = "+--------- manually triggered build "
+        sys.stdout.write("\n")
         sys.stdout.write(pre)
-        sys.stdout.write('-' * (81 - len(pre)))
-        sys.stdout.write('\n')
+        sys.stdout.write("-" * (81 - len(pre)))
+        sys.stdout.write("\n")
 
-        args = ['sphinx-build'] + self._args
+        args = ["sphinx-build"] + self._args
         if pty:
             master, slave = pty.openpty()
             stdout = os.fdopen(master)
             subprocess.Popen(args, stdout=slave)
             os.close(slave)
         else:
-            stdout = subprocess.Popen(args,
-                                      stdout=subprocess.PIPE,
-                                      universal_newlines=True).stdout
+            stdout = subprocess.Popen(
+                args, stdout=subprocess.PIPE, universal_newlines=True
+            ).stdout
         try:
             while 1:
                 line = stdout.readline()
                 if not line:
                     break
-                sys.stdout.write('| ')
+                sys.stdout.write("| ")
                 sys.stdout.write(line.rstrip())
-                sys.stdout.write('\n')
+                sys.stdout.write("\n")
         except IOError:
             pass
         finally:
             if not pty:
                 stdout.close()
-        sys.stdout.write('+')
-        sys.stdout.write('-' * 80)
-        sys.stdout.write('\n\n')
+        sys.stdout.write("+")
+        sys.stdout.write("-" * 80)
+        sys.stdout.write("\n\n")
 
     def get_relative_path(self, path):
         return os.path.relpath(path)
 
 
 SPHINX_BUILD_OPTIONS = (
-    ('b', 'builder'),
-    ('a', None),
-    ('E', None),
-    ('d', 'path'),
-    ('j', 'N'),
-
-    ('c', 'path'),
-    ('C', None),
-    ('D', 'setting=value'),
-    ('t', 'tag'),
-    ('A', 'name=value'),
-    ('n', None),
-
-    ('v', None),
-    ('q', None),
-    ('Q', None),
-    ('w', 'file'),
-    ('W', None),
-    ('T', None),
-    ('N', None),
-    ('P', None),
+    ("b", "builder"),
+    ("a", None),
+    ("E", None),
+    ("d", "path"),
+    ("j", "N"),
+    ("c", "path"),
+    ("C", None),
+    ("D", "setting=value"),
+    ("t", "tag"),
+    ("A", "name=value"),
+    ("n", None),
+    ("v", None),
+    ("q", None),
+    ("Q", None),
+    ("w", "file"),
+    ("W", None),
+    ("T", None),
+    ("N", None),
+    ("P", None),
 )
 
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--port', type=int, default=8000)
-    parser.add_argument('-H', '--host', type=str, default='127.0.0.1')
-    parser.add_argument('-r', '--re-ignore', action='append', default=[])
-    parser.add_argument('-i', '--ignore', action='append', default=[])
-    parser.add_argument('--poll', dest='use_polling',
-                        action='store_true', default=False)
-    parser.add_argument('--no-initial', dest='initial_build',
-                        action='store_false', default=True)
-    parser.add_argument('-B', '--open-browser', dest='openbrowser',
-                        action='store_true', default=False)
-    parser.add_argument('-s', '--delay', dest='delay', type=int, default=5)
-    parser.add_argument('-z', '--watch', action='append', metavar='DIR',
-                        default=[],
-                        help=('Specify additional directories to watch. May be'
-                              ' used multiple times.'),
-                        dest='additional_watched_dirs')
-    parser.add_argument('--version', action='version',
-                        version='sphinx-autobuild {}'.format(__version__))
+    parser.add_argument("-p", "--port", type=int, default=8000)
+    parser.add_argument("-H", "--host", type=str, default="127.0.0.1")
+    parser.add_argument("-r", "--re-ignore", action="append", default=[])
+    parser.add_argument("-i", "--ignore", action="append", default=[])
+    parser.add_argument(
+        "--poll", dest="use_polling", action="store_true", default=False
+    )
+    parser.add_argument(
+        "--no-initial", dest="initial_build", action="store_false", default=True
+    )
+    parser.add_argument(
+        "-B", "--open-browser", dest="openbrowser", action="store_true", default=False
+    )
+    parser.add_argument("-s", "--delay", dest="delay", type=int, default=5)
+    parser.add_argument(
+        "-z",
+        "--watch",
+        action="append",
+        metavar="DIR",
+        default=[],
+        help=(
+            "Specify additional directories to watch. May be" " used multiple times."
+        ),
+        dest="additional_watched_dirs",
+    )
+    parser.add_argument(
+        "--version", action="version", version="sphinx-autobuild {}".format(__version__)
+    )
 
     for opt, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
-            parser.add_argument('-{0}'.format(opt), action='count',
-                                help='See `sphinx-build -h`')
+            parser.add_argument(
+                "-{0}".format(opt), action="count", help="See `sphinx-build -h`"
+            )
         else:
-            parser.add_argument('-{0}'.format(opt), action='append',
-                                metavar=meta, help='See `sphinx-build -h`')
+            parser.add_argument(
+                "-{0}".format(opt),
+                action="append",
+                metavar=meta,
+                help="See `sphinx-build -h`",
+            )
 
-    parser.add_argument('sourcedir')
-    parser.add_argument('outdir')
-    parser.add_argument('filenames', nargs='*', help='See `sphinx-build -h`')
+    parser.add_argument("sourcedir")
+    parser.add_argument("outdir")
+    parser.add_argument("filenames", nargs="*", help="See `sphinx-build -h`")
     return parser
 
 
@@ -266,7 +279,7 @@ def main():
         val = getattr(args, arg)
         if not val:
             continue
-        opt = '-{0}'.format(arg)
+        opt = "-{0}".format(arg)
         if meta is None:
             build_args.extend([opt] * val)
         else:
@@ -293,9 +306,7 @@ def main():
         portn = port_for.select_random()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
-    server = Server(
-        watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),
-    )
+    server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
 
     server.watch(srcdir, builder)
     for dirpath in args.additional_watched_dirs:
@@ -307,7 +318,6 @@ def main():
         builder.build()
 
     if args.openbrowser is True:
-        server.serve(port=portn, host=args.host,
-                     root=outdir, open_url_delay=args.delay)
+        server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
     else:
         server.serve(port=portn, host=args.host, root=outdir)
