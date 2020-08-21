@@ -45,11 +45,13 @@ def _set_changed(w, _):
 
 
 class LivereloadWatchdogWatcher(object):
-    """
-    File system watch dog.
-    """
+    """File system watchdog."""
 
     def __init__(self, use_polling=False):
+        """Prepare a new instance.
+
+        :param use_polling: Whether PollingObserver should be used by this instance.
+        """
         super(LivereloadWatchdogWatcher, self).__init__()
         self._changed = False
         # TODO: Hack.
@@ -78,14 +80,13 @@ class LivereloadWatchdogWatcher(object):
         self._changes = []
 
     def set_changed(self):
+        """Note that changes were made."""
         self._changed = True
 
     def examine(self):
-        """
-        Called by LiveReloadHandler's poll_tasks method.
+        """Would be called by LiveReloadHandler's poll_tasks method.
 
-        If a boolean true value is returned, then the waiters (browsers) are
-        reloaded.
+        Returns whether the waiters (browsers) are reloaded.
         """
         if self._changes:
             return self._changes.pop()
@@ -97,7 +98,8 @@ class LivereloadWatchdogWatcher(object):
         return action_file, None
 
     def watch(self, path, action, *args, **kwargs):
-        """
+        """Prepare event handlers to watch for changes.
+
         Called by the Server instance when a new watch task is requested.
         """
         if action is None:
@@ -106,9 +108,7 @@ class LivereloadWatchdogWatcher(object):
         self._observer.schedule(event_handler, path=path, recursive=True)
 
     def start(self, callback):
-        """
-        Start the watcher running, calling callback when changes are
-        observed.
+        """Start the watcher running, calling callback when changes are observed.
 
         If this returns False, regular polling will be used.
         """
@@ -116,11 +116,13 @@ class LivereloadWatchdogWatcher(object):
 
 
 class SphinxBuilder(object):
-    """
-    Helper class to run sphinx-build command.
-    """
+    """Helper class to run sphinx-build command."""
 
     def __init__(self, outdir, args, ignored=None, regex_ignored=None):
+        """Prepare a new instance.
+
+        Currently, the arguments are undocumented.
+        """
         self._outdir = outdir
         self._args = args
         self._ignored = ignored or []
@@ -128,6 +130,7 @@ class SphinxBuilder(object):
         self._regex_ignored = [re.compile(r) for r in regex_ignored or []]
 
     def is_ignored(self, src_path):
+        """Determine if changes in src_path should be ignored."""
         path = self.get_relative_path(src_path)
         for i in self._ignored:
             if fnmatch.fnmatch(path, i):
@@ -140,6 +143,7 @@ class SphinxBuilder(object):
                 return True
 
     def __call__(self, watcher, src_path):
+        """Build documentation, unless given path should be ignored."""
         path = self.get_relative_path(src_path)
 
         if self.is_ignored(src_path):
@@ -150,6 +154,7 @@ class SphinxBuilder(object):
         self.build(path)
 
     def build(self, path=None):
+        """Perform a build using ``sphinx-build``."""
         if path:
             pre = "+--------- {0} changed ".format(path)
         else:
@@ -187,6 +192,7 @@ class SphinxBuilder(object):
         sys.stdout.write("\n\n")
 
     def get_relative_path(self, path):
+        """Get the relative path."""
         return os.path.relpath(path)
 
 
@@ -214,6 +220,11 @@ SPHINX_BUILD_OPTIONS = (
 
 
 def get_parser():
+    """Get the application's argument parser.
+
+    Note: this also handles SPHINX_BUILD_OPTIONS, which later get forwarded to
+    sphinx-build as-is.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port", type=int, default=8000)
     parser.add_argument("-H", "--host", type=str, default="127.0.0.1")
@@ -264,6 +275,7 @@ def get_parser():
 
 
 def main():
+    """Actual application logic."""
     parser = get_parser()
     args = parser.parse_args()
 
