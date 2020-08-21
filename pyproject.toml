@@ -35,7 +35,7 @@ requires = [
 ]
 
 [tool.flit.scripts]
-sphinx-autobuild = "sphinx_autobuild:main"
+sphinx-autobuild = "sphinx_autobuild.__main__:main"
 
 [tool.flit.metadata.requires-extra]
 test = ["mock", "pytest", "pytest-cov"]

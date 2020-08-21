@@ -4,5 +4,3 @@
 
 __version__ = "0.7.1"
 __url__ = "https://github.com/GaretJax/sphinx-autobuild"
-
-from ._core import main
