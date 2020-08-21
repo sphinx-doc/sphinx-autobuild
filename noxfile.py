@@ -12,14 +12,11 @@ def lint(session):
 @nox.session(python=["3.6", "3.7", "3.8"])
 def test(session):
     session.install(".[test]")
-    # fmt: off
-    default_args = [
-        "--cov-report", "term",
-        "--cov", "sphinx_autobuild",
-        "sphinx_autobuild",
-    ]
-    # fmt: on
-    session.run("pytest", *(session.posargs or default_args))
+
+    default_args = ["--cov-report", "term", "--cov", "sphinx_autobuild"]
+    args = session.posargs or default_args
+
+    session.run("pytest", *args)
 
 
 @nox.session
