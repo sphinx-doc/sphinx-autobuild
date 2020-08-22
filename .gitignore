@@ -1,29 +1,18 @@
-*.py[cod]
-
-.DS_Store
-
 # Build artifacts
-/*.egg
-/*.egg-info
-/dist
 /build
-/eggs
-/sdist
-/develop-eggs
-/.sass-cache
-/.cache
-/.env
+/dist
+__pycache__
 
-# Installer logs
-pip-log.txt
+# Generated artifacts
+*.py[cod]
+*.egg-info
+.*cache*
+.idea
+
+# OS-specific files
+.DS_Store
 
 # Unit test / coverage reports
 .coverage
 .htmlcov
-.tox
-
-# Translations
-*.mo
-
-# Sphinx
-docs/_build
+.nox
