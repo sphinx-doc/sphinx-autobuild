@@ -1,17 +1,11 @@
 language: python
-
-sudo: false
+os: linux
+dist: xenial
 
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
+  - 3.6
+  - 3.7
+  - 3.8
 
-install:
-  - pip install -r requirements.txt -r requirements-testing.txt
-  - pip install coveralls
-
-script: py.test
-
-after_success: coveralls
+install: pip install nox
+script: nox -s test-${TRAVIS_PYTHON_VERSION}

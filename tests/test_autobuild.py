@@ -7,7 +7,7 @@ import pytest
 from mock import call
 from watchdog import observers
 
-from sphinx_autobuild import DEFAULT_IGNORE_REGEX, main
+from sphinx_autobuild.cli import DEFAULT_IGNORE_REGEX, main
 
 
 @pytest.fixture(autouse=True)
@@ -19,7 +19,7 @@ def patched_args(sys_args, monkeypatch):
 @pytest.mark.parametrize("sys_args", (["sphinx-autobuild", "/source", "/output"],))
 @mock.patch.object(observers.Observer, "schedule")
 @mock.patch.object(livereload.Server, "serve")
-@mock.patch("sphinx_autobuild.SphinxBuilder.build")
+@mock.patch("sphinx_autobuild.cli.SphinxBuilder.build")
 @mock.patch("os.makedirs")
 def test_autobuild(mock_makedirs, mock_builder, mock_serve, mock_schedule):
     """
@@ -51,7 +51,7 @@ def test_autobuild(mock_makedirs, mock_builder, mock_serve, mock_schedule):
 )
 @mock.patch.object(observers.Observer, "schedule")
 @mock.patch.object(livereload.Server, "serve")
-@mock.patch("sphinx_autobuild.SphinxBuilder")
+@mock.patch("sphinx_autobuild.cli.SphinxBuilder")
 @mock.patch.object(livereload.Server, "watch")
 @mock.patch("os.makedirs")
 def test_autobuild_with_options(
