@@ -79,6 +79,8 @@ def main():
 
     srcdir = os.path.realpath(args.sourcedir)
     outdir = os.path.realpath(args.outdir)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
     build_args = []
     for arg, meta in SPHINX_BUILD_OPTIONS:
@@ -100,9 +102,6 @@ def main():
         ignored.append(os.path.realpath(args.w[0]))
     if args.d:  # Doctrees
         ignored.append(os.path.realpath(args.d[0]))
-
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
 
     re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
 
