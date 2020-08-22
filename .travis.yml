@@ -2,10 +2,16 @@ language: python
 os: linux
 dist: xenial
 
-python:
-  - 3.6
-  - 3.7
-  - 3.8
+matrix:
+  include:
+    - env: NOXSESSION=docs
+    - env: NOXSESSION=lint
+    - python: 3.6
+      env: NOXSESSION=test-3.6
+    - python: 3.7
+      env: NOXSESSION=test-3.7
+    - python: 3.8
+      env: NOXSESSION=test-3.8
 
 install: pip install nox
-script: nox -s test-${TRAVIS_PYTHON_VERSION}
+script: nox
