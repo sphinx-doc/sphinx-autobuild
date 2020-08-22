@@ -10,11 +10,7 @@ from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
 from .watcher import LivereloadWatchdogWatcher
 from .utils import find_free_port
 
-DEFAULT_IGNORE_REGEX = [
-    r"__pycache__/.*\.py",
-    r".*\.pyc",
-    r".*\.kate-swp",
-]
+DEFAULT_IGNORE_REGEX = [r".*\.pyc"]
 
 
 def get_parser():
