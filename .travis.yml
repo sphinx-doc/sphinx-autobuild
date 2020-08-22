@@ -7,9 +7,5 @@ python:
   - 3.7
   - 3.8
 
-install:
-  - pip install nox
-  - nox -s test-${TRAVIS_PYTHON_VERSION} --install-only
-
-script:
-  - nox -s test-${TRAVIS_PYTHON_VERSION}
+install: pip install nox
+script: nox -s test-${TRAVIS_PYTHON_VERSION}
