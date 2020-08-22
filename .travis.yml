@@ -1,17 +1,15 @@
 language: python
-
 sudo: false
 
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
 
 install:
-  - pip install -r requirements.txt -r requirements-testing.txt
-  - pip install coveralls
+  - pip install nox
+  - nox -s test-${TRAVIS_PYTHON_VERSION} --install-only
 
-script: py.test
-
-after_success: coveralls
+script:
+  - nox -s test-${TRAVIS_PYTHON_VERSION}
