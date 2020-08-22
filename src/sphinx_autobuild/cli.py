@@ -3,12 +3,12 @@
 import argparse
 import os
 
-import port_for
 from livereload import Server
 
 from . import __version__
 from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
 from .watcher import LivereloadWatchdogWatcher
+from .utils import find_free_port
 
 DEFAULT_IGNORE_REGEX = [
     r"__pycache__/.*\.py",
@@ -106,10 +106,8 @@ def main():
 
     re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
 
-    if args.port != 0:
-        portn = args.port
-    else:
-        portn = port_for.select_random()
+    # Find the free port
+    portn = args.port or find_free_port()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
