@@ -25,13 +25,9 @@ classifiers = [
 home-page = "https://github.com/GaretJax/sphinx_autobuild"
 license = "MIT"
 requires = [
-  "watchdog >= 0.7.1",
-  "argh >= 0.24.1",
-  "pathtools >= 0.1.2",
-  "PyYAML >= 3.10",
-  "tornado >= 3.2",
-  "port_for==0.3.1",
-  "livereload >= 2.3.0",
+  "watchdog",
+  "port_for",
+  "livereload",
 ]
 
 [tool.flit.scripts]
