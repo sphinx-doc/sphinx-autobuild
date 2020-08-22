@@ -45,7 +45,7 @@ by Sphinx plus the following options:
   ``--open-browser`` was selected (default 5)
 * ``-z``/``--watch`` multiple allowed, option to specify additional directories
   to watch, for example: `some/extra/dir`
-* ``--poll`` force polling, useful for Vagrant or VirtualBox which do not 
+* ``--poll`` force polling, useful for Vagrant or VirtualBox which do not
   trigger file updates in `shared folders`_
 
 .. _shared folders: https://www.virtualbox.org/ticket/10660
