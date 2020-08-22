@@ -40,9 +40,7 @@ def get_parser():
         action="append",
         metavar="DIR",
         default=[],
-        help=(
-            "Specify additional directories to watch. May be" " used multiple times."
-        ),
+        help="Specify additional directories to watch. May be used multiple times.",
         dest="additional_watched_dirs",
     )
     parser.add_argument(
@@ -101,8 +99,6 @@ def main():
 
     re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
 
-    # Find the free port
-    portn = args.port or find_free_port()
 
     builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
     server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
@@ -116,6 +112,8 @@ def main():
     if args.initial_build:
         builder.build()
 
+    # Find the free port
+    portn = args.port or find_free_port()
     if args.openbrowser is True:
         server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
     else:
