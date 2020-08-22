@@ -1,4 +1,4 @@
-from sphinx_autobuild import SphinxBuilder
+from sphinx_autobuild.cli import SphinxBuilder
 
 
 class TestWatcher(object):
