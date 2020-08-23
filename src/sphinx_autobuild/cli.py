@@ -12,6 +12,24 @@ from .utils import find_free_port
 from .watcher import LivereloadWatchdogWatcher
 
 
+def get_build_args(args):
+    build_args = []
+    for arg, meta in SPHINX_BUILD_OPTIONS:
+        val = getattr(args, arg)
+        if not val:
+            continue
+        opt = "-{0}".format(arg)
+        if meta is None:
+            build_args.extend([opt] * val)
+        else:
+            for v in val:
+                build_args.extend([opt, v])
+
+    build_args.extend([os.path.realpath(args.sourcedir), os.path.realpath(args.outdir)])
+    build_args.extend(args.filenames)
+    return build_args
+
+
 def get_ignore_handler(args):
     """Create an IgnoreHandler from CLI arguments."""
     regular = args.ignore[:]
@@ -89,22 +107,8 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    build_args = []
-    for arg, meta in SPHINX_BUILD_OPTIONS:
-        val = getattr(args, arg)
-        if not val:
-            continue
-        opt = "-{0}".format(arg)
-        if meta is None:
-            build_args.extend([opt] * val)
-        else:
-            for v in val:
-                build_args.extend([opt, v])
-
-    build_args.extend([srcdir, outdir])
-    build_args.extend(args.filenames)
-
     ignore_handler = get_ignore_handler(args)
+    build_args = get_build_args(args)
 
     builder = SphinxBuilder(build_args, ignore_handler)
     server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
