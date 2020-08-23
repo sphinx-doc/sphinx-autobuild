@@ -46,7 +46,7 @@ class SphinxBuilder(object):
         if self.is_ignored(src_path):
             return
 
-        watcher._action_file = path  # TODO: Hack (see above)
+        watcher._action_file = path  # TODO: Hack (see watcher.py)
 
         self.build(path)
 
