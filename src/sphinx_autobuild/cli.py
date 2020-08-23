@@ -8,8 +8,8 @@ from livereload import Server
 from . import __version__
 from .ignore import IgnoreHandler
 from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
-from .watcher import LivereloadWatchdogWatcher
 from .utils import find_free_port
+from .watcher import LivereloadWatchdogWatcher
 
 
 def get_ignore_handler(args):
