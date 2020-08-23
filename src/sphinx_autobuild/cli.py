@@ -6,11 +6,24 @@ import os
 from livereload import Server
 
 from . import __version__
+from .ignore import IgnoreHandler
 from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
 from .watcher import LivereloadWatchdogWatcher
 from .utils import find_free_port
 
-DEFAULT_IGNORE_REGEX = [r".*\.pyc"]
+
+def get_ignore_handler(args):
+    """Create an IgnoreHandler from CLI arguments."""
+    regular = args.ignore[:]
+    regular.append(os.path.realpath(args.outdir))  # output directory
+    if args.w:  # Logfile
+        regular.append(os.path.realpath(args.w[0]))
+    if args.d:  # Doctrees
+        regular.append(os.path.realpath(args.d[0]))
+
+    regex_based = args.re_ignore + [r"\.pyc$"]  # ignore .pyc files
+
+    return IgnoreHandler(regular, regex_based)
 
 
 def get_parser():
@@ -91,16 +104,9 @@ def main():
     build_args.extend([srcdir, outdir])
     build_args.extend(args.filenames)
 
-    ignored = args.ignore
-    if args.w:  # Logfile
-        ignored.append(os.path.realpath(args.w[0]))
-    if args.d:  # Doctrees
-        ignored.append(os.path.realpath(args.d[0]))
+    ignore_handler = get_ignore_handler(args)
 
-    re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
-
-
-    builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
+    builder = SphinxBuilder(build_args, ignore_handler)
     server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
 
     server.watch(srcdir, builder)

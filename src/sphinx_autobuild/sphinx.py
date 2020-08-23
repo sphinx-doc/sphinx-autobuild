@@ -1,8 +1,6 @@
 """Logic for interacting with sphinx-build."""
 
-import fnmatch
 import os
-import re
 import subprocess
 import sys
 
@@ -15,35 +13,19 @@ except ImportError:
 class SphinxBuilder(object):
     """Helper class to run sphinx-build command."""
 
-    def __init__(self, outdir, args, ignored=None, regex_ignored=None):
+    def __init__(self, args, ignore_handler):
         """Prepare a new instance.
 
         Currently, the arguments are undocumented.
         """
-        self._outdir = outdir
         self._args = args
-        self._ignored = ignored or []
-        self._ignored.append(outdir)
-        self._regex_ignored = [re.compile(r) for r in regex_ignored or []]
-
-    def is_ignored(self, src_path):
-        """Determine if changes in src_path should be ignored."""
-        path = self.get_relative_path(src_path)
-        for i in self._ignored:
-            if fnmatch.fnmatch(path, i):
-                return True
-            if src_path.startswith(i + os.sep):
-                return True
-
-        for r in self._regex_ignored:
-            if r.search(src_path):
-                return True
+        self._ignore_handler = ignore_handler
 
     def __call__(self, watcher, src_path):
         """Build documentation, unless given path should be ignored."""
         path = self.get_relative_path(src_path)
 
-        if self.is_ignored(src_path):
+        if self._ignore_handler(src_path):
             return
 
         watcher._action_file = path  # TODO: Hack (see watcher.py)
