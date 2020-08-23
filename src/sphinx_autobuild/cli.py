@@ -44,6 +44,10 @@ def get_ignore_handler(args):
     return IgnoreHandler(regular, regex_based)
 
 
+def get_watcher(args):
+    return LivereloadWatchdogWatcher(use_polling=args.use_polling)
+
+
 def get_parser():
     """Get the application's argument parser.
 
@@ -109,9 +113,10 @@ def main():
 
     ignore_handler = get_ignore_handler(args)
     build_args = get_build_args(args)
+    watcher = get_watcher(args)
 
     builder = SphinxBuilder(build_args, ignore_handler)
-    server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
+    server = Server(watcher=watcher)
 
     server.watch(srcdir, builder)
     for dirpath in args.additional_watched_dirs:
