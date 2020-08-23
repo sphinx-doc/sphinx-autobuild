@@ -3,6 +3,14 @@
 import nox
 
 
+def _install_this_editable(session, *, extras=None):
+    if extras is None:
+        extras = []
+
+    session.install("flit")
+    session.run("flit", "install", "-s", "--deps=production", "--extras", ",".join(extras), silent=True)
+
+
 @nox.session
 def lint(session):
     session.install("pre-commit")
@@ -11,7 +19,7 @@ def lint(session):
 
 @nox.session(python=["3.6", "3.7", "3.8"])
 def test(session):
-    session.install(".[test]")
+    _install_this_editable(session, extras=["test"])
 
     default_args = ["--cov-report", "term", "--cov", "sphinx_autobuild"]
     args = session.posargs or default_args
@@ -21,5 +29,5 @@ def test(session):
 
 @nox.session
 def docs(session):
-    session.install(".[docs]")
+    _install_this_editable(session, extras=["docs"])
     session.run("sphinx-build", "-b", "html", "docs/", "build/docs")
