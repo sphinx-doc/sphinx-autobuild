@@ -8,7 +8,15 @@ def _install_this_editable(session, *, extras=None):
         extras = []
 
     session.install("flit")
-    session.run("flit", "install", "-s", "--deps=production", "--extras", ",".join(extras), silent=True)
+    session.run(
+        "flit",
+        "install",
+        "-s",
+        "--deps=production",
+        "--extras",
+        ",".join(extras),
+        silent=True,
+    )
 
 
 @nox.session
