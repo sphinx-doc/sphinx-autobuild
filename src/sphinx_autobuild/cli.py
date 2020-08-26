@@ -30,8 +30,7 @@ def get_build_args(args):
     return build_args
 
 
-def get_ignore_handler(args):
-    """Create an IgnoreHandler from CLI arguments."""
+def _get_ignore_handler(args):
     regular = args.ignore[:]
     regular.append(os.path.realpath(args.outdir))  # output directory
     if args.w:  # Logfile
@@ -111,9 +110,8 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    ignore_handler = get_ignore_handler(args)
+    ignore_handler = _get_ignore_handler(args)
     build_args = get_build_args(args)
-    watcher = get_watcher(args)
 
     builder = SphinxBuilder(build_args, ignore_handler)
     server = Server(watcher=watcher)
