@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shlex
 
 from livereload import Server
 
@@ -26,7 +27,9 @@ def _get_build_args(args):
 
     build_args.extend([os.path.realpath(args.sourcedir), os.path.realpath(args.outdir)])
     build_args.extend(args.filenames)
-    return build_args
+
+    pre_build_commands = [shlex.split(cmd_str) for cmd_str in args.pre_build]
+    return build_args, pre_build_commands
 
 
 def _get_ignore_handler(args):
@@ -69,6 +72,12 @@ def get_parser():
         dest="additional_watched_dirs",
     )
     parser.add_argument(
+        "--pre-build",
+        action="append",
+        default=[],
+        help="Command to run prior to building the documentation.",
+    )
+    parser.add_argument(
         "--version", action="version", version="sphinx-autobuild {}".format(__version__)
     )
 
@@ -101,8 +110,8 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    build_args = _get_build_args(args)
-    builder = get_builder(build_args)
+    build_args, pre_build_commands = _get_build_args(args)
+    builder = get_builder(build_args, pre_build_commands=pre_build_commands)
 
     server = Server()
 
