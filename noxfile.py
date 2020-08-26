@@ -44,4 +44,4 @@ def docs(session):
 @nox.session(name="docs-live")
 def docs_live(session):
     _install_this_editable(session, extras=["docs"])
-    session.run("sphinx-autobuild", "-b", "html", "docs/", "build/docs")
+    session.run("sphinx-autobuild", "-b", "html", "docs/", "build/docs", *session.posargs)
