@@ -37,9 +37,7 @@ def get_builder(sphinx_args, *, pre_build_commands):
 
         for command in pre_build_commands:
             run_with_surrounding_separators(
-                command,
-                heading=f"pre-build for {heading}",
-                include_footer=False
+                command, heading=f"pre-build for {heading}", include_footer=False
             )
 
         run_with_surrounding_separators(sphinx_command, heading=heading)
