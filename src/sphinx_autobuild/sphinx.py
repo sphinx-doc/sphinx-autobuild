@@ -1,13 +1,10 @@
 """Logic for interacting with sphinx-build."""
 
 import os
-import subprocess
 import sys
+import subprocess
 
-try:
-    import pty
-except ImportError:
-    pty = None
+from .utils import run_with_surrounding_separators
 
 
 class SphinxBuilder(object):
@@ -35,40 +32,12 @@ class SphinxBuilder(object):
     def build(self, path=None):
         """Perform a build using ``sphinx-build``."""
         if path:
-            pre = "+--------- {0} changed ".format(path)
+            heading = "{0} changed".format(path)
         else:
-            pre = "+--------- manually triggered build "
-        sys.stdout.write("\n")
-        sys.stdout.write(pre)
-        sys.stdout.write("-" * (81 - len(pre)))
-        sys.stdout.write("\n")
+            heading = "manually triggered build"
 
         args = [sys.executable, '-m', 'sphinx'] + self._args
-        if pty:
-            master, slave = pty.openpty()
-            stdout = os.fdopen(master)
-            subprocess.Popen(args, stdout=slave)
-            os.close(slave)
-        else:
-            stdout = subprocess.Popen(
-                args, stdout=subprocess.PIPE, universal_newlines=True
-            ).stdout
-        try:
-            while 1:
-                line = stdout.readline()
-                if not line:
-                    break
-                sys.stdout.write("| ")
-                sys.stdout.write(line.rstrip())
-                sys.stdout.write("\n")
-        except IOError:
-            pass
-        finally:
-            if not pty:
-                stdout.close()
-        sys.stdout.write("+")
-        sys.stdout.write("-" * 80)
-        sys.stdout.write("\n\n")
+        run_with_surrounding_separators(args, heading=heading)
 
     def get_relative_path(self, path):
         """Get the relative path."""
