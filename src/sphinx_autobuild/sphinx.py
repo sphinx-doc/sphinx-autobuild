@@ -28,6 +28,7 @@ SPHINX_BUILD_OPTIONS = (
 
 
 def get_builder(args):
+    """Prepare the function that calls sphinx."""
     command = [sys.executable, "-m", "sphinx"] + args
 
     def build(initial=False):
