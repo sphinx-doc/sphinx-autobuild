@@ -1,8 +1,8 @@
-from sphinx_autobuild.ignore import IgnoreHandler
+from sphinx_autobuild.ignore import get_ignore
 
 
 def test_empty():
-    ignored = IgnoreHandler([], [])
+    ignored = get_ignore([], [])
 
     assert not ignored("amazing-file.txt")
     assert not ignored("module.pyc")
@@ -14,7 +14,7 @@ def test_empty():
 
 
 def test_single_regex():
-    ignored = IgnoreHandler([], [r"\.pyc$"])
+    ignored = get_ignore([], [r"\.pyc$"])
 
     assert not ignored("amazing-file.txt")
     assert ignored("module.pyc")
@@ -26,7 +26,7 @@ def test_single_regex():
 
 
 def test_multiple_regex():
-    ignored = IgnoreHandler([], [r"\.md", r"one\.rst"])
+    ignored = get_ignore([], [r"\.md", r"one\.rst"])
 
     assert not ignored("amazing-file.txt")
     assert not ignored("module.pyc")
@@ -38,7 +38,7 @@ def test_multiple_regex():
 
 
 def test_single_regular():
-    ignored = IgnoreHandler(["*.pyc"], [])
+    ignored = get_ignore(["*.pyc"], [])
 
     assert not ignored("amazing-file.txt")
     assert ignored("module.pyc")
@@ -50,7 +50,7 @@ def test_single_regular():
 
 
 def test_multiple_regular():
-    ignored = IgnoreHandler(["bar", "foo"], [])
+    ignored = get_ignore(["bar", "foo"], [])
 
     assert not ignored("amazing-file.txt")
     assert not ignored("module.pyc")
@@ -62,7 +62,7 @@ def test_multiple_regular():
 
 
 def test_multiple_both():
-    ignored = IgnoreHandler(["bar", "foo"], [r"\.txt", r"one\.*"])
+    ignored = get_ignore(["bar", "foo"], [r"\.txt", r"one\.*"])
 
     assert ignored("amazing-file.txt")
     assert not ignored("module.pyc")

@@ -6,7 +6,7 @@ import os
 from livereload import Server
 
 from . import __version__
-from .ignore import IgnoreHandler
+from .ignore import get_ignore
 from .sphinx import SPHINX_BUILD_OPTIONS, get_builder
 from .utils import find_free_port
 
@@ -38,8 +38,7 @@ def _get_ignore_handler(args):
         regular.append(os.path.realpath(args.d[0]))
 
     regex_based = args.re_ignore
-
-    return IgnoreHandler(regular, regex_based)
+    return get_ignore(regular, regex_based)
 
 
 def get_parser():
@@ -102,12 +101,12 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    ignore_handler = _get_ignore_handler(args)
     build_args = _get_build_args(args)
-
     builder = get_builder(build_args)
+
     server = Server()
 
+    ignore_handler = _get_ignore_handler(args)
     server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
