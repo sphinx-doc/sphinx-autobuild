@@ -6,15 +6,39 @@ import os
 from livereload import Server
 
 from . import __version__
-from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
-from .watcher import LivereloadWatchdogWatcher
+from .ignore import get_ignore
+from .sphinx import SPHINX_BUILD_OPTIONS, get_builder
 from .utils import find_free_port
 
-DEFAULT_IGNORE_REGEX = [
-    r"__pycache__/.*\.py",
-    r".*\.pyc",
-    r".*\.kate-swp",
-]
+
+def _get_build_args(args):
+    build_args = []
+    for arg, meta in SPHINX_BUILD_OPTIONS:
+        val = getattr(args, arg)
+        if not val:
+            continue
+        opt = "-{0}".format(arg)
+        if meta is None:
+            build_args.extend([opt] * val)
+        else:
+            for v in val:
+                build_args.extend([opt, v])
+
+    build_args.extend([os.path.realpath(args.sourcedir), os.path.realpath(args.outdir)])
+    build_args.extend(args.filenames)
+    return build_args
+
+
+def _get_ignore_handler(args):
+    regular = args.ignore[:]
+    regular.append(os.path.realpath(args.outdir))  # output directory
+    if args.w:  # Logfile
+        regular.append(os.path.realpath(args.w[0]))
+    if args.d:  # Doctrees
+        regular.append(os.path.realpath(args.d[0]))
+
+    regex_based = args.re_ignore
+    return get_ignore(regular, regex_based)
 
 
 def get_parser():
@@ -29,9 +53,6 @@ def get_parser():
     parser.add_argument("-r", "--re-ignore", action="append", default=[])
     parser.add_argument("-i", "--ignore", action="append", default=[])
     parser.add_argument(
-        "--poll", dest="use_polling", action="store_true", default=False
-    )
-    parser.add_argument(
         "--no-initial", dest="initial_build", action="store_false", default=True
     )
     parser.add_argument(
@@ -44,9 +65,7 @@ def get_parser():
         action="append",
         metavar="DIR",
         default=[],
-        help=(
-            "Specify additional directories to watch. May be" " used multiple times."
-        ),
+        help="Specify additional directories to watch. May be used multiple times.",
         dest="additional_watched_dirs",
     )
     parser.add_argument(
@@ -79,48 +98,26 @@ def main():
 
     srcdir = os.path.realpath(args.sourcedir)
     outdir = os.path.realpath(args.outdir)
-
-    build_args = []
-    for arg, meta in SPHINX_BUILD_OPTIONS:
-        val = getattr(args, arg)
-        if not val:
-            continue
-        opt = "-{0}".format(arg)
-        if meta is None:
-            build_args.extend([opt] * val)
-        else:
-            for v in val:
-                build_args.extend([opt, v])
-
-    build_args.extend([srcdir, outdir])
-    build_args.extend(args.filenames)
-
-    ignored = args.ignore
-    if args.w:  # Logfile
-        ignored.append(os.path.realpath(args.w[0]))
-    if args.d:  # Doctrees
-        ignored.append(os.path.realpath(args.d[0]))
-
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    re_ignore = args.re_ignore + DEFAULT_IGNORE_REGEX
+    build_args = _get_build_args(args)
+    builder = get_builder(build_args)
+
+    server = Server()
+
+    ignore_handler = _get_ignore_handler(args)
+    server.watch(srcdir, builder, ignore=ignore_handler)
+    for dirpath in args.additional_watched_dirs:
+        dirpath = os.path.realpath(dirpath)
+        server.watch(dirpath, builder, ignore=ignore_handler)
+    server.watch(outdir, ignore=ignore_handler)
+
+    if args.initial_build:
+        builder(initial=True)
 
     # Find the free port
     portn = args.port or find_free_port()
-
-    builder = SphinxBuilder(outdir, build_args, ignored, re_ignore)
-    server = Server(watcher=LivereloadWatchdogWatcher(use_polling=args.use_polling),)
-
-    server.watch(srcdir, builder)
-    for dirpath in args.additional_watched_dirs:
-        dirpath = os.path.realpath(dirpath)
-        server.watch(dirpath, builder)
-    server.watch(outdir)
-
-    if args.initial_build:
-        builder.build()
-
     if args.openbrowser is True:
         server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
     else:

@@ -26,7 +26,6 @@ home-page = "https://github.com/GaretJax/sphinx_autobuild"
 license = "MIT"
 requires = [
   "sphinx",
-  "watchdog",
   "livereload",
 ]
 
@@ -34,5 +33,5 @@ requires = [
 sphinx-autobuild = "sphinx_autobuild.__main__:main"
 
 [tool.flit.metadata.requires-extra]
-test = ["mock", "pytest", "pytest-cov"]
+test = ["pytest", "pytest-cov"]
 docs = []
