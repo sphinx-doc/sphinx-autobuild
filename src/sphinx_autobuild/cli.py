@@ -12,7 +12,7 @@ from .utils import find_free_port
 from .watcher import LivereloadWatchdogWatcher
 
 
-def get_build_args(args):
+def _get_build_args(args):
     build_args = []
     for arg, meta in SPHINX_BUILD_OPTIONS:
         val = getattr(args, arg)
@@ -38,13 +38,9 @@ def _get_ignore_handler(args):
     if args.d:  # Doctrees
         regular.append(os.path.realpath(args.d[0]))
 
-    regex_based = args.re_ignore + [r"\.pyc$"]  # ignore .pyc files
+    regex_based = args.re_ignore
 
     return IgnoreHandler(regular, regex_based)
-
-
-def get_watcher(args):
-    return LivereloadWatchdogWatcher(use_polling=args.use_polling)
 
 
 def get_parser():
@@ -58,9 +54,6 @@ def get_parser():
     parser.add_argument("-H", "--host", type=str, default="127.0.0.1")
     parser.add_argument("-r", "--re-ignore", action="append", default=[])
     parser.add_argument("-i", "--ignore", action="append", default=[])
-    parser.add_argument(
-        "--poll", dest="use_polling", action="store_true", default=False
-    )
     parser.add_argument(
         "--no-initial", dest="initial_build", action="store_false", default=True
     )
@@ -111,7 +104,7 @@ def main():
         os.makedirs(outdir)
 
     ignore_handler = _get_ignore_handler(args)
-    build_args = get_build_args(args)
+    build_args = _get_build_args(args)
 
     builder = SphinxBuilder(build_args, ignore_handler)
     server = Server(watcher=watcher)
