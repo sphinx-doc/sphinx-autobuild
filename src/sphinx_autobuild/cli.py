@@ -7,9 +7,8 @@ from livereload import Server
 
 from . import __version__
 from .ignore import IgnoreHandler
-from .sphinx import SPHINX_BUILD_OPTIONS, SphinxBuilder
+from .sphinx import SPHINX_BUILD_OPTIONS, get_builder
 from .utils import find_free_port
-from .watcher import LivereloadWatchdogWatcher
 
 
 def _get_build_args(args):
@@ -106,17 +105,17 @@ def main():
     ignore_handler = _get_ignore_handler(args)
     build_args = _get_build_args(args)
 
-    builder = SphinxBuilder(build_args, ignore_handler)
-    server = Server(watcher=watcher)
+    builder = get_builder(build_args)
+    server = Server()
 
-    server.watch(srcdir, builder)
+    server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
-        server.watch(dirpath, builder)
-    server.watch(outdir)
+        server.watch(dirpath, builder, ignore=ignore_handler)
+    server.watch(outdir, ignore=ignore_handler)
 
     if args.initial_build:
-        builder.build()
+        builder(initial=True)
 
     # Find the free port
     portn = args.port or find_free_port()
