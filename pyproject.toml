@@ -26,7 +26,6 @@ home-page = "https://github.com/GaretJax/sphinx_autobuild"
 license = "MIT"
 requires = [
   "sphinx",
-  "watchdog",
   "livereload",
 ]
 
