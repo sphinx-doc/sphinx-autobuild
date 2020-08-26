@@ -52,7 +52,6 @@ def get_parser():
     """
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,)
     parser.add_argument(
-        "-p",
         "--port",
         type=int,
         default=8000,
@@ -61,21 +60,18 @@ def get_parser():
         ),
     )
     parser.add_argument(
-        "-H",
         "--host",
         type=str,
         default="127.0.0.1",
         help="host to serve documentation on",
     )
     parser.add_argument(
-        "-r",
         "--re-ignore",
         action="append",
         default=[],
         help="regular expression for files to ignore, when watching for changes",
     )
     parser.add_argument(
-        "-i",
         "--ignore",
         action="append",
         default=[],
@@ -89,7 +85,6 @@ def get_parser():
         help="skip the initial build",
     )
     parser.add_argument(
-        "-B",
         "--open-browser",
         dest="openbrowser",
         action="store_true",
@@ -97,7 +92,6 @@ def get_parser():
         help="open the browser after building documentation",
     )
     parser.add_argument(
-        "-s",
         "--delay",
         dest="delay",
         type=int,
@@ -105,7 +99,6 @@ def get_parser():
         help="how long to wait before opening the browser",
     )
     parser.add_argument(
-        "-z",
         "--watch",
         action="append",
         metavar="DIR",
