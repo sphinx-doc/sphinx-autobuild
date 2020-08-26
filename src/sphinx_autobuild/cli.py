@@ -6,8 +6,8 @@ import os
 from livereload import Server
 
 from . import __version__
+from .build import SPHINX_BUILD_OPTIONS, get_builder
 from .ignore import get_ignore
-from .sphinx import SPHINX_BUILD_OPTIONS, get_builder
 from .utils import find_free_port
 
 
