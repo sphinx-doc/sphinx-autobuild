@@ -25,7 +25,7 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-def run_with_surrounding_separators(args, *, heading):
+def run_with_surrounding_separators(args, *, heading, include_footer=True):
     """Run a subprocess with the output surrounded by a box.
 
     Looks like::
@@ -65,4 +65,5 @@ def run_with_surrounding_separators(args, *, heading):
         if not have_pty:
             stdout.close()
 
-    sys.stdout.write(footer + "\n")
+    if include_footer:
+        sys.stdout.write(footer + "\n")
