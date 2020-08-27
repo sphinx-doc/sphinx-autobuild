@@ -1,5 +1,6 @@
 """Rebuild Sphinx documentation on changes, with live-reload in the browser."""
 # MIT License. See LICENSE for more details.
+# Copyright (c) 2020, Pradyun Gedam
 # Copyright (c) 2013, Jonathan Stoppani
 
 __version__ = "0.7.1"
