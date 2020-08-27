@@ -20,7 +20,7 @@ def _get_build_args(args):
         val = getattr(args, arg)
         if not val:
             continue
-        opt = "-{0}".format(arg)
+        opt = f"-{arg}"
         if meta is None:
             build_args.extend([opt] * val)
         else:
@@ -52,53 +52,106 @@ def get_parser():
     Note: this also handles SPHINX_BUILD_OPTIONS, which later get forwarded to
     sphinx-build as-is.
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", type=int, default=8000)
-    parser.add_argument("-H", "--host", type=str, default="127.0.0.1")
-    parser.add_argument("-r", "--re-ignore", action="append", default=[])
-    parser.add_argument("-i", "--ignore", action="append", default=[])
-    parser.add_argument(
-        "--no-initial", dest="initial_build", action="store_false", default=True
+
+    class RawTextArgumentDefaultsHelpFormatter(
+        argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter
+    ):
+        pass
+
+    parser = argparse.ArgumentParser(
+        formatter_class=RawTextArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        "-B", "--open-browser", dest="openbrowser", action="store_true", default=False
+        "--port",
+        type=int,
+        default=8000,
+        help="port to serve documentation on. 0 means find and use a free port",
     )
-    parser.add_argument("-s", "--delay", dest="delay", type=int, default=5)
     parser.add_argument(
-        "-z",
+        "--host",
+        type=str,
+        default="127.0.0.1",
+        help="hostname to serve documentation on",
+    )
+    parser.add_argument(
+        "--re-ignore",
+        action="append",
+        default=[],
+        help="regular expression for files to ignore, when watching for changes",
+    )
+    parser.add_argument(
+        "--ignore",
+        action="append",
+        default=[],
+        help="glob expression for files to ignore, when watching for changes",
+    )
+    parser.add_argument(
+        "--no-initial",
+        dest="no_initial_build",
+        action="store_true",
+        default=False,
+        help="skip the initial build",
+    )
+    parser.add_argument(
+        "--open-browser",
+        dest="openbrowser",
+        action="store_true",
+        default=False,
+        help="open the browser after building documentation",
+    )
+    parser.add_argument(
+        "--delay",
+        dest="delay",
+        type=int,
+        default=5,
+        help="how long to wait before opening the browser",
+    )
+    parser.add_argument(
         "--watch",
         action="append",
         metavar="DIR",
         default=[],
-        help="Specify additional directories to watch. May be used multiple times.",
+        help="additional directories to watch",
         dest="additional_watched_dirs",
     )
     parser.add_argument(
         "--pre-build",
         action="append",
+        metavar="COMMAND",
         default=[],
-        help="Command to run prior to building the documentation.",
+        help="additional command(s) to run prior to building the documentation",
     )
     parser.add_argument(
         "--version", action="version", version="sphinx-autobuild {}".format(__version__)
     )
 
-    for opt, meta in SPHINX_BUILD_OPTIONS:
+    sphinx_arguments = ", ".join(
+        f"-{arg}" if meta is None else f"-{arg}={meta}"
+        for arg, meta in SPHINX_BUILD_OPTIONS
+    )
+    sphinx_parser = parser.add_argument_group(
+        "sphinx's arguments",
+        (
+            "The following arguments are forwarded as-is to Sphinx. Please look at "
+            f"`sphinx --help` for more information.\n  {sphinx_arguments}"
+        ),
+    )
+
+    for arg, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
-            parser.add_argument(
-                "-{0}".format(opt), action="count", help="See `sphinx-build -h`"
+            sphinx_parser.add_argument(
+                f"-{arg}", action="count", help=argparse.SUPPRESS
             )
         else:
-            parser.add_argument(
-                "-{0}".format(opt),
-                action="append",
-                metavar=meta,
-                help="See `sphinx-build -h`",
+            sphinx_parser.add_argument(
+                f"-{arg}", action="append", help=argparse.SUPPRESS, metavar=meta,
             )
 
-    parser.add_argument("sourcedir")
-    parser.add_argument("outdir")
-    parser.add_argument("filenames", nargs="*", help="See `sphinx-build -h`")
+    parser.add_argument("sourcedir", help="source directory")
+    parser.add_argument("outdir", help="output directory for built documentation")
+    parser.add_argument(
+        "filenames", nargs="*", help="specific files to rebuild on each run"
+    )
     return parser
 
 
@@ -124,7 +177,7 @@ def main():
         server.watch(dirpath, builder, ignore=ignore_handler)
     server.watch(outdir, ignore=ignore_handler)
 
-    if args.initial_build:
+    if not args.no_initial_build:
         builder(initial=True)
 
     # Find the free port
