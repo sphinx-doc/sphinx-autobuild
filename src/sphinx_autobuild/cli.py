@@ -85,9 +85,9 @@ def get_parser():
     )
     parser.add_argument(
         "--no-initial",
-        dest="initial_build",
-        action="store_false",
-        default=True,
+        dest="no_initial_build",
+        action="store_true",
+        default=False,
         help="skip the initial build",
     )
     parser.add_argument(
@@ -175,7 +175,7 @@ def main():
         server.watch(dirpath, builder, ignore=ignore_handler)
     server.watch(outdir, ignore=ignore_handler)
 
-    if args.initial_build:
+    if not args.no_initial_build:
         builder(initial=True)
 
     # Find the free port
