@@ -50,20 +50,26 @@ def get_parser():
     Note: this also handles SPHINX_BUILD_OPTIONS, which later get forwarded to
     sphinx-build as-is.
     """
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,)
+
+    class RawTextArgumentDefaultsHelpFormatter(
+        argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter
+    ):
+        pass
+
+    parser = argparse.ArgumentParser(
+        formatter_class=RawTextArgumentDefaultsHelpFormatter
+    )
     parser.add_argument(
         "--port",
         type=int,
         default=8000,
-        help=(
-            "port to serve documentation on (0 means find and use a free port)"
-        ),
+        help="port to serve documentation on. 0 means find and use a free port",
     )
     parser.add_argument(
         "--host",
         type=str,
         default="127.0.0.1",
-        help="host to serve documentation on",
+        help="hostname to serve documentation on",
     )
     parser.add_argument(
         "--re-ignore",
@@ -138,10 +144,10 @@ def get_parser():
                 f"-{arg}", action="append", help=argparse.SUPPRESS, metavar=meta,
             )
 
-    parser.add_argument("sourcedir", help="Source directory")
-    parser.add_argument("outdir", help="Output directory for built documentation")
+    parser.add_argument("sourcedir", help="source directory")
+    parser.add_argument("outdir", help="output directory for built documentation")
     parser.add_argument(
-        "filenames", nargs="*", help="a list of specific files to rebuild on each run"
+        "filenames", nargs="*", help="specific files to rebuild on each run"
     )
     return parser
 
