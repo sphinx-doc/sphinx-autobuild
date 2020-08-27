@@ -2,5 +2,5 @@
 # MIT License. See LICENSE for more details.
 # Copyright (c) 2013, Jonathan Stoppani
 
-__version__ = "0.7.1"
+__version__ = "2020.09.01"
 __url__ = "https://github.com/GaretJax/sphinx-autobuild"
