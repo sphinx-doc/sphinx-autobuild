@@ -1,5 +1,7 @@
 """Main implementation."""
 
+from . import _hacks  # isort:skip  # noqa
+
 import argparse
 import os
 import shlex
