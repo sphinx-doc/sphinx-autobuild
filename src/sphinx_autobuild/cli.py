@@ -115,6 +115,7 @@ def get_parser():
     parser.add_argument(
         "--pre-build",
         action="append",
+        metavar="COMMAND",
         default=[],
         help="additional command(s) to run prior to building the documentation",
     )
