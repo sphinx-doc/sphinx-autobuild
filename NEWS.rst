@@ -1,6 +1,19 @@
 Changelog
 =========
 
+2020.09.01 - 2020-09-01
+-----------------------
+
+* Adopt Calendar Versioning.
+* Modernize codebase and require Python 3.6+.
+* Directly depend on ``sphinx``.
+* Rewritten documentation.
+* Invoke sphinx via ``{sys.executable} -m sphinx`` instead of ``sphinx-build``.
+* Trim dependencies down to only ``livereload`` and ``sphinx``.
+* Drop custom adapter for ``watchdog``.
+* Drop ``--poll`` flag.
+* Drop single letter variants for flags that were specific to sphinx-autobuild.
+
 0.7.1 - 2017/07/05
 ------------------
 
