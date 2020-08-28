@@ -1,6 +1,6 @@
 """This file contains hacks needed to make things work. Ideally, this file is empty."""
 
-from pathlib import PosixPath
+from pathlib import PurePosixPath
 from urllib.parse import urlparse
 
 import livereload.server as server
@@ -16,7 +16,7 @@ class _FixedLiveScriptInjector(server.LiveScriptInjector):
         OutputTransform.__init__(self, request)
 
         # Determine if this is an HTML page
-        path = PosixPath(urlparse(request.uri).path)
+        path = PurePosixPath(urlparse(request.uri).path)
         self.should_modify_request = path.suffix in ["", ".html"]
 
     def transform_first_chunk(self, status_code, headers, chunk, finishing):
