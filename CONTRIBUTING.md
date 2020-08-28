@@ -3,8 +3,8 @@
 Thank you for being interested in contributing to the `sphinx-autobuild`! You
 are awesome. :sparkles:
 
-This page contains information to help you get started with development on this
-project.
+See the [EBP Contributing Guide](https://executablebooks.org/en/latest/contributing.html) for general details,
+then this page contains information to help you get started with development on this project.
 
 ## Feature Suggestions
 
