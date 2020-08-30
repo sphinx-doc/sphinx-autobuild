@@ -36,7 +36,7 @@ def run_with_surrounding_separators(args, *, heading, include_footer=True):
         +-----------------------------
     """
     separator_width = 80
-    header = "+" + f" {heading} ".center(separator_width, "-")
+    header = "+" + f"-- {heading} --".center(separator_width, "-")
     footer = "+" + "-" * separator_width
 
     sys.stdout.write(header + "\n")
