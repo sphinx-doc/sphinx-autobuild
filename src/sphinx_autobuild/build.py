@@ -27,13 +27,16 @@ SPHINX_BUILD_OPTIONS = (
 )
 
 
-def get_builder(sphinx_args, *, pre_build_commands):
+def get_builder(watcher, sphinx_args, *, pre_build_commands):
     """Prepare the function that calls sphinx."""
     sphinx_command = [sys.executable, "-m", "sphinx"] + sphinx_args
 
-    def build(initial=False):
+    def build():
         """Generate the documentation using ``sphinx``."""
-        heading = "initial build" if initial else "changes detected"
+        if watcher.filepath:
+            heading = f"changed: {watcher.filepath}"
+        else:
+            heading = "manual build"
 
         for command in pre_build_commands:
             run_with_surrounding_separators(

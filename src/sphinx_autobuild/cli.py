@@ -165,10 +165,12 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    build_args, pre_build_commands = _get_build_args(args)
-    builder = get_builder(build_args, pre_build_commands=pre_build_commands)
-
     server = Server()
+
+    build_args, pre_build_commands = _get_build_args(args)
+    builder = get_builder(
+        server.watcher, build_args, pre_build_commands=pre_build_commands
+    )
 
     ignore_handler = _get_ignore_handler(args)
     server.watch(srcdir, builder, ignore=ignore_handler)
@@ -178,7 +180,7 @@ def main():
     server.watch(outdir, ignore=ignore_handler)
 
     if not args.no_initial_build:
-        builder(initial=True)
+        builder()
 
     # Find the free port
     portn = args.port or find_free_port()
