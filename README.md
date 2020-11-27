@@ -46,6 +46,7 @@ optional arguments:
   --port PORT           port to serve documentation on. 0 means find and use a free port (default: 8000)
   --host HOST           hostname to serve documentation on (default: 127.0.0.1)
   --re-ignore RE_IGNORE
+  --launch FILE         sets the file to launch the browser too
                         regular expression for files to ignore, when watching for changes (default: [])
   --ignore IGNORE       glob expression for files to ignore, when watching for changes (default: [])
   --no-initial          skip the initial build (default: False)

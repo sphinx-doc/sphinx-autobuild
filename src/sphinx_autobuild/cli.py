@@ -124,6 +124,12 @@ def get_parser():
     parser.add_argument(
         "--version", action="version", version="sphinx-autobuild {}".format(__version__)
     )
+    parser.add_argument(
+        "--launch",
+        metavar="FILE",
+        type=str,
+        help="Specify filename to launch browser to",
+    )
 
     sphinx_arguments = ", ".join(
         f"-{arg}" if meta is None else f"-{arg}={meta}"
@@ -185,6 +191,14 @@ def main():
     # Find the free port
     portn = args.port or find_free_port()
     if args.openbrowser is True:
-        server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
+        server.serve(
+            port=portn,
+            host=args.host,
+            root=outdir,
+            open_url_delay=args.delay,
+            default_filename=args.launch,
+        )
     else:
-        server.serve(port=portn, host=args.host, root=outdir)
+        server.serve(
+            port=portn, host=args.host, root=outdir, default_filename=args.launch
+        )
