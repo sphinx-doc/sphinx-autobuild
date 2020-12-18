@@ -6,13 +6,29 @@ python: 3.8
 matrix:
   include:
     - env: NOXSESSION=docs
+      arch: amd64
     - env: NOXSESSION=lint
+      arch: amd64
     - python: 3.6
       env: NOXSESSION=test-3.6
+      arch: amd64
     - python: 3.7
       env: NOXSESSION=test-3.7
+      arch: amd64
     - python: 3.8
       env: NOXSESSION=test-3.8
+      arch: amd64
+    - env: NOXSESSION=docs
+      arch: ppc64le
+    - python: 3.6
+      env: NOXSESSION=test-3.6
+      arch: ppc64le
+    - python: 3.7
+      env: NOXSESSION=test-3.7
+      arch: ppc64le
+    - python: 3.8
+      env: NOXSESSION=test-3.8
+      arch: ppc64le
 
 install: pip install nox
 script: nox
