@@ -6,6 +6,7 @@ import argparse
 import os
 import shlex
 
+import colorama
 from livereload import Server
 
 from . import __version__
@@ -157,6 +158,8 @@ def get_parser():
 
 def main():
     """Actual application logic."""
+    colorama.init()
+
     parser = get_parser()
     args = parser.parse_args()
 
@@ -165,11 +168,16 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
+    portn = args.port or find_free_port()
     server = Server()
 
     build_args, pre_build_commands = _get_build_args(args)
     builder = get_builder(
-        server.watcher, build_args, pre_build_commands=pre_build_commands
+        server.watcher,
+        build_args,
+        host=args.host,
+        port=portn,
+        pre_build_commands=pre_build_commands,
     )
 
     ignore_handler = _get_ignore_handler(args)
@@ -182,8 +190,6 @@ def main():
     if not args.no_initial_build:
         builder()
 
-    # Find the free port
-    portn = args.port or find_free_port()
     if args.openbrowser is True:
         server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
     else:

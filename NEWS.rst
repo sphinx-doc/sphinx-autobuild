@@ -1,6 +1,13 @@
 Changelog
 =========
 
+unreleased
+----------
+
+* Change output handling for subprocesses.
+* Present helpful error message when the subprocesses fail.
+* Skip the main sphinx build, if pre-build commands fail.
+
 2020.09.01 - 2020-09-01
 -----------------------
 

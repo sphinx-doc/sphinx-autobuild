@@ -19,7 +19,7 @@ def _install_this_editable(session, *, extras=None):
     )
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def lint(session):
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files", *session.posargs)
@@ -35,13 +35,13 @@ def test(session):
     session.run("pytest", *args)
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def docs(session):
     _install_this_editable(session, extras=["docs"])
     session.run("sphinx-build", "-b", "html", "docs/", "build/docs")
 
 
-@nox.session(name="docs-live")
+@nox.session(name="docs-live", reuse_venv=True)
 def docs_live(session):
     _install_this_editable(session, extras=["docs"])
     session.run(
