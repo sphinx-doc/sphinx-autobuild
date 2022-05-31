@@ -101,7 +101,7 @@ When working on multiple Sphinx documentation projects simultaneously, it is req
 
 ```
 sphinx-autobuild --port=0 --open-browser pikachu/docs pikachu/docs/_build/html &
-sphinx-autobuild --port=0 --open-browser magickarp/docs magickarp/docs/_build/html &
+sphinx-autobuild --port=0 --open-browser magikarp/docs magickarp/docs/_build/html &
 ```
 
 ## Relevant Sphinx Bugs
