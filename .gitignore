@@ -16,3 +16,7 @@ __pycache__
 .coverage
 .htmlcov
 .nox
+
+# Virtualenv directories
+[v]env
+.[v]env

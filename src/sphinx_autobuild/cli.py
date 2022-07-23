@@ -145,7 +145,10 @@ def get_parser():
             )
         else:
             sphinx_parser.add_argument(
-                f"-{arg}", action="append", help=argparse.SUPPRESS, metavar=meta,
+                f"-{arg}",
+                action="append",
+                help=argparse.SUPPRESS,
+                metavar=meta,
             )
 
     parser.add_argument("sourcedir", help="source directory")

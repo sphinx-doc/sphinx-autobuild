@@ -1,13 +1,13 @@
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module = "sphinx_autobuild"
-dist-name = "sphinx-autobuild"
-description-file = "README.md"
-author = "Jonathan Stoppani"
-author-email = "jonathan@stoppani.name"
+[project]
+name = "sphinx-autobuild"
+readme = "README.md"
+authors = [
+  {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"},
+]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
@@ -15,23 +15,42 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.6",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 home-page = "https://github.com/executablebooks/sphinx-autobuild"
 license = "MIT"
-requires-python = ">=3.6"
-requires = [
+requires-python = ">=3.7"
+dependencies = [
   "sphinx",
   "livereload",
   "colorama",
 ]
 
-[tool.flit.scripts]
+[project.scripts]
 sphinx-autobuild = "sphinx_autobuild.__main__:main"
 
-[tool.flit.metadata.requires-extra]
+[project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
 docs = []
+
+[tool.coverage.run]
+branch = true
+omit = [
+  "*/conftest.py",
+  "docs/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "NOCOV",
+  "if __name__ == .__main__.:"
+]
+
+[tool.coverage.html]
+directory = ".htmlcov"
+
