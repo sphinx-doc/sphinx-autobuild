@@ -51,7 +51,7 @@ unreleased
 0.5.2 – 2015/04/10
 ------------------
 
-* Added ``-r``, ``--re-ignore`` command line argumet to exclude paths using
+* Added ``-r``, ``--re-ignore`` command line argument to exclude paths using
   regexes.
 
 
