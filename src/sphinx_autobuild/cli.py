@@ -36,7 +36,7 @@ def _get_build_args(args):
 
 
 def _get_ignore_handler(args):
-    regular = args.ignore[:]
+    regular = [os.path.realpath(path) for path in args.ignore[:]]
     regular.append(os.path.realpath(args.outdir))  # output directory
     if args.w:  # Logfile
         regular.append(os.path.realpath(args.w[0]))
