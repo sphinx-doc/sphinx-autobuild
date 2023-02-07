@@ -12,7 +12,7 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
-  "Framework :: Sphinx :: Extension",
+  "Framework :: Sphinx",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
