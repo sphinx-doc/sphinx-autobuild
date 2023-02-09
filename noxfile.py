@@ -56,11 +56,9 @@ def docs_live(session):
     _install_this_editable(session, extras=["docs"])
     cmd = [
         "sphinx-autobuild",
-        "-b",
-        "html",
+        "-b=html",
+        "--port=0",
         "docs/",
         "build/docs",
-        "--port",
-        "0",
     ]
     session.run(*cmd, *session.posargs)
