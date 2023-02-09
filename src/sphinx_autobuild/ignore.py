@@ -2,7 +2,7 @@
 import fnmatch
 import re
 from glob import glob
-from os.path import abspath
+from os.path import abspath, sep
 
 
 def get_ignore(regular, regex_based):
@@ -13,7 +13,7 @@ def get_ignore(regular, regex_based):
     def ignore(path):
         """Determine if path should be ignored."""
         # Return the full path so we make sure we handle relative paths OK
-        path = abspath(path)
+        path_expanded = abspath(path)
 
         # Any regular pattern and glob matches
         for pattern in regular_patterns:
@@ -21,17 +21,20 @@ def get_ignore(regular, regex_based):
             matched_files = [abspath(ii) for ii in glob(pattern, recursive=True)]
 
             # If this file matches any of the glob matches, we ignore it
-            if path in matched_files:
+            if path_expanded in matched_files:
                 return True
 
             # If the parent of this path matches any of the glob matches, ignore it
-            if any(path.startswith(imatch) for imatch in matched_files):
+            if any(path_expanded.startswith(imatch) for imatch in matched_files):
                 return True
 
-            # If fnmatch matches, then return True (to preserve old behavior)
-            # This one doesn't depend on the files actually being present on disk.
+            # These two checks are for preserving old behavior.
+            # They might not be necessary but leaving here just in case.
+            # Neither depends on the files actually being on disk.
             if fnmatch.fnmatch(path, pattern):
                 return True
+            if path.strip(sep).startswith(pattern.strip(sep)):
+                return True 
 
         # Any regular expression matches.
         for regex in regex_based_patterns:
