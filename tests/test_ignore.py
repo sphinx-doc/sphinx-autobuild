@@ -1,6 +1,6 @@
-from sphinx_autobuild.ignore import get_ignore
-from pathlib import Path
 from glob import glob
+
+from sphinx_autobuild.ignore import get_ignore
 
 
 def test_empty():

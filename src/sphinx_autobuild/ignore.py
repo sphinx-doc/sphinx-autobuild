@@ -34,7 +34,7 @@ def get_ignore(regular, regex_based):
             if fnmatch.fnmatch(path, pattern):
                 return True
             if path.strip(sep).startswith(pattern.strip(sep)):
-                return True 
+                return True
 
         # Any regular expression matches.
         for regex in regex_based_patterns:
