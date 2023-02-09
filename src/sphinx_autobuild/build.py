@@ -6,6 +6,8 @@ import sys
 
 from colorama import Fore, Style
 
+# Hard-coded options that we know how to pass-through to Sphinx
+# ref: https://www.sphinx-doc.org/en/master/man/sphinx-build.html#cmdoption-sphinx-build-M
 SPHINX_BUILD_OPTIONS = (
     ("b", "builder"),
     ("a", None),
@@ -23,7 +25,7 @@ SPHINX_BUILD_OPTIONS = (
     ("q", None),
     ("Q", None),
     ("w", "file"),
-    ("-keep-going", None),
+    ("keep_going", None),
     ("W", None),
     ("T", None),
     ("P", None),
