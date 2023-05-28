@@ -57,7 +57,7 @@ optional arguments:
 
 sphinx's arguments:
   The following arguments are forwarded as-is to Sphinx. Please look at `sphinx --help` for more information.
-    -b=builder, -a, -E, -d=path, -j=N, -c=path, -C, -D=setting=value, -t=tag, -A=name=value, -n, -v, -q, -Q, -w=file, -W, -T, -N, -P
+    -b=builder, -a, -E, -d=path, -j=N, -c=path, -C, -D=setting=value, -t=tag, -A=name=value, -n, -v, -q, -Q, -w=file, -W, -T, -N, -P, --keep-going, --color
 ```
 
 ### Using with Makefile

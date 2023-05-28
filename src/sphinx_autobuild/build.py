@@ -19,6 +19,7 @@ SPHINX_BUILD_OPTIONS = (
     ("A", "name=value"),
     ("n", None),
     ("N", None),
+    ("-color", None),
     ("v", None),
     ("q", None),
     ("Q", None),
