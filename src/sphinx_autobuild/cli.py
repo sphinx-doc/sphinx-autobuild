@@ -49,11 +49,12 @@ def _get_ignore_handler(args):
         import types
         from importlib.machinery import SourceFileLoader
 
-        confPath = os.path.join(args.sourcedir, "conf.py")
-        confLoader = SourceFileLoader("conf", confPath)
-        conf = types.ModuleType(confLoader.name)
-        confLoader.exec_module(conf)
-        regular = regular + conf.exclude_patterns
+        conf_path = os.path.join(args.sourcedir, "conf.py")
+        conf_loader = SourceFileLoader("conf", conf_path)
+        conf = types.ModuleType(conf_loader.name)
+        conf_loader.exec_module(conf)
+        conf_regular = [os.path.realpath(path) for path in conf.exclude_patterns]
+        regular = regular + conf_regular
     except Exception as e:
         # if either conf.py or exclude_patterns are invalid,
         # simply defer error reporting to sphinx-build
