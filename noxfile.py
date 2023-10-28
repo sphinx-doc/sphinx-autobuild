@@ -25,7 +25,7 @@ def lint(session):
     session.run("pre-commit", "run", "--all-files", *session.posargs)
 
 
-@nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11"])
+@nox.session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
     _install_this_editable(session, extras=["test"])
 
