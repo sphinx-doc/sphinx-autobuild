@@ -3,12 +3,6 @@ repos:
     rev: 23.10.1
     hooks:
       - id: black
-        args:
-          - --target-version=py37
-          - --target-version=py38
-          - --target-version=py39
-          - --target-version=py310
-          - --target-version=py311
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
