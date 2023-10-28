@@ -40,7 +40,7 @@ def show(*, context=None, command=None):
         _log(context, colour=Fore.CYAN)
     if command is not None:
         assert isinstance(command, (list, tuple))
-        _log("> " + " ".join(shlex.quote(s) for s in command), colour=Fore.BLUE)
+        _log("> " + shlex.join(command), colour=Fore.BLUE)
 
 
 def get_builder(watcher, sphinx_args, *, host, port, pre_build_commands):
