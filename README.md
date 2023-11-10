@@ -106,7 +106,7 @@ sphinx-autobuild --port=0 --open-browser magikarp/docs magickarp/docs/_build/htm
 
 ## Relevant Sphinx Bugs
 
-Sphinx does not [detect changes in non-document files in incremental mode](https://github.com/GaretJax/sphinx-autobuild/issues/34), like theme files, static files and source code used with autodoc.
+Sphinx does not [detect changes in non-document, non-code files in incremental mode](https://github.com/GaretJax/sphinx-autobuild/issues/34), like theme files and static files.
 
 At the time of writing, the only known workaround is to instruct Sphinx to rebuild the relevant pages. This can be done by disabling incremental mode (with `-a`) or passing relevant `filenames` in addition to source and output directory in the CLI.
 
