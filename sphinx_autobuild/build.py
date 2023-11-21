@@ -24,10 +24,20 @@ def show(*, context=None, command=None):
 
 
 class Builder:
-    def __init__(self, watcher, sphinx_args, *, host, port, pre_build_commands):
+    def __init__(
+        self,
+        watcher,
+        sphinx_args,
+        *,
+        host,
+        port,
+        pre_build_commands,
+        post_build_commands,
+    ):
         self.watcher = watcher
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
+        self.post_build_commands = post_build_commands
         self.uri = f"http://{host}:{port}"
 
     def __call__(self):
@@ -62,6 +72,21 @@ class Builder:
                 "Please fix the cause of the error above or press Ctrl+C to stop the "
                 "server."
             )
+
+        else:
+            # Run the post-build commands only if the build was successful
+            try:
+                for command in self.post_build_commands:
+                    show(context="post-build", command=command)
+                    subprocess.run(command, check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Post-build command exited with exit code: {e.returncode}")
+                print(
+                    "Please fix the cause of the error above or press Ctrl+C to stop"
+                    " the server."
+                )
+                raise
+
         # We present this information, so that the user does not need to keep track
         # of the port being used. It is presented by livereload when starting the
         # server, so don't present it in the initial build.

@@ -34,12 +34,14 @@ def main():
     server = Server()
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
+    post_build_commands = list(map(shlex.split, args.post_build))
     builder = Builder(
         server.watcher,
         build_args,
         host=args.host,
         port=port_num,
         pre_build_commands=pre_build_commands,
+        post_build_commands=post_build_commands,
     )
 
     ignore_handler = _get_ignore_handler(
@@ -175,6 +177,13 @@ def _add_autobuild_arguments(parser):
         metavar="COMMAND",
         default=[],
         help="additional command(s) to run prior to building the documentation",
+    )
+    group.add_argument(
+        "--post-build",
+        action="append",
+        metavar="COMMAND",
+        default=[],
+        help="additional command(s) to run after building the documentation",
     )
     return group
 
