@@ -15,9 +15,10 @@ from sphinx_autobuild.utils import show_command, show_message
 
 
 class Builder:
-    def __init__(self, sphinx_args, *, url_host, pre_build_commands):
+    def __init__(self, sphinx_args, *, url_host, pre_build_commands, post_build_commands):
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
+        self.post_build_commands = post_build_commands
         self.uri = f"http://{url_host}"
 
     def __call__(self, *, changed_paths: Sequence[Path]):
@@ -70,5 +71,20 @@ class Builder:
                 "Please fix the cause of the error above or press Ctrl+C to stop the "
                 "server."
             )
+        else:
+            # Run the post-build commands only if the build was successful
+            try:
+                for command in self.post_build_commands:
+                    show_message("post-build")
+                    show_command(command)
+                    subprocess.run(command, check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Post-build command exited with exit code: {e.returncode}")
+                print(
+                    "Please fix the cause of the error above or press Ctrl+C to stop"
+                    " the server."
+                )
+                raise
+
         # Remind the user of the server URL for convenience.
         show_message(f"Serving on {self.uri}")

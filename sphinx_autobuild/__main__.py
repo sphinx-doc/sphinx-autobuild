@@ -49,11 +49,12 @@ def main(argv=()):
     url_host = f"{host_name}:{port_num}"
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
-
+    post_build_commands = list(map(shlex.split, args.post_build))
     builder = Builder(
         build_args,
         url_host=url_host,
         pre_build_commands=pre_build_commands,
+        post_build_commands=post_build_commands,
     )
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
@@ -232,6 +233,13 @@ def _add_autobuild_arguments(parser):
         metavar="COMMAND",
         default=[],
         help="additional command(s) to run prior to building the documentation",
+    )
+    group.add_argument(
+        "--post-build",
+        action="append",
+        metavar="COMMAND",
+        default=[],
+        help="additional command(s) to run after building the documentation",
     )
     return group
 

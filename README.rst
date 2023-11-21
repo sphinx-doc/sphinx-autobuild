@@ -67,6 +67,7 @@ which can seen by running ``sphinx-autobuild --help``:
      --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
+     --post-build COMMAND  additional command(s) to run after building the documentation (default: [])
 
 Using with Makefile
 -------------------
@@ -125,6 +126,14 @@ This results in slower builds, but it ensures that
 all pages are built from the same state of the HTML theme.
 It also works around a `known issue in Sphinx <relevant sphinx bugs_>`__
 which causes significant problems during theme development.
+
+Post-build resources can be processed by passing a user-defined command to
+``--post-build``.
+
+.. code-block:: bash
+   
+   --post-build "npx tailwindcss -i ./src/input.css -o ./src/output.css"
+
 
 Working on multiple projects
 ----------------------------
