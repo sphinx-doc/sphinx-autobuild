@@ -1,4 +1,10 @@
-"""Development automation."""
+"""Development automation. Use this to build the documentation and run tests.
+
+To install IPython for interactive debugging:
+
+    nox -s <name> -- -i
+
+"""
 
 import nox
 
@@ -17,6 +23,10 @@ def _install_this_editable(session, *, extras=None):
         ",".join(extras),
         silent=True,
     )
+
+    if "-i" in session.posargs:
+        session.posargs.pop(session.posargs.index("-i"))
+        session.install("ipython")
 
 
 @nox.session(reuse_venv=True)
@@ -44,6 +54,11 @@ def docs(session):
 @nox.session(name="docs-live", reuse_venv=True)
 def docs_live(session):
     _install_this_editable(session, extras=["docs"])
-    session.run(
-        "sphinx-autobuild", "-b", "html", "docs/", "build/docs", *session.posargs
-    )
+    cmd = [
+        "sphinx-autobuild",
+        "-b=html",
+        "--port=0",
+        "docs/",
+        "build/docs",
+    ]
+    session.run(*cmd, *session.posargs)
