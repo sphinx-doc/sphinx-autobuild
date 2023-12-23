@@ -3,12 +3,15 @@ repos:
     rev: 23.1.0
     hooks:
       - id: black
-        args:
-          - --target-version=py37
-          - --target-version=py38
-          - --target-version=py39
-          - --target-version=py310
-          - --target-version=py311
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        args: [--py38-plus]
+
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 23.10.1
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.12.0
@@ -18,12 +21,12 @@ repos:
         args: ["--profile", "black"]
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-builtin-literals
       - id: check-added-large-files
@@ -35,14 +38,14 @@ repos:
       - id: forbid-new-submodules
       - id: trailing-whitespace
 
-  - repo: https://github.com/PyCQA/pydocstyle.git
-    rev: '6.3.0'
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
     hooks:
       - id: pydocstyle
         files: src/.*\.py$
 
   - repo: https://github.com/asottile/blacken-docs
-    rev: 1.13.0
+    rev: 1.16.0
     hooks:
       - id: blacken-docs
-        additional_dependencies: [black==22.10.0]
+        additional_dependencies: [black==23.10.1]

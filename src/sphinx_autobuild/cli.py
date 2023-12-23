@@ -123,7 +123,7 @@ def get_parser():
         help="additional command(s) to run prior to building the documentation",
     )
     parser.add_argument(
-        "--version", action="version", version="sphinx-autobuild {}".format(__version__)
+        "--version", action="version", version=f"sphinx-autobuild {__version__}"
     )
 
     sphinx_arguments = ", ".join(
