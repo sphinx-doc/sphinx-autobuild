@@ -1,4 +1,4 @@
-"""Main implementation."""
+"""Entrypoint for ``python -m sphinx_autobuild``."""
 
 from . import _hacks  # isort:skip  # noqa
 
@@ -198,3 +198,7 @@ def main():
         server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
     else:
         server.serve(port=portn, host=args.host, root=outdir)
+
+
+if __name__ == "__main__":
+    main()
