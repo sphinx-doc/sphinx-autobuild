@@ -4,18 +4,17 @@ import os
 import re
 
 
-def get_ignore(regular, regex_based):
+def get_ignore(regular_patterns, regex_based):
     """Prepare the function that determines whether a path should be ignored."""
-    regular_patterns = regular
-    regex_based_patterns = [re.compile(r) for r in regex_based]
+    regex_based_patterns = list(map(re.compile, regex_based))
 
     def ignore(path):
         """Determine if path should be ignored."""
         # Any regular pattern matches.
         for pattern in regular_patterns:
-            if fnmatch.fnmatch(path, pattern):
+            if path.startswith((pattern + os.sep, pattern + '/')):
                 return True
-            if path.startswith(pattern + os.sep):
+            if fnmatch.fnmatch(path, pattern):
                 return True
 
         # Any regular expression matches.
