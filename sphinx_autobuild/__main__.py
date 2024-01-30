@@ -19,7 +19,7 @@ def _get_build_args(args):
     build_args = []
     arg_dict = vars(args)  # Convert the args namespace to a dictionary
     for opt, meta in SPHINX_BUILD_OPTIONS:
-        arg = opt[1:]  # remove leading '-'
+        arg = opt.removeprefix("-")  # remove leading '-'
         val = arg_dict.get(arg)
         if val is None:
             continue
