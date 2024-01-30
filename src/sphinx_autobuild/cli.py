@@ -17,9 +17,10 @@ from .utils import find_free_port
 
 def _get_build_args(args):
     build_args = []
+    arg_dict = vars(args)  # Convert the args namespace to a dictionary
     for arg, meta in SPHINX_BUILD_OPTIONS:
-        val = getattr(args, arg)
-        if not val:
+        val = arg_dict.get(arg)
+        if val is None:
             continue
         opt = f"-{arg}"
         if meta is None:
