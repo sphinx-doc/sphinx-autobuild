@@ -8,7 +8,7 @@ from tornado.web import OutputTransform
 
 
 # Why do we do this?
-# See https://github.com/GaretJax/sphinx-autobuild/issues/71#issuecomment-681854580
+# See https://github.com/sphinx-doc/sphinx-autobuild/issues/71#issuecomment-681854580
 class _FixedLiveScriptInjector(server.LiveScriptInjector):
     def __init__(self, request):
         # NOTE: Using super() here causes an infinite cycle, due to

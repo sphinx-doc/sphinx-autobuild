@@ -162,7 +162,7 @@ to instruct Sphinx to rebuild the relevant pages.
 This can be done by disabling incremental mode (with ``-a``)
 or passing relevant ``filenames`` in addition to source and output directory in the CLI.
 
-__ https://github.com/GaretJax/sphinx-autobuild/issues/34
+__ https://github.com/sphinx-doc/sphinx-autobuild/issues/34
 
 Acknowledgements
 ================
@@ -178,5 +178,5 @@ This project is better thanks to your contribution.
 .. _Sphinx: https://sphinx-doc.org/
 .. _LiveReload: https://livereload.com/
 .. _python-livereload: https://github.com/lepture/python-livereload
-.. _contributed code: https://github.com/GaretJax/sphinx-autobuild/graphs/contributors
-.. _discussions on the issue tracker: https://github.com/GaretJax/sphinx-autobuild/issues
+.. _contributed code: https://github.com/sphinx-doc/sphinx-autobuild/graphs/contributors
+.. _discussions on the issue tracker: https://github.com/sphinx-doc/sphinx-autobuild/issues

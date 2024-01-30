@@ -34,9 +34,9 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/executablebooks/sphinx-autobuild#readme"
-Issues = "https://github.com/executablebooks/sphinx-autobuild/issues"
-Source = "https://github.com/executablebooks/sphinx-autobuild"
+Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
+Issues = "https://github.com/sphinx-doc/sphinx-autobuild/issues"
+Source = "https://github.com/sphinx-doc/sphinx-autobuild"
 
 [project.scripts]
 sphinx-autobuild = "sphinx_autobuild.__main__:main"
