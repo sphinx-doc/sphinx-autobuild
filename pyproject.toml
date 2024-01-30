@@ -1,49 +1,77 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
+requires = ["flit_core>=3.7"]
 build-backend = "flit_core.buildapi"
 
+# project metadata
 [project]
 name = "sphinx-autobuild"
 description = "Rebuild Sphinx documentation on changes, with live-reload in the browser."
-dynamic = ["version"]
 readme = "README.rst"
-authors = [
-  {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"},
-]
-classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Framework :: Sphinx",
-  "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-]
-license = {file = "LICENSE"}
+urls.Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
+urls.Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
+urls.Download = "https://pypi.org/project/sphinx-autobuild/"
+urls."Issue tracker" = "https://github.com/sphinx-doc/sphinx-autobuild/issues"
+urls.Source = "https://github.com/sphinx-doc/sphinx-autobuild"
+license.text = "MIT"
 requires-python = ">=3.8"
+
+# Classifiers list: https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Framework :: Sphinx",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Documentation",
+    "Topic :: Documentation :: Sphinx",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
 dependencies = [
   "sphinx",
   "livereload",
   "colorama",
 ]
+dynamic = ["version"]
 
-[project.urls]
-Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
-Issues = "https://github.com/sphinx-doc/sphinx-autobuild/issues"
-Source = "https://github.com/sphinx-doc/sphinx-autobuild"
+[project.optional-dependencies]
+docs = []
+test = [
+    "pytest>=6.0",
+    "pytest-cov",
+]
+
+[[project.authors]]
+name = "Jonathan Stoppani"
+email = "jonathan@stoppani.name"
 
 [project.scripts]
 sphinx-autobuild = "sphinx_autobuild.__main__:main"
 
-[project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
-docs = []
+[tool.flit.sdist]
+include = [
+    "AUTHORS.rst",
+    "LICENSE.rst",
+    "NEWS.rst",
+    # Tests
+    "tests/",
+    "noxfile.py",
+]
 
 [tool.coverage.run]
 branch = true
