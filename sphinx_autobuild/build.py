@@ -7,22 +7,28 @@ import sys
 from colorama import Fore, Style
 
 SPHINX_BUILD_OPTIONS = (
+    # general options
     ("-b", "builder"),
     ("-a", None),
     ("-E", None),
-    ("-t", "tag"),
-    ("-d", "path"),
     ("-j", "N"),
+    ("--jobs", "N"),
+    # path options
+    ("-d", "path"),
     ("-c", "path"),
+    # build configuration options
     ("-C", None),
     ("-D", "setting=value"),
     ("-A", "name=value"),
+    ("-t", "tag"),
     ("-n", None),
-    ("-N", None),
-    ("--color", None),
+    # console output options
     ("-v", None),
     ("-q", None),
     ("-Q", None),
+    ("--color", None),
+    ("-N", None),
+    # warning control options
     ("-w", "file"),
     ("--keep-going", None),
     ("-W", None),
