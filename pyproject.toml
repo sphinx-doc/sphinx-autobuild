@@ -6,7 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "sphinx-autobuild"
 description = "Rebuild Sphinx documentation on changes, with live-reload in the browser."
 dynamic = ["version"]
-readme = "README.md"
+readme = "README.rst"
 authors = [
   {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"},
 ]
