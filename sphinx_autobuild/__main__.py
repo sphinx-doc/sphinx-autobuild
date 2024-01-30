@@ -1,6 +1,6 @@
 """Entrypoint for ``python -m sphinx_autobuild``."""
 
-from . import _hacks  # isort:skip  # noqa
+from sphinx_autobuild import _hacks  # isort:skip  # noqa
 
 import argparse
 import os
@@ -9,10 +9,10 @@ import shlex
 import colorama
 from livereload import Server
 
-from . import __version__
-from .build import SPHINX_BUILD_OPTIONS, get_builder
-from .ignore import get_ignore
-from .utils import find_free_port
+from sphinx_autobuild import __version__
+from sphinx_autobuild.build import SPHINX_BUILD_OPTIONS, get_builder
+from sphinx_autobuild.ignore import get_ignore
+from sphinx_autobuild.utils import find_free_port
 
 
 def _get_build_args(args):
