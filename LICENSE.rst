@@ -1,3 +1,6 @@
+The MIT Licence
+===============
+
 Copyright (c) 2020, Pradyun Gedam
 Copyright (c) 2013, Jonathan Stoppani
 
