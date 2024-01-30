@@ -45,6 +45,22 @@ def _get_ignore_handler(args):
         regular.append(os.path.realpath(args.d[0]))
 
     regex_based = args.re_ignore
+
+    try:
+        import types
+        from importlib.machinery import SourceFileLoader
+
+        conf_path = os.path.join(args.sourcedir, "conf.py")
+        conf_loader = SourceFileLoader("conf", conf_path)
+        conf = types.ModuleType(conf_loader.name)
+        conf_loader.exec_module(conf)
+        conf_regular = [os.path.realpath(path) for path in conf.exclude_patterns]
+        regular = regular + conf_regular
+    except Exception as e:
+        # if either conf.py or exclude_patterns are invalid,
+        # simply defer error reporting to sphinx-build
+        pass
+
     return get_ignore(regular, regex_based)
 
 
