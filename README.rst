@@ -2,6 +2,14 @@
 sphinx-autobuild
 ================
 
+.. image:: https://img.shields.io/pypi/v/sphinx-autobuild.svg
+   :target: https://pypi.org/project/sphinx-autobuild/
+   :alt: Package on PyPI
+
+.. image:: https://img.shields.io/badge/License-MIT-blue.svg
+   :target: https://opensource.org/licenses/MIT
+   :alt: MIT
+
 Rebuild Sphinx documentation on changes, with live-reload in the browser.
 
 .. image:: ./docs/_static/demo.png
