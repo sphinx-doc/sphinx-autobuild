@@ -128,8 +128,7 @@ def get_parser():
     )
 
     sphinx_arguments = ", ".join(
-        arg if meta is None else f"{arg}={meta}"
-        for arg, meta in SPHINX_BUILD_OPTIONS
+        arg if meta is None else f"{arg}={meta}" for arg, meta in SPHINX_BUILD_OPTIONS
     )
     sphinx_parser = parser.add_argument_group(
         "sphinx's arguments",
@@ -141,9 +140,7 @@ def get_parser():
 
     for arg, meta in SPHINX_BUILD_OPTIONS:
         if meta is None:
-            sphinx_parser.add_argument(
-                arg, action="count", help=argparse.SUPPRESS
-            )
+            sphinx_parser.add_argument(arg, action="count", help=argparse.SUPPRESS)
         else:
             sphinx_parser.add_argument(
                 arg,

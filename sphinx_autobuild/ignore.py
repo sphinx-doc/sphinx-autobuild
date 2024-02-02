@@ -12,7 +12,7 @@ def get_ignore(regular_patterns, regex_based):
         """Determine if path should be ignored."""
         # Any regular pattern matches.
         for pattern in regular_patterns:
-            if path.startswith((pattern + os.sep, pattern + '/')):
+            if path.startswith((pattern + os.sep, pattern + "/")):
                 return True
             if fnmatch.fnmatch(path, pattern):
                 return True
