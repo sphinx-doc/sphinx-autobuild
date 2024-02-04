@@ -36,17 +36,6 @@ def _get_build_args(args):
     return build_args, pre_build_commands
 
 
-def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file):
-    regular = list(map(os.path.realpath, ignore))
-    regular.append(os.path.realpath(out_dir))  # output directory
-    if doctree_dir:  # Doctrees
-        regular.append(os.path.realpath(doctree_dir))
-    if warnings_file:  # Logfile
-        regular.append(os.path.realpath(warnings_file))
-
-    return Ignore(regular, regex_based)
-
-
 def get_parser():
     """Get the application's argument parser.
 
@@ -157,6 +146,17 @@ def get_parser():
         "filenames", nargs="*", help="specific files to rebuild on each run"
     )
     return parser
+
+
+def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file):
+    regular = list(map(os.path.realpath, ignore))
+    regular.append(os.path.realpath(out_dir))  # output directory
+    if doctree_dir:  # Doctrees
+        regular.append(os.path.realpath(doctree_dir))
+    if warnings_file:  # Logfile
+        regular.append(os.path.realpath(warnings_file))
+
+    return Ignore(regular, regex_based)
 
 
 def main():
