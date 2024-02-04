@@ -10,7 +10,7 @@ import colorama
 from livereload import Server
 
 from sphinx_autobuild import __version__
-from sphinx_autobuild.build import SPHINX_BUILD_OPTIONS, get_builder
+from sphinx_autobuild.build import SPHINX_BUILD_OPTIONS, Builder
 from sphinx_autobuild.ignore import get_ignore
 from sphinx_autobuild.utils import find_free_port
 
@@ -176,7 +176,7 @@ def main():
     server = Server()
 
     build_args, pre_build_commands = _get_build_args(args)
-    builder = get_builder(
+    builder = Builder(
         server.watcher,
         build_args,
         host=args.host,

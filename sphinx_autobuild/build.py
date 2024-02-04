@@ -51,39 +51,43 @@ def show(*, context=None, command=None):
         _log(msg, colour=Fore.BLUE)
 
 
-def get_builder(watcher, sphinx_args, *, host, port, pre_build_commands):
-    """Prepare the function that calls sphinx."""
-    sphinx_command = [sys.executable, "-m", "sphinx"] + sphinx_args
+class Builder:
+    def __init__(self, watcher, sphinx_args, *, host, port, pre_build_commands):
+        self.watcher = watcher
+        self.sphinx_args = sphinx_args
+        self.pre_build_commands = pre_build_commands
+        self.uri = f"http://{host}:{port}"
 
-    def build():
+    def __call__(self):
         """Generate the documentation using ``sphinx``."""
-        if watcher.filepath:
-            show(context=f"Detected change: {watcher.filepath}")
+
+        sphinx_command = [sys.executable, "-m", "sphinx"] + self.sphinx_args
+
+        if self.watcher.filepath:
+            show(context=f"Detected change: {self.watcher.filepath}")
 
         try:
-            for command in pre_build_commands:
+            for command in self.pre_build_commands:
                 show(context="pre-build", command=command)
                 subprocess.run(command, check=True)
 
-            show(command=["sphinx-build"] + sphinx_args)
+            show(command=["sphinx-build"] + self.sphinx_args)
             subprocess.run(sphinx_command, check=True)
         except subprocess.CalledProcessError as e:
-            cmd_exit(e.returncode)
+            self.cmd_exit(e.returncode)
         finally:
             # We present this information, so that the user does not need to keep track
             # of the port being used. It is presented by livereload when starting the
             # server, so don't present it in the initial build.
-            if watcher.filepath:
-                show(context=f"Serving on http://{host}:{port}")
+            if self.watcher.filepath:
+                show(context=f"Serving on {self.uri}")
 
-    return build
-
-
-def cmd_exit(return_code):
-    print(f"Command exited with exit code: {return_code}")
-    print(
-        "The server will continue serving the build folder, but the contents "
-        "being served are no longer in sync with the documentation sources. "
-        "Please fix the cause of the error above or press Ctrl+C to stop the "
-        "server."
-    )
+    @staticmethod
+    def cmd_exit(return_code):
+        print(f"Command exited with exit code: {return_code}")
+        print(
+            "The server will continue serving the build folder, but the contents "
+            "being served are no longer in sync with the documentation sources. "
+            "Please fix the cause of the error above or press Ctrl+C to stop the "
+            "server."
+        )
