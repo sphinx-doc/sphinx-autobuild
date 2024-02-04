@@ -170,7 +170,7 @@ def main():
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    portn = args.port or find_free_port()
+    port_num = args.port or find_free_port()
     server = Server()
 
     build_args = _get_build_args(args)
@@ -179,7 +179,7 @@ def main():
         server.watcher,
         build_args,
         host=args.host,
-        port=portn,
+        port=port_num,
         pre_build_commands=pre_build_commands,
     )
 
@@ -195,9 +195,9 @@ def main():
         builder()
 
     if args.openbrowser is True:
-        server.serve(port=portn, host=args.host, root=outdir, open_url_delay=args.delay)
+        server.serve(port=port_num, host=args.host, root=outdir, open_url_delay=args.delay)
     else:
-        server.serve(port=portn, host=args.host, root=outdir)
+        server.serve(port=port_num, host=args.host, root=outdir)
 
 
 if __name__ == "__main__":
