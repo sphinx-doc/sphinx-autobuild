@@ -4,6 +4,19 @@ Changelog
 unreleased
 ----------
 
+2024.02.04 - 2024-02-04
+-----------------------
+
+* Declare support for Python 3.9, 3.10, 3.11, and 3.12
+* Drop support for Python 3.8 and earlier
+* Allow passing relative paths to ``--ignore``
+* Support all valid ``sphinx-build`` options (except Make-mode)
+* Fix path issues on Windows
+* Differentiate pre-build command failures from Sphinx failures
+
+2021.03.14 - 2021-03-14
+-----------------------
+
 * Change output handling for subprocesses.
 * Present helpful error message when the subprocesses fail.
 * Skip the main sphinx build, if pre-build commands fail.
