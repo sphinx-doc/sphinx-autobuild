@@ -5,97 +5,120 @@ from sphinx_autobuild import _hacks  # isort:skip  # noqa
 import argparse
 import os
 import shlex
+import sys
 
 import colorama
 from livereload import Server
 
+# This isn't public API, but there aren't many better options
+from sphinx.cmd.build import get_parser as sphinx_get_parser
+
 from sphinx_autobuild import __version__
-from sphinx_autobuild.build import SPHINX_BUILD_OPTIONS, Builder
+from sphinx_autobuild.build import Builder
 from sphinx_autobuild.ignore import Ignore
 from sphinx_autobuild.utils import find_free_port
 
 
-def _get_build_args(args):
-    build_args = []
-    arg_dict = vars(args)  # Convert the args namespace to a dictionary
-    for opt, meta in SPHINX_BUILD_OPTIONS:
-        arg = opt.removeprefix("-")  # remove leading '-'
-        val = arg_dict.get(arg)
-        if val is None:
-            continue
-        if meta is None:
-            build_args.extend([opt] * val)
-        else:
-            for v in val:
-                build_args.extend([opt, v])
+def _parse_args(argv):
+    # Parse once with the Sphinx parser to emit errors
+    # and capture the ``-d`` and ``-w`` options.
+    # NOTE:
+    # The Sphinx parser is not considered to be public API,
+    # but as this is a first-party project, we can cheat a little bit.
+    sphinx_args = _get_sphinx_build_parser().parse_args(argv.copy())
+    print(f"{sphinx_args.filenames=}")
 
-    build_args.extend([os.path.realpath(args.sourcedir), os.path.realpath(args.outdir)])
-    build_args.extend(args.filenames)
+    # Parse a second time with just our parser
+    parser = _get_parser()
+    args, build_args = parser.parse_known_args(argv.copy())
 
-    return build_args
+    # Copy needed settings
+    args.sourcedir = sphinx_args.sourcedir
+    args.outdir = sphinx_args.outputdir
+    args.doctree_dir = sphinx_args.doctreedir
+    args.warnings_file = sphinx_args.warnfile
+
+    return args, build_args
 
 
-def get_parser():
-    """Get the application's argument parser.
+def _get_sphinx_build_parser():
+    # NOTE:
+    # sphinx.cmd.build.get_parser is not considered to be public API,
+    # but as this is a first-party project, we can cheat a little bit.
+    sphinx_build_parser = sphinx_get_parser()
+    sphinx_build_parser.description = None
+    sphinx_build_parser.epilog = None
+    sphinx_build_parser.prog = "sphinx-autobuild"
+    for action in sphinx_build_parser._actions:
+        if hasattr(action, "version"):
+            # Fix the version
+            action.version = f"%(prog)s {__version__}"
+            break
+    _add_autobuild_arguments(sphinx_build_parser)
 
-    Note: this also handles SPHINX_BUILD_OPTIONS, which later get forwarded to
-    sphinx-build as-is.
-    """
+    return sphinx_build_parser
 
-    class RawTextArgumentDefaultsHelpFormatter(
-        argparse.ArgumentDefaultsHelpFormatter, argparse.RawTextHelpFormatter
-    ):
-        pass
 
-    parser = argparse.ArgumentParser(
-        formatter_class=RawTextArgumentDefaultsHelpFormatter
-    )
+def _get_parser():
+    """Get the application's argument parser."""
+
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
+        "--version", action="version", version=f"sphinx-autobuild {__version__}"
+    )
+    _add_autobuild_arguments(parser)
+
+    return parser
+
+
+def _add_autobuild_arguments(parser):
+    group = parser.add_argument_group('autobuild options')
+    group.add_argument(
         "--port",
         type=int,
         default=8000,
         help="port to serve documentation on. 0 means find and use a free port",
     )
-    parser.add_argument(
+    group.add_argument(
         "--host",
         type=str,
         default="127.0.0.1",
         help="hostname to serve documentation on",
     )
-    parser.add_argument(
+    group.add_argument(
         "--re-ignore",
         action="append",
         default=[],
         help="regular expression for files to ignore, when watching for changes",
     )
-    parser.add_argument(
+    group.add_argument(
         "--ignore",
         action="append",
         default=[],
         help="glob expression for files to ignore, when watching for changes",
     )
-    parser.add_argument(
+    group.add_argument(
         "--no-initial",
         dest="no_initial_build",
         action="store_true",
         default=False,
         help="skip the initial build",
     )
-    parser.add_argument(
+    group.add_argument(
         "--open-browser",
         dest="openbrowser",
         action="store_true",
         default=False,
         help="open the browser after building documentation",
     )
-    parser.add_argument(
+    group.add_argument(
         "--delay",
         dest="delay",
         type=int,
         default=5,
         help="how long to wait before opening the browser",
     )
-    parser.add_argument(
+    group.add_argument(
         "--watch",
         action="append",
         metavar="DIR",
@@ -103,48 +126,14 @@ def get_parser():
         help="additional directories to watch",
         dest="additional_watched_dirs",
     )
-    parser.add_argument(
+    group.add_argument(
         "--pre-build",
         action="append",
         metavar="COMMAND",
         default=[],
         help="additional command(s) to run prior to building the documentation",
     )
-    parser.add_argument(
-        "--version", action="version", version=f"sphinx-autobuild {__version__}"
-    )
-
-    sphinx_arguments = ", ".join(
-        arg if meta is None else f"{arg}={meta}"
-        for arg, meta in SPHINX_BUILD_OPTIONS
-    )
-    sphinx_parser = parser.add_argument_group(
-        "sphinx's arguments",
-        (
-            "The following arguments are forwarded as-is to Sphinx. Please look at "
-            f"`sphinx --help` for more information.\n  {sphinx_arguments}"
-        ),
-    )
-
-    for arg, meta in SPHINX_BUILD_OPTIONS:
-        if meta is None:
-            sphinx_parser.add_argument(
-                arg, action="count", help=argparse.SUPPRESS
-            )
-        else:
-            sphinx_parser.add_argument(
-                arg,
-                action="append",
-                help=argparse.SUPPRESS,
-                metavar=meta,
-            )
-
-    parser.add_argument("sourcedir", help="source directory")
-    parser.add_argument("outdir", help="output directory for built documentation")
-    parser.add_argument(
-        "filenames", nargs="*", help="specific files to rebuild on each run"
-    )
-    return parser
+    return group
 
 
 def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file):
@@ -162,8 +151,7 @@ def main():
     """Actual application logic."""
     colorama.init()
 
-    parser = get_parser()
-    args = parser.parse_args()
+    args, build_args = _parse_args(sys.argv[1:])
 
     srcdir = os.path.realpath(args.sourcedir)
     outdir = os.path.realpath(args.outdir)
@@ -173,7 +161,6 @@ def main():
     port_num = args.port or find_free_port()
     server = Server()
 
-    build_args = _get_build_args(args)
     pre_build_commands = list(map(shlex.split, args.pre_build))
     builder = Builder(
         server.watcher,
@@ -184,7 +171,7 @@ def main():
     )
 
     ignore_handler = _get_ignore_handler(args.ignore, args.re_ignore, outdir,
-                                         args.w, args.d)
+                                         args.warnings_file, args.doctree_dir)
     server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
