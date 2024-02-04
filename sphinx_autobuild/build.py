@@ -4,6 +4,7 @@ import shlex
 import subprocess
 
 from colorama import Fore, Style
+
 # This isn't public API, but we want to avoid a subprocess call
 from sphinx.cmd.build import build_main
 

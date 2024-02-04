@@ -12,8 +12,10 @@ class Ignore:
         self.regex_based_patterns = list(map(re.compile, regex_based))
 
     def __repr__(self):
-        return (f"Ignore(regular={self.regular_patterns!r}, "
-                f"regex_based={self.regex_based_patterns!r})")
+        return (
+            f"Ignore(regular={self.regular_patterns!r}, "
+            f"regex_based={self.regex_based_patterns!r})"
+        )
 
     def __call__(self, path):
         """Determine if 'path' should be ignored."""

@@ -42,8 +42,9 @@ def main():
         pre_build_commands=pre_build_commands,
     )
 
-    ignore_handler = _get_ignore_handler(args.ignore, args.re_ignore, outdir,
-                                         args.warnings_file, args.doctree_dir)
+    ignore_handler = _get_ignore_handler(
+        args.ignore, args.re_ignore, outdir, args.warnings_file, args.doctree_dir
+    )
     server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
@@ -54,7 +55,9 @@ def main():
         builder()
 
     if args.openbrowser is True:
-        server.serve(port=port_num, host=args.host, root=outdir, open_url_delay=args.delay)
+        server.serve(
+            port=port_num, host=args.host, root=outdir, open_url_delay=args.delay
+        )
     else:
         server.serve(port=port_num, host=args.host, root=outdir)
 
@@ -112,7 +115,7 @@ def _get_parser():
 
 
 def _add_autobuild_arguments(parser):
-    group = parser.add_argument_group('autobuild options')
+    group = parser.add_argument_group("autobuild options")
     group.add_argument(
         "--port",
         type=int,
