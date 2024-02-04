@@ -11,7 +11,7 @@ from livereload import Server
 
 from sphinx_autobuild import __version__
 from sphinx_autobuild.build import SPHINX_BUILD_OPTIONS, Builder
-from sphinx_autobuild.ignore import get_ignore
+from sphinx_autobuild.ignore import Ignore
 from sphinx_autobuild.utils import find_free_port
 
 
@@ -36,16 +36,15 @@ def _get_build_args(args):
     return build_args, pre_build_commands
 
 
-def _get_ignore_handler(args):
-    regular = [os.path.realpath(path) for path in args.ignore[:]]
-    regular.append(os.path.realpath(args.outdir))  # output directory
-    if args.w:  # Logfile
-        regular.append(os.path.realpath(args.w[0]))
-    if args.d:  # Doctrees
-        regular.append(os.path.realpath(args.d[0]))
+def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file):
+    regular = list(map(os.path.realpath, ignore))
+    regular.append(os.path.realpath(out_dir))  # output directory
+    if doctree_dir:  # Doctrees
+        regular.append(os.path.realpath(doctree_dir))
+    if warnings_file:  # Logfile
+        regular.append(os.path.realpath(warnings_file))
 
-    regex_based = args.re_ignore
-    return get_ignore(regular, regex_based)
+    return Ignore(regular, regex_based)
 
 
 def get_parser():
@@ -184,7 +183,8 @@ def main():
         pre_build_commands=pre_build_commands,
     )
 
-    ignore_handler = _get_ignore_handler(args)
+    ignore_handler = _get_ignore_handler(args.ignore, args.re_ignore, outdir,
+                                         args.w, args.d)
     server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
