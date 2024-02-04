@@ -42,12 +42,13 @@ def _log(text, *, colour):
 
 
 def show(*, context=None, command=None):
-    """Show context and command-to-be-executed, with nice formatting and colors."""
+    """Show context and command-to-be-executed, with nice formatting and colours."""
     if context is not None:
         _log(context, colour=Fore.CYAN)
     if command is not None:
         assert isinstance(command, (list, tuple))
-        _log("> " + shlex.join(command), colour=Fore.BLUE)
+        msg = f"> {shlex.join(command)}"
+        _log(msg, colour=Fore.BLUE)
 
 
 def get_builder(watcher, sphinx_args, *, host, port, pre_build_commands):
@@ -67,13 +68,7 @@ def get_builder(watcher, sphinx_args, *, host, port, pre_build_commands):
             show(command=["sphinx-build"] + sphinx_args)
             subprocess.run(sphinx_command, check=True)
         except subprocess.CalledProcessError as e:
-            print(f"Command exited with exit code: {e.returncode}")
-            print(
-                "The server will continue serving the build folder, but the contents "
-                "being served are no longer in sync with the documentation sources. "
-                "Please fix the cause of the error above or press Ctrl+C to stop the "
-                "server."
-            )
+            cmd_exit(e.returncode)
         finally:
             # We present this information, so that the user does not need to keep track
             # of the port being used. It is presented by livereload when starting the
@@ -82,3 +77,13 @@ def get_builder(watcher, sphinx_args, *, host, port, pre_build_commands):
                 show(context=f"Serving on http://{host}:{port}")
 
     return build
+
+
+def cmd_exit(return_code):
+    print(f"Command exited with exit code: {return_code}")
+    print(
+        "The server will continue serving the build folder, but the contents "
+        "being served are no longer in sync with the documentation sources. "
+        "Please fix the cause of the error above or press Ctrl+C to stop the "
+        "server."
+    )
