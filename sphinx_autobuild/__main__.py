@@ -19,6 +19,46 @@ from sphinx_autobuild.ignore import Ignore
 from sphinx_autobuild.utils import find_free_port
 
 
+def main():
+    """Actual application logic."""
+    colorama.init()
+
+    args, build_args = _parse_args(sys.argv[1:])
+
+    srcdir = os.path.realpath(args.sourcedir)
+    outdir = os.path.realpath(args.outdir)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    port_num = args.port or find_free_port()
+    server = Server()
+
+    pre_build_commands = list(map(shlex.split, args.pre_build))
+    builder = Builder(
+        server.watcher,
+        build_args,
+        host=args.host,
+        port=port_num,
+        pre_build_commands=pre_build_commands,
+    )
+
+    ignore_handler = _get_ignore_handler(args.ignore, args.re_ignore, outdir,
+                                         args.warnings_file, args.doctree_dir)
+    server.watch(srcdir, builder, ignore=ignore_handler)
+    for dirpath in args.additional_watched_dirs:
+        dirpath = os.path.realpath(dirpath)
+        server.watch(dirpath, builder, ignore=ignore_handler)
+    server.watch(outdir, ignore=ignore_handler)
+
+    if not args.no_initial_build:
+        builder()
+
+    if args.openbrowser is True:
+        server.serve(port=port_num, host=args.host, root=outdir, open_url_delay=args.delay)
+    else:
+        server.serve(port=port_num, host=args.host, root=outdir)
+
+
 def _parse_args(argv):
     # Parse once with the Sphinx parser to emit errors
     # and capture the ``-d`` and ``-w`` options.
@@ -145,46 +185,6 @@ def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file
         regular.append(os.path.realpath(warnings_file))
 
     return Ignore(regular, regex_based)
-
-
-def main():
-    """Actual application logic."""
-    colorama.init()
-
-    args, build_args = _parse_args(sys.argv[1:])
-
-    srcdir = os.path.realpath(args.sourcedir)
-    outdir = os.path.realpath(args.outdir)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-
-    port_num = args.port or find_free_port()
-    server = Server()
-
-    pre_build_commands = list(map(shlex.split, args.pre_build))
-    builder = Builder(
-        server.watcher,
-        build_args,
-        host=args.host,
-        port=port_num,
-        pre_build_commands=pre_build_commands,
-    )
-
-    ignore_handler = _get_ignore_handler(args.ignore, args.re_ignore, outdir,
-                                         args.warnings_file, args.doctree_dir)
-    server.watch(srcdir, builder, ignore=ignore_handler)
-    for dirpath in args.additional_watched_dirs:
-        dirpath = os.path.realpath(dirpath)
-        server.watch(dirpath, builder, ignore=ignore_handler)
-    server.watch(outdir, ignore=ignore_handler)
-
-    if not args.no_initial_build:
-        builder()
-
-    if args.openbrowser is True:
-        server.serve(port=port_num, host=args.host, root=outdir, open_url_delay=args.delay)
-    else:
-        server.serve(port=port_num, host=args.host, root=outdir)
 
 
 if __name__ == "__main__":
