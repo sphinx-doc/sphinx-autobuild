@@ -32,8 +32,7 @@ def _get_build_args(args):
     build_args.extend([os.path.realpath(args.sourcedir), os.path.realpath(args.outdir)])
     build_args.extend(args.filenames)
 
-    pre_build_commands = [shlex.split(cmd_str) for cmd_str in args.pre_build]
-    return build_args, pre_build_commands
+    return build_args
 
 
 def get_parser():
@@ -174,7 +173,8 @@ def main():
     portn = args.port or find_free_port()
     server = Server()
 
-    build_args, pre_build_commands = _get_build_args(args)
+    build_args = _get_build_args(args)
+    pre_build_commands = list(map(shlex.split, args.pre_build))
     builder = Builder(
         server.watcher,
         build_args,
