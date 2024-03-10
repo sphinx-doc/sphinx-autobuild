@@ -73,6 +73,7 @@ which can seen by running ``sphinx-autobuild --help``:
      --delay DELAY         how long to wait before opening the browser (default: 5)
      --watch DIR           additional directories to watch (default: [])
      --pre-build COMMAND   additional command(s) to run prior to building the documentation (default: [])
+     --post-build COMMAND  additional command(s) to run after building the documentation (default: [])
      --version             show program's version number and exit
 
    sphinx's arguments:
