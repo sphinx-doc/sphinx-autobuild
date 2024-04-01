@@ -7,6 +7,7 @@ from colorama import Fore, Style
 
 # This isn't public API, but we want to avoid a subprocess call
 from sphinx.cmd.build import build_main
+from tornado import ioloop
 
 
 def _log(text, *, colour):
@@ -29,12 +30,23 @@ class Builder:
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
         self.uri = f"http://{host}:{port}"
+        self.files = []
+        self.ioloop = ioloop.IOLoop.instance()
 
     def __call__(self):
         """Generate the documentation using ``sphinx``."""
 
-        if self.watcher.filepath:
-            show(context=f"Detected change: {self.watcher.filepath}")
+        self.files.append(self.watcher.filepath)
+        if len(self.files) == 1:
+            self.ioloop.add_callback(self.callback)
+
+    def callback(self):
+        if self.files:
+            for file in self.files:
+                if file:
+                    show(context=f"Detected change: {file}")
+
+            self.files = []
 
         try:
             for command in self.pre_build_commands:
