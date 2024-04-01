@@ -6,7 +6,7 @@ import subprocess
 from colorama import Fore, Style
 
 # This isn't public API, but we want to avoid a subprocess call
-from sphinx.cmd.build import build_main
+from sphinx.cmd.build import build_main, make_main
 from tornado import ioloop
 
 
@@ -65,7 +65,10 @@ class Builder:
         # NOTE:
         # sphinx.cmd.build.build_main is not considered to be public API,
         # but as this is a first-party project, we can cheat a little bit.
-        return_code = build_main(self.sphinx_args)
+        if self.sphinx_args[0] == "-M":
+            return_code = make_main(self.sphinx_args)
+        else:
+            return_code = build_main(self.sphinx_args)
         if return_code:
             print(f"Sphinx exited with exit code: {return_code}")
             print(
