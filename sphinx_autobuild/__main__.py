@@ -63,11 +63,13 @@ def main():
     )
 
     if not args.no_initial_build:
+        show(context="Starting initial build")
         builder(rebuild=False)
 
     if args.open_browser:
         open_browser(url_host, args.delay)
 
+    show(context="Waiting to detect changes...")
     try:
         uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
     except KeyboardInterrupt:
