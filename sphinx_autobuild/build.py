@@ -9,10 +9,10 @@ from sphinx_autobuild.utils import show
 
 
 class Builder:
-    def __init__(self, sphinx_args, *, host, port, pre_build_commands):
+    def __init__(self, sphinx_args, *, url_host, pre_build_commands):
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
-        self.uri = f"http://{host}:{port}"
+        self.uri = f"http://{url_host}"
 
     def __call__(self, *, rebuild: bool = True):
         """Generate the documentation using ``sphinx``."""

@@ -25,39 +25,41 @@ def main():
 
     args, build_args = _parse_args(sys.argv[1:])
 
-    srcdir = args.sourcedir
-    outdir = args.outdir
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    src_dir = args.sourcedir
+    out_dir = args.outdir
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
+    host_name = args.host
     port_num = args.port or find_free_port()
+    url_host = f"{host_name}:{port_num}"
     server = Server()
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
+
     builder = Builder(
         build_args,
-        host=args.host,
-        port=port_num,
+        url_host=url_host,
         pre_build_commands=pre_build_commands,
     )
 
     ignore_handler = IgnoreFilter(
-        [p for p in args.ignore + [outdir, args.warnings_file, args.doctree_dir] if p],
+        [p for p in args.ignore + [out_dir, args.warnings_file, args.doctree_dir] if p],
         args.re_ignore,
     )
-    server.watch(srcdir, builder, ignore=ignore_handler)
+    server.watch(src_dir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
         dirpath = os.path.realpath(dirpath)
         server.watch(dirpath, builder, ignore=ignore_handler)
-    server.watch(outdir, ignore=ignore_handler)
+    server.watch(out_dir, ignore=ignore_handler)
 
     if not args.no_initial_build:
         builder(rebuild=False)
 
     if args.open_browser:
-        open_browser(f"{args.host}:{port_num}", args.delay)
+        open_browser(url_host, args.delay)
 
-    server.serve(port=port_num, host=args.host, root=outdir)
+    server.serve(port=port_num, host=host_name, root=out_dir)
 
 
 def _parse_args(argv):
