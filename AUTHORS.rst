@@ -1,6 +1,7 @@
 Project contributors
 ====================
 
+* Adam Turner
 * Alex Gleason <alex@alexgleason.me>
 * Anatoly Bubenkov <bubenkoff@gmail.com>
 * Andrew Lee <ajylee@gmail.com>

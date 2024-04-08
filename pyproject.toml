@@ -58,6 +58,9 @@ test = [
 ]
 
 [[project.authors]]
+name = "Adam Turner"
+
+[[project.authors]]
 name = "Jonathan Stoppani"
 email = "jonathan@stoppani.name"
 
