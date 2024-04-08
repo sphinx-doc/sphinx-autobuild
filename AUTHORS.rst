@@ -1,14 +1,11 @@
 Project contributors
 ====================
 
-* Adam Turner
-* Alex Gleason <alex@alexgleason.me>
+* Adam Turner <AA-Turner@users.noreply.github.com>
 * Anatoly Bubenkov <bubenkoff@gmail.com>
 * Andrew Lee <ajylee@gmail.com>
-* chohner <mail@chohner.com>
-* Chris Sewell <chrisj_sewell@hotmail.com>
+* Christoph Hohnerlein <mail@chohner.com>
 * Dave Dittrich <dittrich@u.washington.edu>
-* Ed Morley <edmorley@users.noreply.github.com>
 * Jonathan Stoppani <jonathan@stoppani.name>
 * Keita Kita <maoutwo@gmail.com>
 * Kristian Holsheimer <kristian.holsheimer@gmail.com>
