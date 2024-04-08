@@ -16,7 +16,7 @@ from sphinx.cmd.build import get_parser as sphinx_get_parser
 from sphinx_autobuild import __version__
 from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
-from sphinx_autobuild.utils import find_free_port
+from sphinx_autobuild.utils import find_free_port, open_browser
 
 
 def main():
@@ -55,12 +55,10 @@ def main():
     if not args.no_initial_build:
         builder()
 
-    if args.openbrowser is True:
-        server.serve(
-            port=port_num, host=args.host, root=outdir, open_url_delay=args.delay
-        )
-    else:
-        server.serve(port=port_num, host=args.host, root=outdir)
+    if args.open_browser:
+        open_browser(f"{args.host}:{port_num}", args.delay)
+
+    server.serve(port=port_num, host=args.host, root=outdir)
 
 
 def _parse_args(argv):
@@ -156,7 +154,6 @@ def _add_autobuild_arguments(parser):
     )
     group.add_argument(
         "--open-browser",
-        dest="openbrowser",
         action="store_true",
         default=False,
         help="open the browser after building documentation",
