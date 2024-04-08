@@ -52,32 +52,21 @@ which can seen by running ``sphinx-autobuild --help``:
 .. code-block:: console
 
    $ sphinx-autobuild --help
-   usage: sphinx-autobuild [-h] [--port PORT] [--host HOST] [--re-ignore RE_IGNORE] [--ignore IGNORE] [--no-initial] [--open-browser]
-                           [--delay DELAY] [--watch DIR] [--pre-build COMMAND] [--version]
-                           sourcedir outdir [filenames [filenames ...]]
+   usage: sphinx-autobuild [OPTIONS] SOURCEDIR OUTPUTDIR [FILENAMES...]
 
-   positional arguments:
-     sourcedir             source directory
-     outdir                output directory for built documentation
-     filenames             specific files to rebuild on each run (default: None)
+   ...
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     --port PORT           port to serve documentation on. 0 means find and use a free port (default: 8000)
-     --host HOST           hostname to serve documentation on (default: 127.0.0.1)
+   autobuild options:
+     --port PORT           port to serve documentation on. 0 means find and use a free port
+     --host HOST           hostname to serve documentation on
      --re-ignore RE_IGNORE
-                           regular expression for files to ignore, when watching for changes (default: [])
-     --ignore IGNORE       glob expression for files to ignore, when watching for changes (default: [])
-     --no-initial          skip the initial build (default: False)
-     --open-browser        open the browser after building documentation (default: False)
-     --delay DELAY         how long to wait before opening the browser (default: 5)
-     --watch DIR           additional directories to watch (default: [])
-     --pre-build COMMAND   additional command(s) to run prior to building the documentation (default: [])
-     --version             show program's version number and exit
-
-   sphinx's arguments:
-     The following arguments are forwarded as-is to Sphinx. Please look at `sphinx --help` for more information.
-       -b=builder, -a, -E, -d=path, -j=N, -c=path, -C, -D=setting=value, -t=tag, -A=name=value, -n, -v, -q, -Q, -w=file, -W, -T, -N, -P, --keep-going, --color
+                           regular expression for files to ignore, when watching for changes
+     --ignore IGNORE       glob expression for files to ignore, when watching for changes
+     --no-initial          skip the initial build
+     --open-browser        open the browser after building documentation
+     --delay DELAY         how long to wait before opening the browser
+     --watch DIR           additional directories to watch
+     --pre-build COMMAND   additional command(s) to run prior to building the documentation
 
 Using with Makefile
 -------------------
