@@ -68,7 +68,6 @@ def _parse_args(argv):
     # The Sphinx parser is not considered to be public API,
     # but as this is a first-party project, we can cheat a little bit.
     sphinx_args = _get_sphinx_build_parser().parse_args(argv.copy())
-    print(f"{sphinx_args.filenames=}")
 
     # Parse a second time with just our parser
     parser = _get_parser()
