@@ -35,7 +35,6 @@ def main():
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
     builder = Builder(
-        server.watcher,
         build_args,
         host=args.host,
         port=port_num,
@@ -53,7 +52,7 @@ def main():
     server.watch(outdir, ignore=ignore_handler)
 
     if not args.no_initial_build:
-        builder()
+        builder(rebuild=False)
 
     if args.open_browser:
         open_browser(f"{args.host}:{port_num}", args.delay)

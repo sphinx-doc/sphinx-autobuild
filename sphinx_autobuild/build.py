@@ -9,17 +9,16 @@ from sphinx_autobuild.utils import show
 
 
 class Builder:
-    def __init__(self, watcher, sphinx_args, *, host, port, pre_build_commands):
-        self.watcher = watcher
+    def __init__(self, sphinx_args, *, host, port, pre_build_commands):
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
         self.uri = f"http://{host}:{port}"
 
-    def __call__(self):
+    def __call__(self, *, rebuild: bool = True):
         """Generate the documentation using ``sphinx``."""
 
-        if self.watcher.filepath:
-            show(context=f"Detected change: {self.watcher.filepath}")
+        if rebuild:
+            show(context="Detected change. Rebuilding...")
 
         try:
             for command in self.pre_build_commands:
@@ -38,8 +37,7 @@ class Builder:
         # NOTE:
         # sphinx.cmd.build.build_main is not considered to be public API,
         # but as this is a first-party project, we can cheat a little bit.
-        return_code = build_main(self.sphinx_args)
-        if return_code:
+        if return_code := build_main(self.sphinx_args):
             print(f"Sphinx exited with exit code: {return_code}")
             print(
                 "The server will continue serving the build folder, but the contents "
@@ -47,8 +45,5 @@ class Builder:
                 "Please fix the cause of the error above or press Ctrl+C to stop the "
                 "server."
             )
-        # We present this information, so that the user does not need to keep track
-        # of the port being used. It is presented by livereload when starting the
-        # server, so don't present it in the initial build.
-        if self.watcher.filepath:
-            show(context=f"Serving on {self.uri}")
+        # Remind the user of the server URL for convenience.
+        show(context=f"Serving on {self.uri}")
