@@ -16,7 +16,7 @@ from sphinx.cmd.build import get_parser as sphinx_get_parser
 from sphinx_autobuild import __version__
 from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
-from sphinx_autobuild.utils import find_free_port, open_browser
+from sphinx_autobuild.utils import find_free_port, open_browser, show
 
 
 def main():
@@ -59,7 +59,10 @@ def main():
     if args.open_browser:
         open_browser(url_host, args.delay)
 
-    server.serve(port=port_num, host=host_name, root=out_dir)
+    try:
+        server.serve(port=port_num, host=host_name, root=out_dir)
+    except KeyboardInterrupt:
+        show(context="Server ceasing operations. Cheerio!")
 
 
 def _parse_args(argv):
