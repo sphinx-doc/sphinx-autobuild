@@ -1,26 +1,11 @@
 """Logic for interacting with sphinx-build."""
 
-import shlex
 import subprocess
-
-from colorama import Fore, Style
 
 # This isn't public API, but we want to avoid a subprocess call
 from sphinx.cmd.build import build_main
 
-
-def _log(text, *, colour):
-    print(f"{Fore.GREEN}[sphinx-autobuild] {colour}{text}{Style.RESET_ALL}")
-
-
-def show(*, context=None, command=None):
-    """Show context and command-to-be-executed, with nice formatting and colours."""
-    if context is not None:
-        _log(context, colour=Fore.CYAN)
-    if command is not None:
-        assert isinstance(command, (list, tuple))
-        msg = f"> {shlex.join(command)}"
-        _log(msg, colour=Fore.BLUE)
+from sphinx_autobuild.utils import show
 
 
 class Builder:
