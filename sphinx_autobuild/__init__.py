@@ -1,3 +1,3 @@
-"""Rebuild Sphinx documentation on changes, with live-reload in the browser."""
+"""Rebuild Sphinx documentation on changes, with hot reloading in the browser."""
 
 __version__ = "2024.02.04"

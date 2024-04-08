@@ -1,21 +1,25 @@
 """Entrypoint for ``python -m sphinx_autobuild``."""
 
-from sphinx_autobuild import _hacks  # isort:skip  # noqa
-
 import argparse
 import os
 import shlex
 import sys
 
 import colorama
-from livereload import Server
+import uvicorn
 
 # This isn't public API, but there aren't many better options
 from sphinx.cmd.build import get_parser as sphinx_get_parser
+from starlette.applications import Starlette
+from starlette.middleware import Middleware
+from starlette.routing import Mount, WebSocketRoute
+from starlette.staticfiles import StaticFiles
 
 from sphinx_autobuild import __version__
 from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
+from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
+from sphinx_autobuild.server import RebuildServer
 from sphinx_autobuild.utils import find_free_port, open_browser, show
 
 
@@ -33,7 +37,6 @@ def main():
     host_name = args.host
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
-    server = Server()
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
 
@@ -43,15 +46,21 @@ def main():
         pre_build_commands=pre_build_commands,
     )
 
+    watch_dirs = [src_dir] + args.additional_watched_dirs
     ignore_handler = IgnoreFilter(
         [p for p in args.ignore + [out_dir, args.warnings_file, args.doctree_dir] if p],
         args.re_ignore,
     )
-    server.watch(src_dir, builder, ignore=ignore_handler)
-    for dirpath in args.additional_watched_dirs:
-        dirpath = os.path.realpath(dirpath)
-        server.watch(dirpath, builder, ignore=ignore_handler)
-    server.watch(out_dir, ignore=ignore_handler)
+    watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
+
+    app = Starlette(
+        routes=[
+            WebSocketRoute("/websocket-reload", watcher, name="reload"),
+            Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
+        ],
+        middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
+        lifespan=watcher.lifespan,
+    )
 
     if not args.no_initial_build:
         builder(rebuild=False)
@@ -60,7 +69,7 @@ def main():
         open_browser(url_host, args.delay)
 
     try:
-        server.serve(port=port_num, host=host_name, root=out_dir)
+        uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
     except KeyboardInterrupt:
         show(context="Server ceasing operations. Cheerio!")
 

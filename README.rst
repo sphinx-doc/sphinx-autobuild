@@ -10,7 +10,7 @@ sphinx-autobuild
    :target: https://opensource.org/licenses/MIT
    :alt: MIT
 
-Rebuild Sphinx documentation on changes, with live-reload in the browser.
+Rebuild Sphinx documentation on changes, with hot reloading in the browser.
 
 .. image:: ./docs/_static/demo.png
    :align: center
@@ -167,16 +167,12 @@ __ https://github.com/sphinx-doc/sphinx-autobuild/issues/34
 Acknowledgements
 ================
 
-This project stands on the shoulders of giants like
-Sphinx_, LiveReload_ and python-livereload_,
+This project stands on the shoulders of giants,
 without whom this project would not be possible.
 
 Many thanks to everyone who has `contributed code`_ as well as
 participated in `discussions on the issue tracker`_.
 This project is better thanks to your contribution.
 
-.. _Sphinx: https://sphinx-doc.org/
-.. _LiveReload: https://livereload.com/
-.. _python-livereload: https://github.com/lepture/python-livereload
 .. _contributed code: https://github.com/sphinx-doc/sphinx-autobuild/graphs/contributors
 .. _discussions on the issue tracker: https://github.com/sphinx-doc/sphinx-autobuild/issues

@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 # project metadata
 [project]
 name = "sphinx-autobuild"
-description = "Rebuild Sphinx documentation on changes, with live-reload in the browser."
+description = "Rebuild Sphinx documentation on changes, with hot reloading in the browser."
 readme = "README.rst"
 urls.Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
 urls.Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
@@ -43,7 +43,9 @@ classifiers = [
 ]
 dependencies = [
   "sphinx",
-  "livereload",
+  "starlette>=0.35",
+  "uvicorn>=0.25",
+  "websockets>=11.0",
   "colorama",
 ]
 dynamic = ["version"]
