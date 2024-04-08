@@ -15,7 +15,7 @@ from sphinx.cmd.build import get_parser as sphinx_get_parser
 
 from sphinx_autobuild import __version__
 from sphinx_autobuild.build import Builder
-from sphinx_autobuild.ignore import Ignore
+from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.utils import find_free_port
 
 
@@ -25,8 +25,8 @@ def main():
 
     args, build_args = _parse_args(sys.argv[1:])
 
-    srcdir = os.path.realpath(args.sourcedir)
-    outdir = os.path.realpath(args.outdir)
+    srcdir = args.sourcedir
+    outdir = args.outdir
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
@@ -42,8 +42,9 @@ def main():
         pre_build_commands=pre_build_commands,
     )
 
-    ignore_handler = _get_ignore_handler(
-        args.ignore, args.re_ignore, outdir, args.warnings_file, args.doctree_dir
+    ignore_handler = IgnoreFilter(
+        [p for p in args.ignore + [outdir, args.warnings_file, args.doctree_dir] if p],
+        args.re_ignore,
     )
     server.watch(srcdir, builder, ignore=ignore_handler)
     for dirpath in args.additional_watched_dirs:
@@ -76,10 +77,16 @@ def _parse_args(argv):
     args, build_args = parser.parse_known_args(argv.copy())
 
     # Copy needed settings
-    args.sourcedir = sphinx_args.sourcedir
-    args.outdir = sphinx_args.outputdir
-    args.doctree_dir = sphinx_args.doctreedir
-    args.warnings_file = sphinx_args.warnfile
+    args.sourcedir = os.path.realpath(sphinx_args.sourcedir)
+    args.outdir = os.path.realpath(sphinx_args.outputdir)
+    if sphinx_args.doctreedir:
+        args.doctree_dir = os.path.realpath(sphinx_args.doctreedir)
+    else:
+        args.doctree_dir = None
+    if sphinx_args.warnfile:
+        args.warnings_file = os.path.realpath(sphinx_args.warnfile)
+    else:
+        args.warnings_file = None
 
     return args, build_args
 
@@ -177,17 +184,6 @@ def _add_autobuild_arguments(parser):
         help="additional command(s) to run prior to building the documentation",
     )
     return group
-
-
-def _get_ignore_handler(ignore, regex_based, out_dir, doctree_dir, warnings_file):
-    regular = list(map(os.path.realpath, ignore))
-    regular.append(os.path.realpath(out_dir))  # output directory
-    if doctree_dir:  # Doctrees
-        regular.append(os.path.realpath(doctree_dir))
-    if warnings_file:  # Logfile
-        regular.append(os.path.realpath(warnings_file))
-
-    return Ignore(regular, regex_based)
 
 
 if __name__ == "__main__":

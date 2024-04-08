@@ -5,15 +5,15 @@ import os
 import re
 
 
-class Ignore:
+class IgnoreFilter:
     def __init__(self, regular, regex_based):
         """Prepare the function that determines whether a path should be ignored."""
-        self.regular_patterns = regular
-        self.regex_based_patterns = list(map(re.compile, regex_based))
+        self.regular_patterns = [*dict.fromkeys(regular)]
+        self.regex_based_patterns = [*map(re.compile, dict.fromkeys(regex_based))]
 
     def __repr__(self):
         return (
-            f"Ignore(regular={self.regular_patterns!r}, "
+            f"IgnoreFilter(regular={self.regular_patterns!r}, "
             f"regex_based={self.regex_based_patterns!r})"
         )
 
