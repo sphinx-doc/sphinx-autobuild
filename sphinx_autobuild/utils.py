@@ -20,7 +20,7 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-def open_browser(url_host: str, delay: int) -> None:
+def open_browser(url_host: str, delay: float) -> None:
     def _opener():
         time.sleep(delay)
         webbrowser.open(f"http://{url_host}")

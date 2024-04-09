@@ -175,7 +175,7 @@ def _add_autobuild_arguments(parser):
     group.add_argument(
         "--delay",
         dest="delay",
-        type=int,
+        type=float,
         default=5,
         help="how long to wait before opening the browser",
     )
