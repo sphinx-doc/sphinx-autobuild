@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from concurrent.futures import ProcessPoolExecutor
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
 
 import watchfiles
@@ -50,7 +51,9 @@ class RebuildServer:
             *self.paths,
             watch_filter=lambda _, path: not self.ignore(path),
         ):
-            self.change_callback()
+            with ProcessPoolExecutor() as pool:
+                fut = pool.submit(self.change_callback)
+                await asyncio.wrap_future(fut)
             self.flag.set()
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:

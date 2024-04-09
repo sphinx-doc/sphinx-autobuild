@@ -7,6 +7,7 @@ unreleased
 * Drop ``python-livereload``.
 * Add ``starlette`` and ``uvicorn`` as dependencies.
 * Implement hot reloading via websockets.
+* Run Sphinx rebuilds in an asynchronous executor.
 
 2024.02.04 - 2024-02-04
 -----------------------
