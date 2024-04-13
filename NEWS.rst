@@ -4,6 +4,9 @@ Changelog
 unreleased
 ----------
 
+2024.04.13 - 2024-04-13
+-----------------------
+
 * Drop ``python-livereload``.
 * Add ``starlette`` and ``uvicorn`` as dependencies.
 * Implement hot reloading via websockets.
