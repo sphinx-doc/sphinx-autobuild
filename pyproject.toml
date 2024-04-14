@@ -42,11 +42,12 @@ classifiers = [
     "Topic :: Utilities",
 ]
 dependencies = [
+  "colorama",
   "sphinx",
   "starlette>=0.35",
   "uvicorn>=0.25",
+  "watchfiles",
   "websockets>=11.0",
-  "colorama",
 ]
 dynamic = ["version"]
 
