@@ -47,6 +47,7 @@ dependencies = [
   "uvicorn>=0.25",
   "websockets>=11.0",
   "colorama",
+  "watchfiles",
 ]
 dynamic = ["version"]
 
