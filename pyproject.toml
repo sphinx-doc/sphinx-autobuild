@@ -54,8 +54,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 docs = []
 test = [
-    "pytest>=6.0",
-    "pytest-cov",
+    "pytest>=6",
 ]
 
 [[project.authors]]
@@ -77,20 +76,3 @@ include = [
     "tests/",
     "noxfile.py",
 ]
-
-[tool.coverage.run]
-branch = true
-omit = [
-  "*/conftest.py",
-  "docs/*",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-  "pragma: no cover",
-  "NOCOV",
-  "if __name__ == .__main__.:"
-]
-
-[tool.coverage.html]
-directory = ".htmlcov"
