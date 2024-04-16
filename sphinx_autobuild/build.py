@@ -16,7 +16,6 @@ class Builder:
 
     def __call__(self, *, rebuild: bool = True):
         """Generate the documentation using ``sphinx``."""
-
         if rebuild:
             show(context="Detected change. Rebuilding...")
 

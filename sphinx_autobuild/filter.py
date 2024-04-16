@@ -27,7 +27,7 @@ class IgnoreFilter:
                 return True
 
         # Any regular expression matches.
-        for regex in self.regex_based_patterns:
+        for regex in self.regex_based_patterns:  # NoQA: SIM110
             if regex.search(path):
                 return True
 

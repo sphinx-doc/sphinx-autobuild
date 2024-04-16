@@ -4,14 +4,15 @@ import asyncio
 import os
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from typing import TYPE_CHECKING
 
 import watchfiles
-from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket
 
-TYPE_CHECKING = False
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    from starlette.types import Receive, Scope, Send
 
     from sphinx_autobuild.filter import IgnoreFilter
 
