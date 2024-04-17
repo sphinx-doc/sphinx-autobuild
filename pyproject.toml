@@ -43,7 +43,7 @@ dependencies = [
   "sphinx",
   "starlette>=0.35",
   "uvicorn>=0.25",
-  "watchfiles",
+  "watchfiles>=0.20",
   "websockets>=11",
 ]
 [project.optional-dependencies]
@@ -51,7 +51,6 @@ docs = [
 ]
 test = [
   "pytest>=6",
-  "pytest-cov",
 ]
 [project.urls]
 Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
@@ -74,20 +73,3 @@ include = [
 
 [tool.pyproject-fmt]
 max_supported_python = "3.13"
-
-[tool.coverage.run]
-branch = true
-omit = [
-  "*/conftest.py",
-  "docs/*",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-  "pragma: no cover",
-  "NOCOV",
-  "if __name__ == .__main__.:"
-]
-
-[tool.coverage.html]
-directory = ".htmlcov"
