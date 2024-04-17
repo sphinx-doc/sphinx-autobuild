@@ -9,7 +9,10 @@ name = "sphinx-autobuild"
 description = "Rebuild Sphinx documentation on changes, with hot reloading in the browser."
 readme = "README.rst"
 license.text = "MIT"
-authors = [{name = "Adam Turner"}, {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"}]
+authors = [
+  {name = "Adam Turner"},
+  {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"},
+]
 requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
