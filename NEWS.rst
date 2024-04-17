@@ -4,6 +4,12 @@ Changelog
 unreleased
 ----------
 
+2024.04.16 - 2024-04-16
+-----------------------
+
+* Add a missing dependency on ``watchfiles``.
+* Adopt Ruff in place of flake8 and black.
+
 2024.04.13 - 2024-04-13
 -----------------------
 

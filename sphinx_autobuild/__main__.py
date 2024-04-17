@@ -123,7 +123,6 @@ def _get_sphinx_build_parser():
 
 def _get_parser():
     """Get the application's argument parser."""
-
     parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument(
         "--version", action="version", version=f"sphinx-autobuild {__version__}"

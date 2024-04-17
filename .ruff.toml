@@ -1,0 +1,84 @@
+target-version = "py39"  # Pin Ruff to Python 3.9
+line-length = 88
+output-format = "full"
+extend-exclude = [
+    "noxfile.py",
+]
+
+[lint]
+preview = true
+ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D105",
+    "D107",
+    "E203",
+#    "W503", # unimplemented in Ruff (as of 2024-04-16)
+]
+select = [
+    # flake8-builtins ('A')
+    "A",
+    # flake8-unused-arguments ('ARG')
+    "ARG",
+    # flake8-async ('ASYNC')
+    "ASYNC",
+    # flake8-bugbear ('B')
+    "B",
+    # flake8-comprehensions ('C4')
+    "C4",
+    # mccabe ('C90')
+    "C901",
+    # pydocstyle ('D')
+    "D",
+    # pycodestyle ('E')
+    "E",
+    # pyflakes ('F')
+    "F",
+    # isort ('I')
+    "I",
+    # pep8-naming ('N')
+    "N",
+    # perflint ('PERF')
+    "PERF",
+    # pygrep-hooks ('PGH')
+    "PGH",
+    # flake8-pytest-style ('PT')
+    "PT",
+    # flake8-quotes ('Q')
+    "Q",
+    # flake8-return ('RET')
+    "RET",
+    # flake8-raise ('RSE')
+    "RSE",
+    # flake8-simplify ('SIM')
+    "SIM",
+    # pyupgrade ('UP')
+    "UP",
+    # pycodestyle ('W')
+    "W",
+]
+
+[lint.pydocstyle]
+convention = "pep257"
+
+[lint.per-file-ignores]
+"tests/*" = [
+    "E501",
+    "S101",  # whitelist ``assert`` for tests
+    "T201",  # whitelist ``print`` for tests
+]
+
+[lint.flake8-quotes]
+inline-quotes = "double"
+
+[lint.isort]
+forced-separate = [
+    "tests",
+]
+
+[format]
+preview = true
+quote-style = "double"
+docstring-code-format = true

@@ -12,8 +12,7 @@ def lint(session):
 @nox.session(python=["3.9", "3.10", "3.11", "3.12"])
 def test(session):
     session.install("-e", ".[test]", silent=True)
-    args = session.posargs or ("--cov-report", "term", "--cov", "sphinx_autobuild")
-    session.run("pytest", *args)
+    session.run("pytest", *session.posargs)
 
 
 @nox.session(reuse_venv=True)
