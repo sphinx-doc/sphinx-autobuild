@@ -24,7 +24,13 @@ class RebuildServer:
         ignore_filter: IgnoreFilter,
         change_callback: Callable[[], None],
     ) -> None:
-        self.paths = [os.path.realpath(path, strict=True) for path in paths]
+        self.paths = [os.path.realpath(path) for path in paths]
+
+        # Santiy check the paths
+        for p in self.paths:
+            if not os.path.exists(p):
+                raise FileNotFoundError(p)
+
         self.ignore = ignore_filter
         self.change_callback = change_callback
         self.flag = asyncio.Event()
