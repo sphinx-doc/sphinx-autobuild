@@ -4,6 +4,8 @@ Changelog
 unreleased
 ----------
 
+* Fix support for Python 3.9.
+
 2024.04.16 - 2024-04-16
 -----------------------
 
