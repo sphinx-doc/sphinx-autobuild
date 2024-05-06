@@ -23,11 +23,11 @@ from sphinx_autobuild.server import RebuildServer
 from sphinx_autobuild.utils import find_free_port, open_browser, show
 
 
-def main():
+def main(argv=()):
     """Actual application logic."""
     colorama.init()
 
-    args, build_args = _parse_args(sys.argv[1:])
+    args, build_args = _parse_args(list(argv))
 
     src_dir = args.sourcedir
     out_dir = args.outdir
@@ -47,20 +47,12 @@ def main():
     )
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
+    ignore_dirs = args.ignore + [out_dir, args.warnings_file, args.doctree_dir]
     ignore_handler = IgnoreFilter(
-        [p for p in args.ignore + [out_dir, args.warnings_file, args.doctree_dir] if p],
+        [p for p in ignore_dirs if p],
         args.re_ignore,
     )
-    watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
-
-    app = Starlette(
-        routes=[
-            WebSocketRoute("/websocket-reload", watcher, name="reload"),
-            Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
-        ],
-        middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
-        lifespan=watcher.lifespan,
-    )
+    app = _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host)
 
     if not args.no_initial_build:
         show(context="Starting initial build")
@@ -74,6 +66,19 @@ def main():
         uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
     except KeyboardInterrupt:
         show(context="Server ceasing operations. Cheerio!")
+
+
+def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
+    watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
+
+    return Starlette(
+        routes=[
+            WebSocketRoute("/websocket-reload", watcher, name="reload"),
+            Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
+        ],
+        middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
+        lifespan=watcher.lifespan,
+    )
 
 
 def _parse_args(argv):
@@ -197,4 +202,4 @@ def _add_autobuild_arguments(parser):
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

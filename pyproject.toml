@@ -53,6 +53,7 @@ dependencies = [
 docs = [
 ]
 test = [
+  "httpx",
   "pytest>=6",
 ]
 [project.urls]
