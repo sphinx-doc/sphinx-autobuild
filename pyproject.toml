@@ -1,7 +1,7 @@
 [build-system]
 build-backend = "flit_core.buildapi"
 requires = [
-  "flit_core>=3.7",
+  "flit-core>=3.7",
 ]
 
 [project]
@@ -10,8 +10,8 @@ description = "Rebuild Sphinx documentation on changes, with hot reloading in th
 readme = "README.rst"
 license.text = "MIT"
 authors = [
-  {name = "Adam Turner"},
-  {name = "Jonathan Stoppani", email = "jonathan@stoppani.name"},
+  { name = "Adam Turner" },
+  { name = "Jonathan Stoppani", email = "jonathan@stoppani.name" },
 ]
 requires-python = ">=3.9"
 classifiers = [
@@ -49,30 +49,27 @@ dependencies = [
   "watchfiles>=0.20",
   "websockets>=11",
 ]
-[project.optional-dependencies]
-docs = [
+optional-dependencies.docs = [
 ]
-test = [
+optional-dependencies.test = [
   "httpx",
   "pytest>=6",
 ]
-[project.urls]
-Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
-Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
-Download = "https://pypi.org/project/sphinx-autobuild/"
-"Issue tracker" = "https://github.com/sphinx-doc/sphinx-autobuild/issues"
-Source = "https://github.com/sphinx-doc/sphinx-autobuild"
-[project.scripts]
-sphinx-autobuild = "sphinx_autobuild.__main__:main"
+urls.Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
+urls.Documentation = "https://github.com/sphinx-doc/sphinx-autobuild#readme"
+urls.Download = "https://pypi.org/project/sphinx-autobuild/"
+urls."Issue tracker" = "https://github.com/sphinx-doc/sphinx-autobuild/issues"
+urls.Source = "https://github.com/sphinx-doc/sphinx-autobuild"
+scripts.sphinx-autobuild = "sphinx_autobuild.__main__:main"
 
 [tool.flit.sdist]
 include = [
-    "AUTHORS.rst",
-    "LICENSE.rst",
-    "NEWS.rst",
-    # Tests
-    "tests/",
-    "noxfile.py",
+  "AUTHORS.rst",
+  "LICENSE.rst",
+  "NEWS.rst",
+  # Tests
+  "tests/",
+  "noxfile.py",
 ]
 
 [tool.pyproject-fmt]
