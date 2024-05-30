@@ -27,7 +27,7 @@ def main(argv=()):
     """Actual application logic."""
     colorama.init()
 
-    args, build_args = _parse_args(list(argv))
+    args, build_args = _parse_args(list(argv) or sys.argv[1:])
 
     src_dir = args.sourcedir
     out_dir = args.outdir
