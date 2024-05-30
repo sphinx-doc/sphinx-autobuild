@@ -2,9 +2,6 @@
 
 import subprocess
 
-# This isn't public API, but we want to avoid a subprocess call
-from sphinx.cmd.build import build_main
-
 from sphinx_autobuild.utils import show
 
 
@@ -32,12 +29,10 @@ class Builder:
             raise
 
         show(command=["sphinx-build"] + self.sphinx_args)
-
-        # NOTE:
-        # sphinx.cmd.build.build_main is not considered to be public API,
-        # but as this is a first-party project, we can cheat a little bit.
-        if return_code := build_main(self.sphinx_args):
-            print(f"Sphinx exited with exit code: {return_code}")
+        try:
+            subprocess.run(["sphinx-build"] + self.sphinx_args, check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Sphinx exited with exit code: {e.returncode}")
             print(
                 "The server will continue serving the build folder, but the contents "
                 "being served are no longer in sync with the documentation sources. "
