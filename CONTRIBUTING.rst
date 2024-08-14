@@ -59,7 +59,7 @@ you can do so using:
 
 .. code-block:: bash
 
-   nox -s tests-3.12
+   nox -s test-3.12
 
 Running Linters
 ---------------
