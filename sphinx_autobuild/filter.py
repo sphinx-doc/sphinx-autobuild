@@ -27,8 +27,7 @@ class IgnoreFilter:
 
             # Expand the pattern into a list of files that match a glob
             matched_files = [
-                os.path.abspath(ii)
-                for ii in glob(pattern, recursive=True)
+                os.path.abspath(ii) for ii in glob(pattern, recursive=True)
             ]
 
             if path_expanded in matched_files:
@@ -42,9 +41,10 @@ class IgnoreFilter:
             # They might not be necessary but leaving here just in case.
             # Neither depends on the files actually being on disk.
 
-            if path.strip(os.path.sep).startswith(
-                (pattern.strip(os.path.sep) + os.path.sep, pattern + "/")
-            ):
+            if path.strip(os.path.sep).startswith((
+                pattern.strip(os.path.sep) + os.path.sep,
+                pattern + "/",
+            )):
                 return True
             if fnmatch.fnmatch(path, pattern):
                 return True
