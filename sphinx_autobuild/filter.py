@@ -3,6 +3,7 @@
 import fnmatch
 import os
 import re
+from glob import glob
 
 
 class IgnoreFilter:
@@ -19,9 +20,27 @@ class IgnoreFilter:
 
     def __call__(self, path):
         """Determine if 'path' should be ignored."""
+        # Return the full path so we make sure we handle relative paths OK
+        path_expanded = os.path.abspath(path)
         # Any regular pattern matches.
         for pattern in self.regular_patterns:
-            if path.startswith((pattern + os.sep, pattern + "/")):
+
+            # Expand the pattern into a list of files that match a glob
+            matched_files = [os.path.abspath(ii) for ii in glob(pattern, recursive=True)]
+
+            # If this file matches any of the glob matches, we ignore it
+            if path_expanded in matched_files:
+                return True
+
+            # If the parent of this path matches any of the glob matches, ignore it
+            if any(path_expanded.startswith(imatch) for imatch in matched_files):
+                return True
+
+            # These two checks are for preserving old behavior.
+            # They might not be necessary but leaving here just in case.
+            # Neither depends on the files actually being on disk.
+
+            if path.strip(os.path.sep).startswith((pattern.strip(os.path.sep) + os.path.sep, pattern + "/")):
                 return True
             if fnmatch.fnmatch(path, pattern):
                 return True
