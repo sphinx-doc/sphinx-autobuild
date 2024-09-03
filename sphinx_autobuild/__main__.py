@@ -1,9 +1,9 @@
 """Entrypoint for ``python -m sphinx_autobuild``."""
 
 import argparse
-import os
 import shlex
 import sys
+from pathlib import Path
 
 import colorama
 import uvicorn
@@ -33,10 +33,9 @@ def main(argv=()):
 
     args, build_args = _parse_args(list(argv))
 
-    src_dir = args.sourcedir
-    out_dir = args.outdir
-    if not os.path.exists(out_dir):
-        os.makedirs(out_dir)
+    src_dir = Path(args.sourcedir)
+    out_dir = Path(args.outdir)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     host_name = args.host
     port_num = args.port or find_free_port()
@@ -53,7 +52,7 @@ def main(argv=()):
     watch_dirs = [src_dir] + args.additional_watched_dirs
     ignore_dirs = args.ignore + [out_dir, args.warnings_file, args.doctree_dir]
     ignore_handler = IgnoreFilter(
-        [p for p in ignore_dirs if p],
+        [Path(p).as_posix() for p in ignore_dirs if p],
         args.re_ignore,
     )
     app = _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host)
@@ -98,14 +97,14 @@ def _parse_args(argv):
     args, build_args = parser.parse_known_args(argv.copy())
 
     # Copy needed settings
-    args.sourcedir = os.path.realpath(sphinx_args.sourcedir)
-    args.outdir = os.path.realpath(sphinx_args.outputdir)
+    args.sourcedir = Path(sphinx_args.sourcedir).resolve(strict=True)
+    args.outdir = Path(sphinx_args.outputdir).resolve(strict=True)
     if sphinx_args.doctreedir:
-        args.doctree_dir = os.path.realpath(sphinx_args.doctreedir)
+        args.doctree_dir = Path(sphinx_args.doctreedir).resolve(strict=True)
     else:
         args.doctree_dir = None
     if sphinx_args.warnfile:
-        args.warnings_file = os.path.realpath(sphinx_args.warnfile)
+        args.warnings_file = Path(sphinx_args.warnfile).resolve(strict=True)
     else:
         args.warnings_file = None
 

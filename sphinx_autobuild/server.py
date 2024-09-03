@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import asyncio
-import os
-import sys
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import watchfiles
 from starlette.websockets import WebSocket
 
 if TYPE_CHECKING:
+    import os
     from collections.abc import Callable
 
     from starlette.types import Receive, Scope, Send
@@ -25,15 +25,7 @@ class RebuildServer:
         ignore_filter: IgnoreFilter,
         change_callback: Callable[[], None],
     ) -> None:
-        if sys.version_info[:2] >= (3, 10):
-            self.paths = [os.path.realpath(path, strict=True) for path in paths]
-        else:
-            self.paths = [os.path.realpath(path) for path in paths]
-            # Sanity check the paths
-            for p in self.paths:
-                if not os.path.exists(p):
-                    raise FileNotFoundError(p)
-
+        self.paths = [Path(path).resolve(strict=True) for path in paths]
         self.ignore = ignore_filter
         self.change_callback = change_callback
         self.flag = asyncio.Event()

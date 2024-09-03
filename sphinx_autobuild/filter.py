@@ -1,7 +1,6 @@
 """Logic for ignoring paths."""
 
 import fnmatch
-import os
 import re
 
 
@@ -21,7 +20,8 @@ class IgnoreFilter:
         """Determine if 'path' should be ignored."""
         # Any regular pattern matches.
         for pattern in self.regular_patterns:
-            if path.startswith((pattern + os.sep, pattern + "/")):
+            # separators are normalised before creating the IgnoreFilter
+            if path.startswith(f"{pattern}/"):
                 return True
             if fnmatch.fnmatch(path, pattern):
                 return True
