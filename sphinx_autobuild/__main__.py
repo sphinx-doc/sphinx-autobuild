@@ -120,12 +120,16 @@ def _get_sphinx_build_parser():
     sphinx_build_parser.description = None
     sphinx_build_parser.epilog = None
     sphinx_build_parser.prog = "sphinx-autobuild"
-    sphinx_build_parser.add_argument("-M", dest="use_make_mode")
     for action in sphinx_build_parser._actions:
         if hasattr(action, "version"):
             # Fix the version
             action.version = f"%(prog)s {__version__}"
             break
+    sphinx_build_parser.add_argument(
+        "-M",
+        dest="use_make_mode",
+        help=argparse.SUPPRESS,
+    )
     _add_autobuild_arguments(sphinx_build_parser)
 
     return sphinx_build_parser
