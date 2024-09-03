@@ -25,7 +25,7 @@ from sphinx_autobuild.utils import find_free_port, open_browser, show
 
 def main(argv=()):
     """Actual application logic."""
-    colorama.init()
+    colorama.just_fix_windows_console()
 
     if not argv:
         # entry point functions don't receive args

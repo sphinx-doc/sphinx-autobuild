@@ -42,7 +42,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "colorama",
+  "colorama>=0.4.6",
   "sphinx",
   "starlette>=0.35",
   "uvicorn>=0.25",
