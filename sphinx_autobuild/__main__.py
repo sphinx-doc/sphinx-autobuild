@@ -125,6 +125,11 @@ def _get_sphinx_build_parser():
             # Fix the version
             action.version = f"%(prog)s {__version__}"
             break
+    sphinx_build_parser.add_argument(
+        "-M",
+        dest="use_make_mode",
+        help=argparse.SUPPRESS,
+    )
     _add_autobuild_arguments(sphinx_build_parser)
 
     return sphinx_build_parser
