@@ -25,8 +25,7 @@ class IgnoreFilter:
         # Any regular pattern matches.
         for pattern in self.regular_patterns:
             # Expand the pattern into a list of files that match a glob
-            matched_files = [
-                os.path.abspath(ii) for ii in glob(pattern, recursive=True)
+            matched_files = set(map(os.path.abspath, glob(pattern, recursive=True)))
             ]
 
             if path_expanded in matched_files:
