@@ -1,3 +1,5 @@
+from glob import glob
+
 from sphinx_autobuild.filter import IgnoreFilter
 
 
@@ -72,3 +74,25 @@ def test_multiple_both():
     assert ignored("foo/random.txt")
     assert ignored("foo/module.pyc")
     assert ignored("bar/__pycache__/file.pyc")
+
+
+def test_glob_expression():
+    ignored = IgnoreFilter(
+        [
+            # Glob for folder
+            "**/do_ignore",
+            # Glob for files
+            "**/*doignore*.*",
+        ],
+        [],
+    )
+    # Root folder of our glob test files. Assume tests are run from project root.
+    for ifile in glob("tests/test_ignore_glob/**/*"):
+        # Convert to be relative to the tests directory since that mimics
+        # the user's behavior.
+        if "do_ignore" in ifile or "doignore" in ifile:
+            print(f"Should ignore: {ifile})")
+            assert ignored(ifile)
+        else:
+            print(f"Should NOT ignore: {ifile})")
+            assert not ignored(ifile)
