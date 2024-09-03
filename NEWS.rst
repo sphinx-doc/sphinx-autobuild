@@ -4,7 +4,13 @@ Changelog
 unreleased
 ----------
 
+2024.09.03 - 2024-09-03
+-----------------------
+
 * Fix support for Python 3.9.
+* Fix running ``sphinx-autobuild`` via entry point scripts.
+* Run ``sphinx-build`` in a subprocess to mitigate autdoc issues.
+* Support the ``-M`` 'make mode' option for ``sphinx-build``.
 
 2024.04.16 - 2024-04-16
 -----------------------
