@@ -1,6 +1,7 @@
 """Logic for interacting with sphinx-build."""
 
 import subprocess
+import sys
 
 from sphinx_autobuild.utils import show
 
@@ -28,9 +29,12 @@ class Builder:
             )
             raise
 
-        show(command=["sphinx-build"] + self.sphinx_args)
+        show(command=["python", "-m", "sphinx"] + self.sphinx_args)
         try:
-            subprocess.run(["sphinx-build"] + self.sphinx_args, check=True)
+            subprocess.run(
+                [sys.executable, "-m", "sphinx"] + self.sphinx_args,
+                check=True,
+            )
         except subprocess.CalledProcessError as e:
             print(f"Sphinx exited with exit code: {e.returncode}")
             print(
