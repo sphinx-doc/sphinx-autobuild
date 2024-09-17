@@ -98,13 +98,13 @@ def _parse_args(argv):
 
     # Copy needed settings
     args.sourcedir = Path(sphinx_args.sourcedir).resolve(strict=True)
-    args.outdir = Path(sphinx_args.outputdir).resolve(strict=True)
+    args.outdir = Path(sphinx_args.outputdir).resolve()
     if sphinx_args.doctreedir:
-        args.doctree_dir = Path(sphinx_args.doctreedir).resolve(strict=True)
+        args.doctree_dir = Path(sphinx_args.doctreedir).resolve()
     else:
         args.doctree_dir = None
     if sphinx_args.warnfile:
-        args.warnings_file = Path(sphinx_args.warnfile).resolve(strict=True)
+        args.warnings_file = Path(sphinx_args.warnfile).resolve()
     else:
         args.warnings_file = None
 
