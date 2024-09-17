@@ -100,7 +100,7 @@ def _parse_args(argv):
     args.sourcedir = Path(sphinx_args.sourcedir).resolve(strict=True)
     args.outdir = Path(sphinx_args.outputdir).resolve()
     if sphinx_args.doctreedir:
-        args.doctree_dir = Path(sphinx_args.doctreedir).resolve(strict=True)
+        args.doctree_dir = Path(sphinx_args.doctreedir).resolve()
     else:
         args.doctree_dir = None
     if sphinx_args.warnfile:
