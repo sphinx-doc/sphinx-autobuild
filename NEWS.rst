@@ -4,6 +4,11 @@ Changelog
 unreleased
 ----------
 
+2024.09.17 - 2024-09-17
+-----------------------
+
+* Relax checks for paths that aren't required to exist.
+
 2024.09.03 - 2024-09-03
 -----------------------
 
