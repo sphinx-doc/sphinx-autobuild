@@ -37,6 +37,11 @@ def main(argv=()):
     out_dir = Path(args.outdir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    serve_dir = out_dir
+    if args.make_mode_builder:
+        serve_dir = out_dir / args.make_mode_builder
+        serve_dir.mkdir(parents=True, exist_ok=True)
+
     host_name = args.host
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
@@ -72,7 +77,7 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host)
+    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
 
     if not args.no_initial_build:
         show(context="Starting initial build")
@@ -124,6 +129,9 @@ def _parse_args(argv):
         args.warnings_file = Path(sphinx_args.warnfile).resolve()
     else:
         args.warnings_file = None
+
+    # Copy the make-mode builder, if present
+    args.make_mode_builder = sphinx_args.use_make_mode or ""
 
     return args, build_args
 
