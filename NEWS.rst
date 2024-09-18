@@ -4,6 +4,13 @@ Changelog
 unreleased
 ----------
 
+2024.09.19 - 2024-09-19
+-----------------------
+
+* Fix path filtering on Windows by normalising path separators.
+* Filter various directories by default (``.git``, ``venv``, etc).
+* Serve the correct directory when using make mode (``-M``).
+
 2024.09.18 - 2024-09-18
 -----------------------
 
