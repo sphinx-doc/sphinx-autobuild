@@ -50,11 +50,14 @@ def main(argv=()):
     )
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
-    ignore_dirs = args.ignore + [out_dir, args.warnings_file, args.doctree_dir]
-    ignore_handler = IgnoreFilter(
-        [Path(p).as_posix() for p in ignore_dirs if p],
-        args.re_ignore,
-    )
+    ignore_dirs = [
+        *args.ignore,
+        out_dir,
+        args.warnings_file,
+        args.doctree_dir,
+    ]
+    ignore_dirs = list(filter(None, ignore_dirs))
+    ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
     app = _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host)
 
     if not args.no_initial_build:
