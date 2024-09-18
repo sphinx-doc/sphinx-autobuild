@@ -51,6 +51,20 @@ def main(argv=()):
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
     ignore_dirs = [
+        ".git",
+        ".hg",
+        ".idea",
+        ".mypy_cache",
+        "node_modules",
+        ".nox",
+        ".ruff_cache",
+        ".pytest_cache",
+        ".pytype",
+        ".svn",
+        ".tox",
+        ".venv",
+        "venv",
+        ".vscode",
         *args.ignore,
         out_dir,
         args.warnings_file,
