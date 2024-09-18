@@ -4,6 +4,11 @@ Changelog
 unreleased
 ----------
 
+2024.09.18 - 2024-09-18
+-----------------------
+
+* Run Sphinx through the Python entry point rather than the binary on PATH.
+
 2024.09.17 - 2024-09-17
 -----------------------
 
