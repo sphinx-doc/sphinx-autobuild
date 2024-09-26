@@ -3,7 +3,7 @@
 import subprocess
 import sys
 
-from sphinx_autobuild.utils import show
+from sphinx_autobuild.utils import show_command, show_message
 
 
 class Builder:
@@ -15,11 +15,12 @@ class Builder:
     def __call__(self, *, rebuild: bool = True):
         """Generate the documentation using ``sphinx``."""
         if rebuild:
-            show(context="Detected change. Rebuilding...")
+            show_message("Detected change. Rebuilding...")
 
         try:
             for command in self.pre_build_commands:
-                show(context="pre-build", command=command)
+                show_message("pre-build")
+                show_command(command)
                 subprocess.run(command, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Pre-build command exited with exit code: {e.returncode}")
@@ -29,12 +30,10 @@ class Builder:
             )
             raise
 
-        show(command=["python", "-m", "sphinx"] + self.sphinx_args)
+        sphinx_build_args = ["-m", "sphinx"] + self.sphinx_args
+        show_command(["python"] + sphinx_build_args)
         try:
-            subprocess.run(
-                [sys.executable, "-m", "sphinx"] + self.sphinx_args,
-                check=True,
-            )
+            subprocess.run([sys.executable] + sphinx_build_args, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Sphinx exited with exit code: {e.returncode}")
             print(
@@ -44,4 +43,4 @@ class Builder:
                 "server."
             )
         # Remind the user of the server URL for convenience.
-        show(context=f"Serving on {self.uri}")
+        show_message(f"Serving on {self.uri}")

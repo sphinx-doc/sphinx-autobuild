@@ -34,11 +34,13 @@ def _log(text, *, colour):
     print(f"{Fore.GREEN}[sphinx-autobuild] {colour}{text}{Style.RESET_ALL}")
 
 
-def show(*, context=None, command=None):
-    """Show context and command-to-be-executed, with nice formatting and colours."""
-    if context is not None:
-        _log(context, colour=Fore.CYAN)
-    if command is not None:
-        assert isinstance(command, (list, tuple))
-        msg = f"> {shlex.join(command)}"
-        _log(msg, colour=Fore.BLUE)
+def show_message(context: str, /) -> None:
+    """Show context, with nice formatting and colours."""
+    _log(context, colour=Fore.CYAN)
+
+
+def show_command(command: list[str] | tuple[str, ...], /) -> None:
+    """Show command-to-be-executed, with nice formatting and colours."""
+    assert isinstance(command, (list, tuple))
+    msg = f"> {shlex.join(command)}"
+    _log(msg, colour=Fore.BLUE)
