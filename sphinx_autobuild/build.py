@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import contextlib
 import subprocess
 import sys
+from collections.abc import Sequence
+from pathlib import Path
 
 import sphinx
 
@@ -16,10 +19,20 @@ class Builder:
         self.pre_build_commands = pre_build_commands
         self.uri = f"http://{url_host}"
 
-    def __call__(self, *, rebuild: bool = True):
+    def __call__(self, *, changed_paths: Sequence[Path]):
         """Generate the documentation using ``sphinx``."""
-        if rebuild:
-            show_message("Detected change. Rebuilding...")
+        if changed_paths:
+            cwd = Path.cwd()
+            rel_paths = []
+            for changed_path in changed_paths[:5]:
+                if not changed_path.exists():
+                    continue
+                with contextlib.suppress(ValueError):
+                    changed_path = changed_path.relative_to(cwd)
+                rel_paths.append(changed_path.as_posix())
+            if rel_paths:
+                show_message(f"Detected changes ({', '.join(rel_paths)})")
+            show_message("Rebuilding...")
 
         try:
             for command in self.pre_build_commands:

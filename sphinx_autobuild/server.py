@@ -11,7 +11,7 @@ from starlette.websockets import WebSocket
 
 if TYPE_CHECKING:
     import os
-    from collections.abc import Callable
+    from collections.abc import Callable, Sequence
 
     from starlette.types import Receive, Scope, Send
 
@@ -23,7 +23,7 @@ class RebuildServer:
         self,
         paths: list[os.PathLike[str]],
         ignore_filter: IgnoreFilter,
-        change_callback: Callable[[], None],
+        change_callback: Callable[[Sequence[Path]], None],
     ) -> None:
         self.paths = [Path(path).resolve(strict=True) for path in paths]
         self.ignore = ignore_filter
@@ -49,12 +49,13 @@ class RebuildServer:
         [task.result() for task in done]
 
     async def watch(self) -> None:
-        async for _changes in watchfiles.awatch(
+        async for changes in watchfiles.awatch(
             *self.paths,
             watch_filter=lambda _, path: not self.ignore(path),
         ):
+            changed_paths = [Path(path).resolve() for (_, path) in changes]
             with ProcessPoolExecutor() as pool:
-                fut = pool.submit(self.change_callback)
+                fut = pool.submit(self.change_callback, changed_paths=changed_paths)
                 await asyncio.wrap_future(fut)
             self.flag.set()
 

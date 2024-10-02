@@ -83,7 +83,7 @@ def main(argv=()):
 
     if not args.no_initial_build:
         show_message("Starting initial build")
-        builder(rebuild=False)
+        builder(changed_paths=())
 
     if args.open_browser:
         open_browser(url_host, args.delay)

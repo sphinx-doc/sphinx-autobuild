@@ -26,7 +26,7 @@ def test_application(tmp_path):
     app = _create_app([src_dir], ignore_handler, builder, out_dir, url_host)
     client = TestClient(app)
 
-    builder(rebuild=False)
+    builder(changed_paths=())
 
     response = client.get("/")
     assert response.status_code == 200
