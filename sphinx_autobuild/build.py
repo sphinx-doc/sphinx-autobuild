@@ -3,6 +3,8 @@
 import subprocess
 import sys
 
+import sphinx
+
 from sphinx_autobuild.utils import show_command, show_message
 
 
@@ -30,7 +32,10 @@ class Builder:
             )
             raise
 
-        sphinx_build_args = ["-m", "sphinx"] + self.sphinx_args
+        if sphinx.version_info[:3] >= (7, 2, 3):
+            sphinx_build_args = ["-m", "sphinx", "build"] + self.sphinx_args
+        else:
+            sphinx_build_args = ["-m", "sphinx"] + self.sphinx_args
         show_command(["python"] + sphinx_build_args)
         try:
             subprocess.run([sys.executable] + sphinx_build_args, check=True)
