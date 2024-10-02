@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import subprocess
 import sys
+import traceback
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -45,7 +46,14 @@ class Builder:
                 "Please fix the cause of the error above or press Ctrl+C to stop the "
                 "server."
             )
-            raise
+            print(
+                "The server will continue serving the build folder, but the contents "
+                "being served are no longer in sync with the documentation sources. "
+                "Please fix the cause of the error above or press Ctrl+C to stop the "
+                "server."
+            )
+            traceback.print_exception(e)
+            return
 
         if sphinx.version_info[:3] >= (7, 2, 3):
             sphinx_build_args = ["-m", "sphinx", "build"] + self.sphinx_args
