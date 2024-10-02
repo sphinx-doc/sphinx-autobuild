@@ -18,20 +18,20 @@ class IgnoreFilter:
             f"regex_based={self.regex_based_patterns!r})"
         )
 
-    def __call__(self, path):
+    def __call__(self, filename: str, /):
         """Determine if 'path' should be ignored."""
-        path = Path(path).resolve().as_posix()
+        normalised_path = Path(filename).resolve().as_posix()
         # Any regular pattern matches.
         for pattern in self.regular_patterns:
             # separators are normalised before creating the IgnoreFilter
-            if path.startswith(f"{pattern}/"):
+            if normalised_path.startswith(f"{pattern}/"):
                 return True
-            if fnmatch.fnmatch(path, pattern):
+            if fnmatch.fnmatch(normalised_path, pattern):
                 return True
 
         # Any regular expression matches.
         for regex in self.regex_based_patterns:  # NoQA: SIM110
-            if regex.search(path):
+            if regex.search(normalised_path):
                 return True
 
         return False
