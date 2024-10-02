@@ -4,6 +4,11 @@ Changelog
 unreleased
 ----------
 
+2024.10.03 - 2024-10-03
+-----------------------
+
+* Improve error handling for failures in pre-build commands.
+
 2024.10.02 - 2024-10-02
 -----------------------
 
