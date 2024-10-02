@@ -1,5 +1,7 @@
 """Logic for interacting with sphinx-build."""
 
+from __future__ import annotations
+
 import subprocess
 import sys
 

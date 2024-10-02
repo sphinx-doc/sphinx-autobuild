@@ -1,5 +1,7 @@
 """Generic utilities."""
 
+from __future__ import annotations
+
 import shlex
 import socket
 import threading

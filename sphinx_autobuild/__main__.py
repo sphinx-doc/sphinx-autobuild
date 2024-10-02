@@ -1,5 +1,7 @@
 """Entrypoint for ``python -m sphinx_autobuild``."""
 
+from __future__ import annotations
+
 import argparse
 import shlex
 import sys
