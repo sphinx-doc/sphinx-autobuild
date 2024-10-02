@@ -4,6 +4,11 @@ Changelog
 unreleased
 ----------
 
+2024.10.02 - 2024-10-02
+-----------------------
+
+* Show the changed paths that triggered the rebuild.
+
 2024.09.19 - 2024-09-19
 -----------------------
 
