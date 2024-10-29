@@ -14,6 +14,7 @@ ROOT = Path(__file__).parent.parent
 
 def test_application(tmp_path):
     src_dir = tmp_path / "docs"
+    index_file = src_dir / "index.rst"
     out_dir = tmp_path / "build"
     shutil.copytree(ROOT / "docs", tmp_path / "docs")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -24,9 +25,16 @@ def test_application(tmp_path):
         [str(src_dir), str(out_dir)], url_host=url_host, pre_build_commands=[]
     )
     app = _create_app([src_dir], ignore_handler, builder, out_dir, url_host)
-    client = TestClient(app)
 
-    builder(changed_paths=())
+    with TestClient(app) as client:
+        builder(changed_paths=())
 
-    response = client.get("/")
-    assert response.status_code == 200
+        response = client.get("/")
+        assert response.status_code == 200
+
+        with client.websocket_connect("/websocket-reload") as websocket:
+            with index_file.open("a") as f:
+                f.write("hello")
+
+            data = websocket.receive_text()
+            assert data == "refresh"
