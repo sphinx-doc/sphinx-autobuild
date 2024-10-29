@@ -28,11 +28,11 @@ class RebuildServer:
         self.paths = [Path(path).resolve(strict=True) for path in paths]
         self.ignore = ignore_filter
         self.change_callback = change_callback
-        self.flag = asyncio.Event()
-        self.should_exit = asyncio.Event()
 
     @asynccontextmanager
     async def lifespan(self, _app) -> AbstractAsyncContextManager[None]:
+        self.flag = asyncio.Event()
+        self.should_exit = asyncio.Event()
         task = asyncio.create_task(self.main())
         yield
         self.should_exit.set()
