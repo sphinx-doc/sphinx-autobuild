@@ -3,6 +3,7 @@
 import shutil
 from pathlib import Path
 
+import anyio
 import httpx
 import pytest
 from asgi_lifespan import LifespanManager
@@ -23,10 +24,11 @@ def anyio_backend():
 
 async def test_application(tmp_path, anyio_backend):
     src_dir = tmp_path / "docs"
-    index_file = src_dir / "index.rst"
     out_dir = tmp_path / "build"
     shutil.copytree(ROOT / "docs", tmp_path / "docs")
     out_dir.mkdir(parents=True, exist_ok=True)
+    index_file = anyio.Path(src_dir / "index.rst")
+    await index_file.write_text("hello")
 
     url_host = "127.0.0.1:7777"
     ignore_handler = IgnoreFilter([out_dir], [])
@@ -47,8 +49,7 @@ async def test_application(tmp_path, anyio_backend):
         assert response.status_code == 200
 
         async with aconnect_ws("/websocket-reload", client) as websocket:
-            with index_file.open("a") as f:
-                f.write("hello")
+            await index_file.write_text("world")
 
             data = await websocket.receive_text()
             assert data == "refresh"
