@@ -22,7 +22,7 @@ def anyio_backend():
     return "asyncio"
 
 
-async def test_application(tmp_path, anyio_backend):
+async def test_application(tmp_path, anyio_backend):  # noqa: ARG001
     src_dir = tmp_path / "docs"
     out_dir = tmp_path / "build"
     shutil.copytree(ROOT / "docs", tmp_path / "docs")
