@@ -3,7 +3,11 @@
 import shutil
 from pathlib import Path
 
-from starlette.testclient import TestClient
+import httpx
+import pytest
+from asgi_lifespan import LifespanManager
+from httpx_ws import aconnect_ws
+from httpx_ws.transport import ASGIWebSocketTransport
 
 from sphinx_autobuild.__main__ import _create_app
 from sphinx_autobuild.build import Builder
@@ -12,7 +16,12 @@ from sphinx_autobuild.filter import IgnoreFilter
 ROOT = Path(__file__).parent.parent
 
 
-def test_application(tmp_path):
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
+
+
+async def test_application(tmp_path, anyio_backend):
     src_dir = tmp_path / "docs"
     index_file = src_dir / "index.rst"
     out_dir = tmp_path / "build"
@@ -26,15 +35,20 @@ def test_application(tmp_path):
     )
     app = _create_app([src_dir], ignore_handler, builder, out_dir, url_host)
 
-    with TestClient(app) as client:
+    async with (
+        LifespanManager(app) as manager,
+        httpx.AsyncClient(
+            transport=ASGIWebSocketTransport(manager.app), base_url="http://testserver"
+        ) as client,
+    ):
         builder(changed_paths=())
 
-        response = client.get("/")
+        response = await client.get("/")
         assert response.status_code == 200
 
-        with client.websocket_connect("/websocket-reload") as websocket:
+        async with aconnect_ws("/websocket-reload", client) as websocket:
             with index_file.open("a") as f:
                 f.write("hello")
 
-            data = websocket.receive_text()
+            data = await websocket.receive_text()
             assert data == "refresh"
