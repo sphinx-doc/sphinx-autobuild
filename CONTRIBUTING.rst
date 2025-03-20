@@ -27,7 +27,7 @@ Set-up
 
        $ git clone https://github.com/YOUR_USERNAME_HERE/sphinx-autobuild
 
-To work on this project, you need Python 3.9 or newer.
+To work on this project, you need Python 3.10 or newer.
 Most of this project's development workflow commands use nox_.
 
 If you're not sure how to install nox,
