@@ -67,7 +67,7 @@ which can seen by running ``sphinx-autobuild --help``:
      --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
-     --post-build COMMAND  additional command(s) to run after building the documentation (default: [])
+     --post-build COMMAND  additional command(s) to run after building the documentation
 
 Using with Makefile
 -------------------
@@ -127,14 +127,6 @@ all pages are built from the same state of the HTML theme.
 It also works around a `known issue in Sphinx <relevant sphinx bugs_>`__
 which causes significant problems during theme development.
 
-Post-build resources can be processed by passing a user-defined command to
-``--post-build``.
-
-.. code-block:: bash
-   
-   --post-build "npx tailwindcss -i ./src/input.css -o ./src/output.css"
-
-
 Working on multiple projects
 ----------------------------
 
@@ -148,6 +140,18 @@ to avoid needing to manually manage ports and opening browser windows
 
    sphinx-autobuild --port=0 --open-browser pikachu/docs pikachu/docs/_build/html &
    sphinx-autobuild --port=0 --open-browser magikarp/docs magickarp/docs/_build/html &
+
+Notify when build starts and ends
+---------------------------------
+
+When running sphinx-autobuild as a daemon, users may need to be notified when
+the build starts and ends (require libnotify and a notification server).
+
+.. code-block:: bash
+
+   sphinx-autobuild docs docs/_build/html/ \
+      --pre-build 'notify-send "sphinx-autobuild: build start"' \
+      --post-build 'notify-send "sphinx-autobuild: build end"'
 
 Relevant Sphinx Bugs
 ====================
