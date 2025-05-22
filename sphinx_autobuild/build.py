@@ -15,7 +15,9 @@ from sphinx_autobuild.utils import show_command, show_message
 
 
 class Builder:
-    def __init__(self, sphinx_args, *, url_host, pre_build_commands, post_build_commands):
+    def __init__(
+        self, sphinx_args, *, url_host, pre_build_commands, post_build_commands
+    ):
         self.sphinx_args = sphinx_args
         self.pre_build_commands = pre_build_commands
         self.post_build_commands = post_build_commands
