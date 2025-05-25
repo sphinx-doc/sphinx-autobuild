@@ -21,7 +21,10 @@ def test_application(tmp_path):
     url_host = "127.0.0.1:7777"
     ignore_handler = IgnoreFilter([out_dir], [])
     builder = Builder(
-        [str(src_dir), str(out_dir)], url_host=url_host, pre_build_commands=[]
+        [str(src_dir), str(out_dir)],
+        url_host=url_host,
+        pre_build_commands=[],
+        post_build_commands=[],
     )
     app = _create_app([src_dir], ignore_handler, builder, out_dir, url_host)
     client = TestClient(app)
