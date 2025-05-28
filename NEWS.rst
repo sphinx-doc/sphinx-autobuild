@@ -4,6 +4,8 @@ Changelog
 unreleased
 ----------
 
+* Drop support for Python 3.9-3.10 to match Sphinx.
+
 2024.10.03 - 2024-10-03
 -----------------------
 
