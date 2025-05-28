@@ -50,7 +50,9 @@ dependencies = [
 optional-dependencies.docs = [
 ]
 optional-dependencies.test = [
+  "asgi-lifespan",
   "httpx",
+  "httpx-ws",
   "pytest>=6",
 ]
 urls.Changelog = "https://github.com/sphinx-doc/sphinx-autobuild/blob/main/NEWS.rst"
