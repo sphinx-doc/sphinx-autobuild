@@ -144,8 +144,9 @@ to avoid needing to manually manage ports and opening browser windows
 Notifications for build cycles
 ------------------------------
 
-When running sphinx-autobuild as a daemon, users may need to be notified when
-the build starts and ends (require libnotify and a notification server).
+As an example of using the ``--pre-build`` and ``--post-build`` arguments,
+the command below uses `notify-send` to send a notification when a build
+starts and finishes.
 
 .. code-block:: bash
 
