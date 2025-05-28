@@ -85,5 +85,4 @@ class Builder:
             )
             traceback.print_exception(e)
             return e.returncode
-        else:
-            return 0
+        return 0
