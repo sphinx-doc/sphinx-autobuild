@@ -141,8 +141,8 @@ to avoid needing to manually manage ports and opening browser windows
    sphinx-autobuild --port=0 --open-browser pikachu/docs pikachu/docs/_build/html &
    sphinx-autobuild --port=0 --open-browser magikarp/docs magickarp/docs/_build/html &
 
-Notify when build starts and ends
----------------------------------
+Notifications for build cycles
+------------------------------
 
 When running sphinx-autobuild as a daemon, users may need to be notified when
 the build starts and ends (require libnotify and a notification server).
