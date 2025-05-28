@@ -23,31 +23,6 @@ class Builder:
         self.post_build_commands = post_build_commands
         self.uri = f"http://{url_host}"
 
-    def _run_commands(self, commands, log_context):
-        try:
-            for command in commands:
-                show_message(log_context)
-                show_command(command)
-                subprocess.run(command, check=True)
-        except subprocess.CalledProcessError as e:
-            print(
-                f"{log_context.title()} command exited with exit code: {e.returncode}"
-            )
-            print(
-                "Please fix the cause of the error above or press Ctrl+C to stop the "
-                "server."
-            )
-            print(
-                "The server will continue serving the build folder, but the contents "
-                "being served are no longer in sync with the documentation sources. "
-                "Please fix the cause of the error above or press Ctrl+C to stop the "
-                "server."
-            )
-            traceback.print_exception(e)
-            return e.returncode
-        else:
-            return 0
-
     def __call__(self, *, changed_paths: Sequence[Path]):
         """Generate the documentation using ``sphinx``."""
         if changed_paths:
@@ -87,3 +62,28 @@ class Builder:
 
         # Remind the user of the server URL for convenience.
         show_message(f"Serving on {self.uri}")
+
+    def _run_commands(self, commands, log_context):
+        try:
+            for command in commands:
+                show_message(log_context)
+                show_command(command)
+                subprocess.run(command, check=True)
+        except subprocess.CalledProcessError as e:
+            print(
+                f"{log_context.title()} command exited with exit code: {e.returncode}"
+            )
+            print(
+                "Please fix the cause of the error above or press Ctrl+C to stop the "
+                "server."
+            )
+            print(
+                "The server will continue serving the build folder, but the contents "
+                "being served are no longer in sync with the documentation sources. "
+                "Please fix the cause of the error above or press Ctrl+C to stop the "
+                "server."
+            )
+            traceback.print_exception(e)
+            return e.returncode
+        else:
+            return 0
