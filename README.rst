@@ -171,6 +171,7 @@ Debugging
 =========
 
 If the ``SPHINX_AUTOBUILD_DEBUG`` environment variable is present
+(regardless of its value)
 and a file change is detected,
 its path and the currently active ignore expressions are printed.
 This is to help setting up the ignore expressions correctly.
