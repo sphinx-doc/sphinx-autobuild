@@ -148,6 +148,10 @@ def _get_sphinx_build_parser():
     sphinx_build_parser.epilog = None
     sphinx_build_parser.prog = "sphinx-autobuild"
     for action in sphinx_build_parser._actions:
+        if hasattr(action, "help"):
+            # Replace _TranslationProxy objects with strings
+            action.help = str(action.help)
+    for action in sphinx_build_parser._actions:
         if hasattr(action, "version"):
             # Fix the version
             action.version = f"%(prog)s {__version__}"
