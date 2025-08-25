@@ -1,3 +1,7 @@
+import os
+
+import pytest
+
 from sphinx_autobuild.filter import IgnoreFilter
 
 
@@ -72,3 +76,16 @@ def test_multiple_both():
     assert ignored("foo/random.txt")
     assert ignored("foo/module.pyc")
     assert ignored("bar/__pycache__/file.pyc")
+
+
+@pytest.mark.parametrize("val", [None, "0", "", "y", "1", "whatever"])
+def test_debug(val, capfd):
+    if val is not None:
+        os.environ["SPHINX_AUTOBUILD_DEBUG"] = val
+    ignore_handler = IgnoreFilter([], [])
+    ignore_handler("dummyfile")
+    captured = capfd.readouterr()
+    if val in ("y", "1", "whatever"):
+        assert "SPHINX_AUTOBUILD_DEBUG" in captured.out
+    else:
+        assert "SPHINX_AUTOBUILD_DEBUG" not in captured.out
