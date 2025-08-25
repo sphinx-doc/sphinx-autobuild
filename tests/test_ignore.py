@@ -78,17 +78,14 @@ def test_multiple_both():
     assert ignored("bar/__pycache__/file.pyc")
 
 
-@pytest.mark.parametrize("is_debug", [True, False])
-def test_debug(is_debug, capfd):
-    if is_debug:
-        # also "0" is considered to mean "print debug output":
-        os.environ["SPHINX_AUTOBUILD_DEBUG"] = "0"
-    else:
-        del os.environ["SPHINX_AUTOBUILD_DEBUG"]
+@pytest.mark.parametrize("val", [None, "0", "", "y", "1", "whatever"])
+def test_debug(val, capfd):
+    if val is not None:
+        os.environ["SPHINX_AUTOBUILD_DEBUG"] = val
     ignore_handler = IgnoreFilter([], [])
     ignore_handler("dummyfile")
     captured = capfd.readouterr()
-    if is_debug:
+    if val in ("y", "1", "whatever"):
         assert "SPHINX_AUTOBUILD_DEBUG" in captured.out
     else:
         assert "SPHINX_AUTOBUILD_DEBUG" not in captured.out

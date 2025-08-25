@@ -24,7 +24,7 @@ class IgnoreFilter:
     def __call__(self, filename: str, /):
         """Determine if 'path' should be ignored."""
         normalised_path = Path(filename).resolve().as_posix()
-        if "SPHINX_AUTOBUILD_DEBUG" in os.environ:
+        if os.getenv("SPHINX_AUTOBUILD_DEBUG") not in (None, "", "0"):
             print(
                 f"SPHINX_AUTOBUILD_DEBUG: {normalised_path!r} has changed; "
                 f"ignores are {self}"

@@ -170,8 +170,8 @@ __ https://github.com/sphinx-doc/sphinx-autobuild/issues/34
 Debugging
 =========
 
-If the ``SPHINX_AUTOBUILD_DEBUG`` environment variable is present
-(regardless of its value)
+If the ``SPHINX_AUTOBUILD_DEBUG`` environment variable is present,
+is not ``""`` (the empty string) or ``0``,
 and a file change is detected,
 its path and the currently active ignore expressions are printed.
 This is to help setting up the ignore expressions correctly.
