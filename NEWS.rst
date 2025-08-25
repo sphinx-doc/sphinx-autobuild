@@ -4,8 +4,15 @@ Changelog
 unreleased
 ----------
 
+2025.08.25 - 2025-08-25
+-----------------------
+
 * Drop support for Python 3.9-3.10 to match Sphinx.
 * Declare support for Python 3.14.
+* Add an optional ``--post-build`` flag to run additional commands
+  after building the documentation.
+* Add support for the ``SPHINX_AUTOBUILD_DEBUG`` environment variable
+  to help with debugging.
 
 2024.10.03 - 2024-10-03
 -----------------------
