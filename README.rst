@@ -67,6 +67,7 @@ which can seen by running ``sphinx-autobuild --help``:
      --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
+     --post-build COMMAND  additional command(s) to run after building the documentation
 
 Using with Makefile
 -------------------
@@ -140,6 +141,19 @@ to avoid needing to manually manage ports and opening browser windows
    sphinx-autobuild --port=0 --open-browser pikachu/docs pikachu/docs/_build/html &
    sphinx-autobuild --port=0 --open-browser magikarp/docs magickarp/docs/_build/html &
 
+Notifications for build cycles
+------------------------------
+
+As an example of using the ``--pre-build`` and ``--post-build`` arguments,
+the command below uses `notify-send` to send a notification when a build
+starts and finishes.
+
+.. code-block:: bash
+
+   sphinx-autobuild docs docs/_build/html/ \
+      --pre-build 'notify-send "sphinx-autobuild: build start"' \
+      --post-build 'notify-send "sphinx-autobuild: build end"'
+
 Relevant Sphinx Bugs
 ====================
 
@@ -152,6 +166,15 @@ This can be done by disabling incremental mode (with ``-a``)
 or passing relevant ``filenames`` in addition to source and output directory in the CLI.
 
 __ https://github.com/sphinx-doc/sphinx-autobuild/issues/34
+
+Debugging
+=========
+
+If the ``SPHINX_AUTOBUILD_DEBUG`` environment variable is present,
+is not ``""`` (the empty string) or ``0``,
+and a file change is detected,
+its path and the currently active ignore expressions are printed.
+This is to help setting up the ignore expressions correctly.
 
 Acknowledgements
 ================

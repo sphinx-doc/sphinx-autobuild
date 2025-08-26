@@ -50,7 +50,7 @@ The tests can be run using:
 
 .. code-block:: bash
 
-   nox -s tests
+   nox -s test
 
 This will run tests against all supported version of Python that are installed.
 

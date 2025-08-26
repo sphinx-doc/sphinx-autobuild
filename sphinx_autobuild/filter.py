@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fnmatch
+import os
 import re
 from pathlib import Path
 
@@ -23,6 +24,11 @@ class IgnoreFilter:
     def __call__(self, filename: str, /):
         """Determine if 'path' should be ignored."""
         normalised_path = Path(filename).resolve().as_posix()
+        if os.getenv("SPHINX_AUTOBUILD_DEBUG") not in {None, "", "0"}:
+            print(
+                f"SPHINX_AUTOBUILD_DEBUG: {normalised_path!r} has changed; "
+                f"ignores are {self}"
+            )
         # Any regular pattern matches.
         for pattern in self.regular_patterns:
             # separators are normalised before creating the IgnoreFilter
