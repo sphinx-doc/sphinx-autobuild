@@ -53,7 +53,9 @@ dynamic = ["version"]
 [project.optional-dependencies]
 docs = []
 test = [
+    "asgi-lifespan",
     "httpx",
+    "httpx-ws",
     "pytest>=6",
 ]
 
