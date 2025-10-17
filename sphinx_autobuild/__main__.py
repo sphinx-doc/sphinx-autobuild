@@ -22,7 +22,12 @@ from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
 from sphinx_autobuild.server import RebuildServer
-from sphinx_autobuild.utils import find_free_port, is_port_available, open_browser, show_message
+from sphinx_autobuild.utils import (
+    find_free_port,
+    is_port_available,
+    open_browser,
+    show_message,
+)
 
 
 def main(argv=()):
@@ -122,7 +127,8 @@ def _run_with_port_fallback(
         if port_explicitly_set:
             show_message(
                 f"Error: Cannot bind to {host_name}:{port_num}. "
-                f"The port is already in use. Use --port 0 to automatically find a free port."
+                f"The port is already in use. "
+                f"Use --port 0 to automatically find a free port."
             )
             sys.exit(1)
         else:
@@ -244,7 +250,10 @@ def _add_autobuild_arguments(parser):
         "--port",
         type=int,
         default=None,
-        help="port to serve documentation on (defaults to 8000, or a free port if 8000 is in use)",
+        help=(
+            "port to serve documentation on "
+            "(defaults to 8000, or a free port if 8000 is in use)"
+        ),
     )
     group.add_argument(
         "--host",
