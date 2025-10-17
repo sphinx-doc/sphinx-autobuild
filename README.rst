@@ -35,7 +35,7 @@ To build a classical Sphinx documentation set, run:
 
    sphinx-autobuild docs docs/_build/html
 
-This will start a server at http://127.0.0.1:8000
+This will start a server at http://127.0.0.1:8000 (or automatically find a free port if 8000 is in use)
 and start watching for changes in the ``docs/`` directory.
 When a change is detected in ``docs/``, the documentation is rebuilt
 and any open browser windows are reloaded automatically.
@@ -57,7 +57,7 @@ which can seen by running ``sphinx-autobuild --help``:
    ...
 
    autobuild options:
-     --port PORT           port to serve documentation on. 0 means find and use a free port
+     --port PORT           port to serve documentation on (defaults to 8000, or a free port if 8000 is in use)
      --host HOST           hostname to serve documentation on
      --re-ignore RE_IGNORE
                            regular expression for files to ignore, when watching for changes
@@ -101,9 +101,14 @@ Passing ``--open-browser`` will enable this behaviour.
 Automatically selecting a port
 ------------------------------
 
-sphinx-autobuild asks the operating system for a free port number
-and use that for its server.
-Passing ``--port=0`` will enable this behaviour.
+By default, sphinx-autobuild tries to use port 8000.
+If port 8000 is already in use, it will automatically find and use a free port instead.
+
+You can explicitly request a specific port with ``--port N`` (e.g., ``--port 3000``).
+If that port is unavailable, sphinx-autobuild will exit with an error.
+
+To always use an automatically-selected free port (skipping the 8000 default),
+pass ``--port 0``.
 
 
 Workflow suggestions

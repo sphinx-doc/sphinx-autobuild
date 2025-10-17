@@ -22,7 +22,12 @@ from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
 from sphinx_autobuild.server import RebuildServer
-from sphinx_autobuild.utils import find_free_port, open_browser, show_message
+from sphinx_autobuild.utils import (
+    find_free_port,
+    is_port_available,
+    open_browser,
+    show_message,
+)
 
 
 def main(argv=()):
@@ -45,17 +50,26 @@ def main(argv=()):
         serve_dir.mkdir(parents=True, exist_ok=True)
 
     host_name = args.host
-    port_num = args.port or find_free_port()
-    url_host = f"{host_name}:{port_num}"
+
+    # Resolve port:
+    # - If user specified --port 0, always find a free port
+    # - If user specified --port N (N > 0), use that port (may fail if unavailable)
+    # - If user didn't specify --port, use 8000 (or free port if 8000 is taken)
+    if args.port == 0:
+        # Auto-find mode
+        port_num = find_free_port()
+        port_explicitly_set = False
+    elif args.port is not None:
+        # User specified a specific port
+        port_num = args.port
+        port_explicitly_set = True
+    else:
+        # Default: try 8000, but allow fallback to free port
+        port_num = 8000
+        port_explicitly_set = False
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
     post_build_commands = list(map(shlex.split, args.post_build))
-    builder = Builder(
-        build_args,
-        url_host=url_host,
-        pre_build_commands=pre_build_commands,
-        post_build_commands=post_build_commands,
-    )
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
     ignore_dirs = [
@@ -80,7 +94,58 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+
+    _run_with_port_fallback(
+        host_name,
+        port_num,
+        port_explicitly_set,
+        args,
+        watch_dirs,
+        ignore_handler,
+        build_args,
+        pre_build_commands,
+        post_build_commands,
+        serve_dir,
+    )
+
+
+def _run_with_port_fallback(
+    host_name,
+    port_num,
+    port_explicitly_set,
+    args,
+    watch_dirs,
+    ignore_handler,
+    build_args,
+    pre_build_commands,
+    post_build_commands,
+    serve_dir,
+):
+    """Run the server with automatic port fallback on binding failure."""
+    # Check if the port is available BEFORE doing anything else
+    if not is_port_available(host_name, port_num):
+        if port_explicitly_set:
+            show_message(
+                f"Error: Cannot bind to {host_name}:{port_num}. "
+                f"The port is already in use. "
+                f"Use --port 0 to automatically find a free port."
+            )
+            sys.exit(1)
+        else:
+            show_message(
+                f"Port {port_num} already in use. Attempting to find a free port..."
+            )
+            port_num = find_free_port()
+            show_message(f"Using port {port_num} instead.")
+
+    url_host = f"{host_name}:{port_num}"
+
+    builder = Builder(
+        build_args,
+        url_host=url_host,
+        pre_build_commands=pre_build_commands,
+        post_build_commands=post_build_commands,
+    )
 
     if not args.no_initial_build:
         show_message("Starting initial build")
@@ -90,6 +155,8 @@ def main(argv=()):
         open_browser(url_host, args.delay)
 
     show_message("Waiting to detect changes...")
+    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+
     try:
         uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
     except KeyboardInterrupt:
@@ -182,8 +249,11 @@ def _add_autobuild_arguments(parser):
     group.add_argument(
         "--port",
         type=int,
-        default=8000,
-        help="port to serve documentation on. 0 means find and use a free port",
+        default=None,
+        help=(
+            "port to serve documentation on "
+            "(defaults to 8000, or a free port if 8000 is in use)"
+        ),
     )
     group.add_argument(
         "--host",
