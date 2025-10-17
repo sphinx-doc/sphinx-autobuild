@@ -48,6 +48,7 @@ def test_is_port_available():
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     test_port = find_free_port()
     s.bind(("127.0.0.1", test_port))
+    s.listen(1)  # Put the socket in listening state to actually reserve the port
 
     try:
         # Now the port should not be available
