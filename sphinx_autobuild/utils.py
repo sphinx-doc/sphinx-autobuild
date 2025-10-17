@@ -11,6 +11,20 @@ import webbrowser
 from colorama import Fore, Style
 
 
+def is_port_available(host: str, port: int) -> bool:
+    """Check if a port is available for binding.
+
+    Returns True if the port is available, False otherwise.
+    """
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind((host, port))
+            return True
+    except OSError:
+        return False
+
+
 def find_free_port():
     """Find and return a free port number.
 
