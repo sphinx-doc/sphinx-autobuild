@@ -38,6 +38,7 @@ class JavascriptInjectorMiddleware:
                     if "Content-Length" in headers:
                         length = int(headers["Content-Length"]) + len(self.script)
                         headers["Content-Length"] = str(length)
+                headers["Cache-Control"] = "no-cache"
             elif message["type"] == "http.response.body":
                 request_complete = not message.get("more_body", False)
                 if add_script and request_complete:
