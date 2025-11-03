@@ -221,6 +221,29 @@ def _add_autobuild_arguments(parser):
         help="hostname to serve documentation on",
     )
     group.add_argument(
+        "--ws-port",
+        type=int,
+        default=None,
+        help="port portion of the websocket URL to ask the browser to "
+        "connect to (defaults to --port, useful when running behind a "
+        "reverse proxy)",
+    )
+    group.add_argument(
+        "--ws-host",
+        type=str,
+        default=None,
+        help="host portion of the websocket URL to ask the browser to "
+        "connect to (defaults to --host, useful when running behind a "
+        "reverse proxy)",
+    )
+    group.add_argument(
+        "--ws-https",
+        action="store_true",
+        default=False,
+        help="tell the browser to use HTTPS/WSS for websocket connections "
+        "(useful when running behind a reverse proxy)",
+    )
+    group.add_argument(
         "--re-ignore",
         action="append",
         default=[],
@@ -273,29 +296,6 @@ def _add_autobuild_arguments(parser):
         metavar="COMMAND",
         default=[],
         help="additional command(s) to run after building the documentation",
-    )
-    group.add_argument(
-        "--ws-host",
-        type=str,
-        default=None,
-        help="host portion of the websocket URL to ask the browser to "
-        "connect to (defaults to --host, useful when running behind a "
-        "reverse proxy)",
-    )
-    group.add_argument(
-        "--ws-port",
-        type=int,
-        default=None,
-        help="port portion of the websocket URL to ask the browser to "
-        "connect to (defaults to --port, useful when running behind a "
-        "reverse proxy)",
-    )
-    group.add_argument(
-        "--ws-https",
-        action="store_true",
-        default=False,
-        help="tell the browser to use HTTPS/WSS for websocket connections "
-        "(useful when running behind a reverse proxy)",
     )
     return group
 
