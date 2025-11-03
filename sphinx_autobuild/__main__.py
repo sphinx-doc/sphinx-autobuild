@@ -48,7 +48,8 @@ def main(argv=()):
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
 
-    # Determine base URL for websocket URL sent to browser. (default to server host/port)
+    # Determine host, port, and schema to report to the browser when hooking up the
+    # websocket connection.
     websocket_host = args.ws_host or host_name
     websocket_port = args.ws_port if args.ws_port is not None else port_num
     websocket_https = args.ws_https
