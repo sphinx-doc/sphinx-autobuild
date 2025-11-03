@@ -294,7 +294,7 @@ def _add_autobuild_arguments(parser):
         "--ws-https",
         action="store_true",
         default=False,
-        help="tell the browser to use HTTPS/WSS for websocket connections. "
+        help="tell the browser to use HTTPS/WSS for websocket connections "
         "(useful when running behind a reverse proxy)",
     )
     return group
