@@ -18,7 +18,9 @@ def test_application(tmp_path):
     shutil.copytree(ROOT / "docs", tmp_path / "docs")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    url_host = "127.0.0.1:7777"
+    host = "127.0.0.1"
+    port = 7777
+    url_host = f"{host}:{port}"
     ignore_handler = IgnoreFilter([out_dir], [])
     builder = Builder(
         [str(src_dir), str(out_dir)],
@@ -26,7 +28,7 @@ def test_application(tmp_path):
         pre_build_commands=[],
         post_build_commands=[],
     )
-    app = _create_app([src_dir], ignore_handler, builder, out_dir, url_host)
+    app = _create_app([src_dir], ignore_handler, builder, out_dir, host, port)
     client = TestClient(app)
 
     builder(changed_paths=())

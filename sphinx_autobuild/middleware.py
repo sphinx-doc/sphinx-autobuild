@@ -8,20 +8,31 @@ if TYPE_CHECKING:
     from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 
-def web_socket_script(ws_url: str) -> str:
+def web_socket_script(host: str, port: int, https: bool = False) -> str:
+    websocket_url = f"{'wss' if https else 'ws'}://{host}:{port}/websocket-reload"
     # language=HTML
     return f"""
 <script>
-const ws = new WebSocket("ws://{ws_url}/websocket-reload");
+const ws = new WebSocket("{websocket_url}");
 ws.onmessage = () => window.location.reload();
 </script>
 """
 
 
 class JavascriptInjectorMiddleware:
-    def __init__(self, app: ASGIApp, ws_url: str) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        websocket_host: str,
+        websocket_port: int,
+        websocket_https: bool = False,
+    ) -> None:
         self.app = app
-        self.script = web_socket_script(ws_url).encode("utf-8")
+        self.script = web_socket_script(
+            websocket_host,
+            websocket_port,
+            websocket_https,
+        ).encode("utf-8")
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         add_script = False
