@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
-from contextlib import AbstractAsyncContextManager, asynccontextmanager
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -10,20 +10,24 @@ import watchfiles
 from starlette.websockets import WebSocket
 
 if TYPE_CHECKING:
-    import os
-    from collections.abc import Callable, Sequence
+    from collections.abc import AsyncGenerator, Sequence
+    from os import PathLike
+    from typing import Protocol
 
     from starlette.types import Receive, Scope, Send
 
     from sphinx_autobuild.filter import IgnoreFilter
 
+    class ChangeCallback(Protocol):
+        def __call__(self, *, changed_paths: Sequence[Path]) -> None: ...
+
 
 class RebuildServer:
     def __init__(
         self,
-        paths: list[os.PathLike[str]],
+        paths: list[PathLike[str]],
         ignore_filter: IgnoreFilter,
-        change_callback: Callable[[Sequence[Path]], None],
+        change_callback: ChangeCallback,
     ) -> None:
         self.paths = [Path(path).resolve(strict=True) for path in paths]
         self.ignore = ignore_filter
@@ -32,7 +36,7 @@ class RebuildServer:
         self.should_exit = asyncio.Event()
 
     @asynccontextmanager
-    async def lifespan(self, _app) -> AbstractAsyncContextManager[None]:
+    async def lifespan(self, _app) -> AsyncGenerator[None]:
         task = asyncio.create_task(self.main())
         yield
         self.should_exit.set()
