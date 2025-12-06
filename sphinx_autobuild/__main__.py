@@ -80,6 +80,7 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
+
     app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
 
     if not args.no_initial_build:
@@ -87,7 +88,7 @@ def main(argv=()):
         builder(changed_paths=())
 
     if args.open_browser:
-        open_browser(url_host, args.delay)
+        open_browser(url_host)
 
     show_message("Waiting to detect changes...")
     try:
@@ -216,13 +217,7 @@ def _add_autobuild_arguments(parser):
         default=False,
         help="open the browser after building documentation",
     )
-    group.add_argument(
-        "--delay",
-        dest="delay",
-        type=float,
-        default=5,
-        help="how long to wait before opening the browser",
-    )
+
     group.add_argument(
         "--watch",
         action="append",

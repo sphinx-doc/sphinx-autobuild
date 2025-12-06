@@ -5,7 +5,6 @@ from __future__ import annotations
 import shlex
 import socket
 import threading
-import time
 import webbrowser
 
 from colorama import Fore, Style
@@ -22,9 +21,8 @@ def find_free_port():
         return s.getsockname()[1]
 
 
-def open_browser(url_host: str, delay: float) -> None:
+def open_browser(url_host: str) -> None:
     def _opener():
-        time.sleep(delay)
         webbrowser.open(f"http://{url_host}")
 
     t = threading.Thread(target=_opener)
