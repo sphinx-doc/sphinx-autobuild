@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import shlex
 import socket
-import threading
 import webbrowser
 
 from colorama import Fore, Style
@@ -22,12 +21,7 @@ def find_free_port():
 
 
 def open_browser(url_host: str) -> None:
-    def _opener():
-        webbrowser.open(f"http://{url_host}")
-
-    t = threading.Thread(target=_opener)
-    t.start()
-    t.join()
+    webbrowser.open(f"http://{url_host}")
 
 
 def _log(text, *, colour):
