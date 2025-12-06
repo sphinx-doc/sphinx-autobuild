@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import shlex
 import socket
-import webbrowser
 
 from colorama import Fore, Style
 
@@ -18,10 +17,6 @@ def find_free_port():
         s.bind(("", 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
-
-
-def open_browser(url_host: str) -> None:
-    webbrowser.open(f"http://{url_host}")
 
 
 def _log(text, *, colour):
