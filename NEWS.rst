@@ -4,6 +4,8 @@ Changelog
 unreleased
 ----------
 
+* Set ``Cache-Control`` header to ```no-cache``` for served files.
+
 2025.08.25 - 2025-08-25
 -----------------------
 

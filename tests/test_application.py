@@ -33,3 +33,4 @@ def test_application(tmp_path):
 
     response = client.get("/")
     assert response.status_code == 200
+    assert response.headers["Cache-Control"] == "no-cache"
