@@ -5,6 +5,8 @@ unreleased
 ----------
 
 * Set ``Cache-Control`` header to ```no-cache``` for served files.
+* Add new option ``--watch-glob`` to watch multiple directories by
+  glob pattern.
 
 2025.08.25 - 2025-08-25
 -----------------------

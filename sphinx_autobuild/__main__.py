@@ -58,6 +58,11 @@ def main(argv=()):
     )
 
     watch_dirs = [src_dir] + args.additional_watched_dirs
+    cwd = Path.cwd()
+    for dir_glob in args.additional_watched_dir_globs:
+        for directory in cwd.glob(dir_glob):
+            if directory.is_dir():
+                watch_dirs.append(directory.resolve())
     ignore_dirs = [
         ".git",
         ".hg",
@@ -230,6 +235,14 @@ def _add_autobuild_arguments(parser):
         default=[],
         help="additional directories to watch",
         dest="additional_watched_dirs",
+    )
+    group.add_argument(
+        "--watch-glob",
+        action="append",
+        metavar="DIR_GLOB",
+        default=[],
+        help="glob pattern for additional directories to watch",
+        dest="additional_watched_dir_globs",
     )
     group.add_argument(
         "--pre-build",

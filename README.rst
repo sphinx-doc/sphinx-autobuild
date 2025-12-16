@@ -66,6 +66,8 @@ which can seen by running ``sphinx-autobuild --help``:
      --open-browser        open the browser after building documentation
      --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
+     --watch-glob DIR_GLOB
+                           glob pattern for additional directories to watch
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
      --post-build COMMAND  additional command(s) to run after building the documentation
 
