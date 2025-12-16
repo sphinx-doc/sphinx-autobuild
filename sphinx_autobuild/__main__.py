@@ -48,6 +48,12 @@ def main(argv=()):
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
 
+    # Determine host, port, and schema to report to the browser when hooking up the
+    # websocket connection.
+    websocket_host = args.ws_host or host_name
+    websocket_port = args.ws_port if args.ws_port is not None else port_num
+    websocket_https = args.ws_https
+
     pre_build_commands = list(map(shlex.split, args.pre_build))
     post_build_commands = list(map(shlex.split, args.post_build))
     builder = Builder(
@@ -80,7 +86,15 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+    app = _create_app(
+        watch_dirs,
+        ignore_handler,
+        builder,
+        serve_dir,
+        websocket_host,
+        websocket_port,
+        websocket_https,
+    )
 
     if not args.no_initial_build:
         show_message("Starting initial build")
@@ -96,7 +110,15 @@ def main(argv=()):
         show_message("Server ceasing operations. Cheerio!")
 
 
-def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
+def _create_app(
+    watch_dirs,
+    ignore_handler,
+    builder,
+    out_dir,
+    websocket_host,
+    websocket_port,
+    websocket_https=False,
+):
     watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
 
     return Starlette(
@@ -104,7 +126,14 @@ def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
             WebSocketRoute("/websocket-reload", watcher, name="reload"),
             Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
         ],
-        middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
+        middleware=[
+            Middleware(
+                JavascriptInjectorMiddleware,
+                websocket_host=websocket_host,
+                websocket_port=websocket_port,
+                websocket_https=websocket_https,
+            )
+        ],
         lifespan=watcher.lifespan,
     )
 
@@ -190,6 +219,29 @@ def _add_autobuild_arguments(parser):
         type=str,
         default="127.0.0.1",
         help="hostname to serve documentation on",
+    )
+    group.add_argument(
+        "--ws-port",
+        type=int,
+        default=None,
+        help="port portion of the websocket URL to ask the browser to "
+        "connect to (defaults to --port, useful when running behind a "
+        "reverse proxy)",
+    )
+    group.add_argument(
+        "--ws-host",
+        type=str,
+        default=None,
+        help="host portion of the websocket URL to ask the browser to "
+        "connect to (defaults to --host, useful when running behind a "
+        "reverse proxy)",
+    )
+    group.add_argument(
+        "--ws-https",
+        action="store_true",
+        default=False,
+        help="tell the browser to use HTTPS/WSS for websocket connections "
+        "(useful when running behind a reverse proxy)",
     )
     group.add_argument(
         "--re-ignore",

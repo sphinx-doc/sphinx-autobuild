@@ -59,6 +59,12 @@ which can seen by running ``sphinx-autobuild --help``:
    autobuild options:
      --port PORT           port to serve documentation on. 0 means find and use a free port
      --host HOST           hostname to serve documentation on
+     --ws-port WS_PORT     port portion of the websocket URL to ask the browser to connect to
+                           (defaults to --port, useful when running behind a reverse proxy)
+     --ws-host WS_HOST     host portion of the websocket URL to ask the browser to connect to
+                           (defaults to --host, useful when running behind a reverse proxy)
+     --ws-https            tell the browser to use HTTPS/WSS for websocket connections
+                           (useful when running behind a reverse proxy)
      --re-ignore RE_IGNORE
                            regular expression for files to ignore, when watching for changes
      --ignore IGNORE       glob expression for files to ignore, when watching for changes
@@ -104,6 +110,33 @@ Automatically selecting a port
 sphinx-autobuild asks the operating system for a free port number
 and use that for its server.
 Passing ``--port=0`` will enable this behaviour.
+
+Using behind a reverse proxy
+----------------------------
+
+sphinx-autobuild tells the browser to reload by having it initiate a websocket
+connection back to the sphinx-autobuild server, through which reload trigger
+events are then sent. In some reverse proxy setups, you may find it necessary
+to manually speify the host and port to use for the websocket URL sent to the
+browser, as distinct from the host and port on which the sphinx-autobuild
+server itself is listening.
+
+To handle this, you can pass ``--ws-host`` and / or ``--ws-port`` to
+sphinx-autobuild, which will override the host and port reported to the browser
+respectively.
+
+.. code-block:: bash
+
+   sphinx-autobuild ... --ws-host docs.my-development.proxy.local --ws-port 80
+
+
+In addition, some reverse proxy setups may require that the browser initiate its
+websocket connection using HTTPS (``wss://``) rather than HTTP (``ws://``). To
+handle this, pass ``--ws-https`` to sphinx-autobuild.
+
+.. code-block:: bash
+
+   sphinx-autobuild ... --ws-host docs.my-development.proxy.local --ws-port 443 --ws-https
 
 
 Workflow suggestions
