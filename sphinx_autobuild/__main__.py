@@ -227,7 +227,13 @@ def _add_autobuild_arguments(parser):
         default=False,
         help="open the browser after building documentation",
     )
-
+    group.add_argument(
+        "--delay",
+        type=float,
+        default=0,
+        help="how long to wait before opening the browser (deprecated, no effect)",
+        **({"deprecated": True} if sys.version_info >= (3, 13) else {}),
+    )
     group.add_argument(
         "--watch",
         action="append",
