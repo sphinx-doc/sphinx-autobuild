@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import shlex
 import sys
+import webbrowser
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import colorama
@@ -22,7 +24,7 @@ from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
 from sphinx_autobuild.server import RebuildServer
-from sphinx_autobuild.utils import find_free_port, open_browser, show_message
+from sphinx_autobuild.utils import find_free_port, show_message
 
 
 def main(argv=()):
@@ -80,14 +82,14 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+
+    app = _create_app(
+        watch_dirs, ignore_handler, builder, serve_dir, url_host, args.open_browser
+    )
 
     if not args.no_initial_build:
         show_message("Starting initial build")
         builder(changed_paths=())
-
-    if args.open_browser:
-        open_browser(url_host, args.delay)
 
     show_message("Waiting to detect changes...")
     try:
@@ -96,8 +98,17 @@ def main(argv=()):
         show_message("Server ceasing operations. Cheerio!")
 
 
-def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
+def _create_app(
+    watch_dirs, ignore_handler, builder, out_dir, url_host, open_browser=False
+):
     watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        async with watcher.lifespan(app):
+            if open_browser:
+                webbrowser.open(f"http://{url_host}")
+            yield
 
     return Starlette(
         routes=[
@@ -105,7 +116,7 @@ def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
             Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
         ],
         middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
-        lifespan=watcher.lifespan,
+        lifespan=lifespan,
     )
 
 
@@ -218,10 +229,10 @@ def _add_autobuild_arguments(parser):
     )
     group.add_argument(
         "--delay",
-        dest="delay",
         type=float,
-        default=5,
-        help="how long to wait before opening the browser",
+        default=0,
+        help="how long to wait before opening the browser (deprecated, no effect)",
+        **({"deprecated": True} if sys.version_info >= (3, 13) else {}),
     )
     group.add_argument(
         "--watch",
