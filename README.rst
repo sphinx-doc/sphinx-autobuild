@@ -80,7 +80,7 @@ add the following to the end of the Makefile:
 .. code-block:: make
 
    livehtml:
-      sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+      sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
 
 ``make livehtml`` will now invoke sphinx-autobuild.
 
