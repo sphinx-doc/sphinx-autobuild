@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import shlex
 import sys
+import webbrowser
 from pathlib import Path
 
 import colorama
@@ -22,7 +24,7 @@ from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
 from sphinx_autobuild.server import RebuildServer
-from sphinx_autobuild.utils import find_free_port, open_browser, show_message
+from sphinx_autobuild.utils import find_free_port, show_message
 
 
 def main(argv=()):
@@ -80,18 +82,29 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
+
     app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
 
     if not args.no_initial_build:
         show_message("Starting initial build")
         builder(changed_paths=())
 
-    if args.open_browser:
-        open_browser(url_host, args.delay)
-
     show_message("Waiting to detect changes...")
+    config = uvicorn.Config(app, host=host_name, port=port_num, log_level="warning")
+    server = uvicorn.Server(config)
+
+    async def serve():
+        server_task = asyncio.create_task(server.serve())
+        while not server.started and not server.should_exit:
+            if server_task.done():
+                break
+            await asyncio.sleep(0.1)
+        if args.open_browser and server.started:
+            webbrowser.open(f"http://{url_host}")
+        await server_task
+
     try:
-        uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
+        asyncio.run(serve())
     except KeyboardInterrupt:
         show_message("Server ceasing operations. Cheerio!")
 
@@ -218,10 +231,10 @@ def _add_autobuild_arguments(parser):
     )
     group.add_argument(
         "--delay",
-        dest="delay",
         type=float,
-        default=5,
-        help="how long to wait before opening the browser",
+        default=0,
+        help="how long to wait before opening the browser (deprecated, no effect)",
+        **({"deprecated": True} if sys.version_info >= (3, 13) else {}),
     )
     group.add_argument(
         "--watch",

@@ -64,7 +64,6 @@ which can seen by running ``sphinx-autobuild --help``:
      --ignore IGNORE       glob expression for files to ignore, when watching for changes
      --no-initial          skip the initial build
      --open-browser        open the browser after building documentation
-     --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
      --post-build COMMAND  additional command(s) to run after building the documentation
