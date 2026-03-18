@@ -60,6 +60,7 @@ def main(argv=()):
     watch_dirs = [src_dir] + args.additional_watched_dirs
     ignore_dirs = [
         ".git",
+        ".jj",
         ".hg",
         ".idea",
         ".mypy_cache",
