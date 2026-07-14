@@ -127,6 +127,20 @@ all pages are built from the same state of the HTML theme.
 It also works around a `known issue in Sphinx <relevant sphinx bugs_>`__
 which causes significant problems during theme development.
 
+Working with external Jinja templates
+-------------------------------------
+
+If an extension generates reStructuredText from Jinja templates outside the
+Sphinx source directory, watch the template directory and disable incremental
+builds and the cached Sphinx environment:
+
+.. code-block:: bash
+
+   sphinx-autobuild -aE docs docs/_build/html --watch path/to/templates
+
+This is slower, but ensures every page uses the current templates and
+configuration.
+
 Working on multiple projects
 ----------------------------
 
