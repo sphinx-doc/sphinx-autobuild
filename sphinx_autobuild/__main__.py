@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shlex
 import sys
 from pathlib import Path
@@ -47,6 +48,7 @@ def main(argv=()):
     host_name = args.host
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
+    ws_host = os.getenv("SPHINX_AUTOBUILD_PUBLIC_HOST", url_host)
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
     post_build_commands = list(map(shlex.split, args.post_build))
@@ -80,7 +82,7 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, ws_host)
 
     if not args.no_initial_build:
         show_message("Starting initial build")
