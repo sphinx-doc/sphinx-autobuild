@@ -114,18 +114,14 @@ Working on a Sphinx HTML theme
 
 When working on a Sphinx HTML theme,
 add the source directory of the theme as a watch directory.
-It is also recommended to disable Sphinx's incremental builds
-by passing the ``-a`` option to sphinx-autobuild.
 
 .. code-block:: bash
 
-   sphinx-autobuild -a docs docs/_build/html --watch path/to/theme
+   sphinx-autobuild docs docs/_build/html --watch path/to/theme
 
-
-This results in slower builds, but it ensures that
-all pages are built from the same state of the HTML theme.
-It also works around a `known issue in Sphinx <relevant sphinx bugs_>`__
-which causes significant problems during theme development.
+Sphinx 8.2.1 or newer copies changed static files even when no documents change.
+HTML template changes also trigger output updates, so ``-a`` is normally unnecessary.
+See `Relevant Sphinx Bugs`_ for exceptions.
 
 Working on multiple projects
 ----------------------------
@@ -157,15 +153,12 @@ starts and finishes.
 Relevant Sphinx Bugs
 ====================
 
-Sphinx does not `detect changes in non-document, non-code files in incremental mode`__,
-like theme files and static files.
+Older Sphinx versions can skip static-file updates (`issue #34`_).
+Upgrade to Sphinx 8.2.1 or newer (see the `Sphinx 8.2 release notes`_),
+or pass ``-a`` to write all output files on each build.
 
-At the time of writing, the only known workaround is
-to instruct Sphinx to rebuild the relevant pages.
-This can be done by disabling incremental mode (with ``-a``)
-or passing relevant ``filenames`` in addition to source and output directory in the CLI.
-
-__ https://github.com/sphinx-doc/sphinx-autobuild/issues/34
+.. _issue #34: https://github.com/sphinx-doc/sphinx-autobuild/issues/34
+.. _Sphinx 8.2 release notes: https://www.sphinx-doc.org/en/master/changes/8.2.html
 
 Debugging
 =========
