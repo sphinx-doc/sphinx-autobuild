@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import shlex
 import sys
+import webbrowser
 from pathlib import Path
 
 import colorama
@@ -22,7 +24,7 @@ from sphinx_autobuild.build import Builder
 from sphinx_autobuild.filter import IgnoreFilter
 from sphinx_autobuild.middleware import JavascriptInjectorMiddleware
 from sphinx_autobuild.server import RebuildServer
-from sphinx_autobuild.utils import find_free_port, open_browser, show_message
+from sphinx_autobuild.utils import find_free_port, show_message
 
 
 def main(argv=()):
@@ -86,14 +88,37 @@ def main(argv=()):
         show_message("Starting initial build")
         builder(changed_paths=())
 
-    if args.open_browser:
-        open_browser(url_host, args.delay)
-
     show_message("Waiting to detect changes...")
+    server = uvicorn.Server(
+        uvicorn.Config(app, host=host_name, port=port_num, log_level="warning")
+    )
+    browser_delay = args.delay if args.open_browser else None
     try:
-        uvicorn.run(app, host=host_name, port=port_num, log_level="warning")
+        asyncio.run(
+            serve_and_open_browser_once_serving(server, url_host, browser_delay)
+        )
     except KeyboardInterrupt:
         show_message("Server ceasing operations. Cheerio!")
+
+
+async def serve_and_open_browser_once_serving(server, url_host, browser_delay):
+    async def open_when_ready():
+        # Uvicorn exposes readiness as a boolean, rather than an event.
+        while not server.started:  # noqa: ASYNC110 -- we don't need to wait too long
+            await asyncio.sleep(0.25)
+        await asyncio.sleep(browser_delay)
+        if not server.should_exit:
+            await asyncio.to_thread(webbrowser.open, f"http://{url_host}")
+
+    async with asyncio.TaskGroup() as tasks:
+        browser_task = (
+            tasks.create_task(open_when_ready()) if browser_delay is not None else None
+        )
+        try:
+            await server.serve()
+        finally:
+            if browser_task is not None:
+                browser_task.cancel()
 
 
 def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
@@ -220,7 +245,7 @@ def _add_autobuild_arguments(parser):
         "--delay",
         dest="delay",
         type=float,
-        default=5,
+        default=0,
         help="how long to wait before opening the browser",
     )
     group.add_argument(

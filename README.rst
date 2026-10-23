@@ -97,6 +97,7 @@ Automatically opening the browser
 sphinx-autobuild can open the homepage of the generated documentation
 in your default browser.
 Passing ``--open-browser`` will enable this behaviour.
+The browser opens only after the server is ready to accept connections.
 
 Automatically selecting a port
 ------------------------------
