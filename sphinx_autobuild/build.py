@@ -30,10 +30,11 @@ class Builder:
             rel_paths = []
             for changed_path in changed_paths[:5]:
                 if not changed_path.exists():
-                    continue
-                with contextlib.suppress(ValueError):
-                    changed_path = changed_path.relative_to(cwd)
-                rel_paths.append(changed_path.as_posix())
+                    rel_paths.append(changed_path.as_posix())
+                else:
+                    with contextlib.suppress(ValueError):
+                        changed_path = changed_path.relative_to(cwd)
+                    rel_paths.append(changed_path.as_posix())
             if rel_paths:
                 show_message(f"Detected changes ({', '.join(rel_paths)})")
             show_message("Rebuilding...")
