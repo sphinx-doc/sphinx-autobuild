@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import watchfiles
 from starlette.websockets import WebSocket
+from watchfiles import Change
 
 if TYPE_CHECKING:
     import os
@@ -51,7 +52,10 @@ class RebuildServer:
     async def watch(self) -> None:
         async for changes in watchfiles.awatch(
             *self.paths,
-            watch_filter=lambda _, path: not self.ignore(path),
+            watch_filter=lambda change, path: (
+                (change != Change.modified or Path(path).is_file())
+                and not self.ignore(path)
+            ),
         ):
             changed_paths = [Path(path).resolve() for (_, path) in changes]
             with ProcessPoolExecutor() as pool:
