@@ -4,6 +4,7 @@ Changelog
 unreleased
 ----------
 
+* Wait until the server is listening before opening the browser, and apply ``--delay`` after the server is ready (which now defaults to 0).
 * Set ``Cache-Control`` header to ```no-cache``` for served files.
 
 2025.08.25 - 2025-08-25
