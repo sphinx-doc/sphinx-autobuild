@@ -33,7 +33,10 @@ class JavascriptInjectorMiddleware:
             nonlocal add_script
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(scope=message)
-                if headers.get("Content-Type", "").startswith("text/html"):
+                is_html = headers.get("Content-Type", "").startswith("text/html")
+                # A 206 Partial Content body is a byte range of the file,
+                # so appending the script would corrupt it.
+                if is_html and message["status"] != 206:
                     add_script = True
                     if "Content-Length" in headers:
                         length = int(headers["Content-Length"]) + len(self.script)

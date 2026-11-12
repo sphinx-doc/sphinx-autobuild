@@ -34,3 +34,27 @@ def test_application(tmp_path):
     response = client.get("/")
     assert response.status_code == 200
     assert response.headers["Cache-Control"] == "no-cache"
+
+
+def test_range_request_not_injected(tmp_path):
+    out_dir = tmp_path / "build"
+    out_dir.mkdir()
+    (out_dir / "index.html").write_bytes(b"<html><body>hello</body></html>")
+
+    url_host = "127.0.0.1:7777"
+    builder = Builder(
+        [], url_host=url_host, pre_build_commands=[], post_build_commands=[]
+    )
+    app = _create_app([tmp_path], IgnoreFilter([], []), builder, out_dir, url_host)
+    client = TestClient(app)
+
+    response = client.get("/index.html", headers={"Range": "bytes=0-9"})
+    assert response.status_code == 206
+    assert response.headers["Content-Range"] == "bytes 0-9/31"
+    assert response.headers["Content-Length"] == "10"
+    assert response.content == b"<html><bod"
+
+    # Full responses still get the reload script.
+    response = client.get("/index.html")
+    assert response.status_code == 200
+    assert b"/websocket-reload" in response.content
