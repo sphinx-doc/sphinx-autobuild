@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from starlette.datastructures import MutableHeaders
+from starlette.status import HTTP_206_PARTIAL_CONTENT
 
 if TYPE_CHECKING:
     from starlette.types import ASGIApp, Message, Receive, Scope, Send
@@ -34,9 +35,7 @@ class JavascriptInjectorMiddleware:
             if message["type"] == "http.response.start":
                 headers = MutableHeaders(scope=message)
                 is_html = headers.get("Content-Type", "").startswith("text/html")
-                # A 206 Partial Content body is a byte range of the file,
-                # so appending the script would corrupt it.
-                if is_html and message["status"] != 206:
+                if is_html and message["status"] != HTTP_206_PARTIAL_CONTENT:
                     add_script = True
                     if "Content-Length" in headers:
                         length = int(headers["Content-Length"]) + len(self.script)

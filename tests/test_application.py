@@ -3,6 +3,7 @@
 import shutil
 from pathlib import Path
 
+from starlette.status import HTTP_206_PARTIAL_CONTENT
 from starlette.testclient import TestClient
 
 from sphinx_autobuild.__main__ import _create_app
@@ -49,7 +50,7 @@ def test_range_request_not_injected(tmp_path):
     client = TestClient(app)
 
     response = client.get("/index.html", headers={"Range": "bytes=0-9"})
-    assert response.status_code == 206
+    assert response.status_code == HTTP_206_PARTIAL_CONTENT
     assert response.headers["Content-Range"] == "bytes 0-9/31"
     assert response.headers["Content-Length"] == "10"
     assert response.content == b"<html><bod"
