@@ -12,7 +12,7 @@ def web_socket_script(ws_url: str) -> str:
     # language=HTML
     return f"""
 <script>
-const ws = new WebSocket("ws://{ws_url}/websocket-reload");
+const ws = new WebSocket("{ws_url}");
 ws.onmessage = () => window.location.reload();
 </script>
 """
