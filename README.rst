@@ -66,6 +66,7 @@ which can seen by running ``sphinx-autobuild --help``:
      --open-browser        open the browser after building documentation
      --delay DELAY         how long to wait before opening the browser
      --watch DIR           additional directories to watch
+     --path-prefix PATH    URL path to serve documentation under
      --pre-build COMMAND   additional command(s) to run prior to building the documentation
      --post-build COMMAND  additional command(s) to run after building the documentation
 
@@ -98,6 +99,18 @@ sphinx-autobuild can open the homepage of the generated documentation
 in your default browser.
 Passing ``--open-browser`` will enable this behaviour.
 The browser opens only after the server is ready to accept connections.
+
+Serving under a URL prefix
+--------------------------
+
+Use ``--path-prefix`` to test a site that will be hosted below the server root.
+
+.. code-block:: bash
+
+   sphinx-autobuild docs docs/_build/html --path-prefix /preview/docs --open-browser
+
+This serves the documentation and live reload under
+``http://127.0.0.1:8000/preview/docs/``. The default is to serve at ``/``.
 
 Automatically selecting a port
 ------------------------------

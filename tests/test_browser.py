@@ -7,7 +7,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from sphinx_autobuild.__main__ import main
+from sphinx_autobuild.__main__ import _parse_args, main
 
 
 @pytest.fixture
@@ -41,7 +41,13 @@ def server(monkeypatch):
     return server
 
 
-def test_browser_waits_for_server_and_delay(cli_args, browser, builder, server):
+@pytest.mark.parametrize(
+    ("prefix_args", "expected_path"),
+    [([], ""), (["--path-prefix", "/preview/docs/"], "/preview/docs/")],
+)
+def test_browser_waits_for_server_and_delay(
+    cli_args, browser, builder, server, prefix_args, expected_path
+):
     # GIVEN
     ready_at = None
     loop = None
@@ -49,7 +55,7 @@ def test_browser_waits_for_server_and_delay(cli_args, browser, builder, server):
 
     def open_browser(url):
         assert server.started
-        assert url == "http://localhost:8000"
+        assert url == f"http://localhost:8000{expected_path}"
         assert time.monotonic() - ready_at >= 0.02
         loop.call_soon_threadsafe(opened.set)
 
@@ -69,10 +75,20 @@ def test_browser_waits_for_server_and_delay(cli_args, browser, builder, server):
     server.serve = serve
 
     # WHEN
-    main([*cli_args, "--open-browser", "--delay", "0.02"])
+    main([*cli_args, "--open-browser", "--delay", "0.02", *prefix_args])
 
     # THEN
-    browser.assert_called_once_with("http://localhost:8000")
+    browser.assert_called_once_with(f"http://localhost:8000{expected_path}")
+
+
+@pytest.mark.parametrize(
+    "prefix",
+    ["preview", "//preview", "/preview/../docs", "/preview/{docs}", "/preview?docs"],
+)
+def test_invalid_path_prefix(cli_args, prefix):
+    with pytest.raises(SystemExit) as exc_info:
+        _parse_args([*cli_args, "--path-prefix", prefix])
+    assert exc_info.value.code == 2
 
 
 @pytest.mark.usefixtures("builder")

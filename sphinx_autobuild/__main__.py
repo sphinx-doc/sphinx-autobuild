@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import re
 import shlex
 import sys
 import webbrowser
@@ -49,12 +50,15 @@ def main(argv=()):
     host_name = args.host
     port_num = args.port or find_free_port()
     url_host = f"{host_name}:{port_num}"
+    preview_address = url_host
+    if args.path_prefix:
+        preview_address = f"{url_host}{args.path_prefix}/"
 
     pre_build_commands = list(map(shlex.split, args.pre_build))
     post_build_commands = list(map(shlex.split, args.post_build))
     builder = Builder(
         build_args,
-        url_host=url_host,
+        url_host=preview_address,
         pre_build_commands=pre_build_commands,
         post_build_commands=post_build_commands,
     )
@@ -82,7 +86,14 @@ def main(argv=()):
     ]
     ignore_dirs = list(filter(None, ignore_dirs))
     ignore_handler = IgnoreFilter(ignore_dirs, args.re_ignore)
-    app = _create_app(watch_dirs, ignore_handler, builder, serve_dir, url_host)
+    app = _create_app(
+        watch_dirs,
+        ignore_handler,
+        builder,
+        serve_dir,
+        url_host,
+        path_prefix=args.path_prefix,
+    )
 
     if not args.no_initial_build:
         show_message("Starting initial build")
@@ -95,7 +106,7 @@ def main(argv=()):
     browser_delay = args.delay if args.open_browser else None
     try:
         asyncio.run(
-            serve_and_open_browser_once_serving(server, url_host, browser_delay)
+            serve_and_open_browser_once_serving(server, preview_address, browser_delay)
         )
     except KeyboardInterrupt:
         show_message("Server ceasing operations. Cheerio!")
@@ -121,15 +132,26 @@ async def serve_and_open_browser_once_serving(server, url_host, browser_delay):
                 browser_task.cancel()
 
 
-def _create_app(watch_dirs, ignore_handler, builder, out_dir, url_host):
+def _create_app(
+    watch_dirs, ignore_handler, builder, out_dir, url_host, *, path_prefix=""
+):
     watcher = RebuildServer(watch_dirs, ignore_handler, change_callback=builder)
+    reload_path = f"{path_prefix}/websocket-reload"
 
     return Starlette(
         routes=[
-            WebSocketRoute("/websocket-reload", watcher, name="reload"),
-            Mount("/", app=StaticFiles(directory=out_dir, html=True), name="static"),
+            WebSocketRoute(reload_path, watcher, name="reload"),
+            Mount(
+                path_prefix or "/",
+                app=StaticFiles(directory=out_dir, html=True),
+                name="static",
+            ),
         ],
-        middleware=[Middleware(JavascriptInjectorMiddleware, ws_url=url_host)],
+        middleware=[
+            Middleware(
+                JavascriptInjectorMiddleware, ws_url=f"ws://{url_host}{reload_path}"
+            )
+        ],
         lifespan=watcher.lifespan,
     )
 
@@ -217,6 +239,13 @@ def _add_autobuild_arguments(parser):
         help="hostname to serve documentation on",
     )
     group.add_argument(
+        "--path-prefix",
+        type=_parse_path_prefix,
+        default="",
+        metavar="PATH",
+        help="URL path to serve documentation under (for example, /preview/docs)",
+    )
+    group.add_argument(
         "--re-ignore",
         action="append",
         default=[],
@@ -271,6 +300,16 @@ def _add_autobuild_arguments(parser):
         help="additional command(s) to run after building the documentation",
     )
     return group
+
+
+def _parse_path_prefix(value: str) -> str:
+    if not re.fullmatch(r"(?:/[A-Za-z0-9._~-]+)*/?", value) or any(
+        part in {".", ".."} for part in value.split("/")
+    ):
+        raise argparse.ArgumentTypeError(
+            "expected a URL path beginning with / and using unreserved path characters"
+        )
+    return value.removesuffix("/")
 
 
 if __name__ == "__main__":
